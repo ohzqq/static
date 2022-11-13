@@ -1,11 +1,11 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
+	"io/fs"
+	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -14,15 +14,59 @@ import (
 var genCmd = &cobra.Command{
 	Use:   "gen",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("gen called")
+		var err error
+
+		arg, err := os.Open(args[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer arg.Close()
+		DirCheck(arg)
+
+		entries, err := WalkDir(args[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("%v\n", entries)
 	},
+}
+
+func WalkDir(root string) ([][]string, error) {
+	var files [][]string
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		var dirFiles []string
+
+		if d.IsDir() {
+			return nil
+		}
+
+		if d.Name() == "meta.toml" {
+			dirFiles = append(dirFiles, path)
+		}
+
+		if d.Name() == "body.html" {
+			dirFiles = append(dirFiles, path)
+		}
+
+		files = append(files, dirFiles)
+
+		return nil
+	})
+	return files, err
+}
+
+func DirCheck(f *os.File) {
+	stat, err := f.Stat()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if !stat.IsDir() {
+		log.Fatal("not a dir")
+	}
 }
 
 func init() {
