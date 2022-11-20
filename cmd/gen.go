@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"idxgen"
 	"io/fs"
 	"log"
 	"os"
@@ -25,20 +26,38 @@ var genCmd = &cobra.Command{
 		defer arg.Close()
 		DirCheck(arg)
 
-		entries, err := WalkDir(args[0])
-		if err != nil {
-			log.Fatal(err)
-		}
+		entries := GetDirEntries(args[0])
 
 		fmt.Printf("%v\n", entries)
 	},
 }
 
+func GetDirEntries(name string) []idxgen.Index {
+	entries, err := os.ReadDir(name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var idx idxgen.Index
+	var pages []idxgen.Index
+	for _, e := range entries {
+		if e.IsDir() {
+			idx.Children = append(idx.Children, e)
+		}
+		switch name := e.Name(); name {
+		case "body.html":
+			idx.Body = name
+		case "meta.toml":
+			idx.Meta = name
+		}
+		pages = append(pages, idx)
+	}
+	return pages
+}
+
 func WalkDir(root string) ([][]string, error) {
 	var files [][]string
+	var dirFiles []string
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		var dirFiles []string
-
 		if d.IsDir() {
 			return nil
 		}
@@ -51,10 +70,9 @@ func WalkDir(root string) ([][]string, error) {
 			dirFiles = append(dirFiles, path)
 		}
 
-		files = append(files, dirFiles)
-
 		return nil
 	})
+	files = append(files, dirFiles)
 	return files, err
 }
 
