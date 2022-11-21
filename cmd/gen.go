@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"idxgen"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+
+	"idxgen/files"
 
 	"github.com/spf13/cobra"
 )
@@ -17,41 +18,32 @@ var genCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		var err error
+		//var err error
 
-		arg, err := os.Open(args[0])
-		if err != nil {
-			log.Fatal(err)
+		//entries := GetDirEntries(args[0])
+		//idx := MakeIndex(entries...)
+		site := files.Site{Root: args[0]}
+		site.GetPages(args[0])
+		//entries := WalkSource(args[0])
+
+		for _, c := range site.Index.Children {
+			fmt.Printf("%+V\n", c.Path)
 		}
-		defer arg.Close()
-		DirCheck(arg)
-
-		entries := GetDirEntries(args[0])
-
-		fmt.Printf("%v\n", entries)
 	},
 }
 
-func GetDirEntries(name string) []idxgen.Index {
-	entries, err := os.ReadDir(name)
+func GetDirEntries(name string) []os.DirEntry {
+	//abs, err := filepath.Abs(name)
+	//if err != nil {
+	//log.Fatal(err)
+	//}
+	abs := name
+	println(abs)
+	entries, err := os.ReadDir(abs)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var idx idxgen.Index
-	var pages []idxgen.Index
-	for _, e := range entries {
-		if e.IsDir() {
-			idx.Children = append(idx.Children, e)
-		}
-		switch name := e.Name(); name {
-		case "body.html":
-			idx.Body = name
-		case "meta.toml":
-			idx.Meta = name
-		}
-		pages = append(pages, idx)
-	}
-	return pages
+	return entries
 }
 
 func WalkDir(root string) ([][]string, error) {
