@@ -12,15 +12,6 @@ type Site struct {
 	Config
 }
 
-type Config struct {
-	Categories  []string              `toml:"categories"`
-	Collections map[string]Collection `toml:"collection"`
-}
-
-type Collection struct {
-	Ext []string `toml:"ext"`
-}
-
 func (s *Site) GetPages(root string) *Site {
 	s.Root = root
 	s.Index = MakeIndex(root)

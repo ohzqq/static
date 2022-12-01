@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"idxgen/files"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -10,6 +12,7 @@ import (
 )
 
 var cfgFile string
+var cfg files.Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -64,5 +67,10 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		err := viper.Unmarshal(&cfg)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%+V\n", cfg)
 	}
 }
