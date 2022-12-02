@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"idxgen/files"
+	"idxgen/config"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,7 +12,7 @@ import (
 )
 
 var cfgFile string
-var cfg files.Config
+var cfg config.Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

@@ -4,18 +4,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"golang.org/x/exp/slices"
 )
 
-type Site struct {
+type Page struct {
 	Index
 	Root string
-	Config
-}
-
-func (s *Site) GetPages(root string) *Site {
-	s.Root = root
-	s.Index = MakeIndex(root)
-	return s
 }
 
 type Index struct {
@@ -27,30 +22,40 @@ type Index struct {
 	Path     string `toml:"path"`
 }
 
+func MakePage(root string, ext ...string) *Page {
+	page := Page{Root: root}
+	page.Index = MakeIndex(root, ext...)
+	page.Files = append(page.Files, GlobExt(page.Path, ext...)...)
+
+	return &page
+}
+
 func MakeIndex(root string, ext ...string) Index {
 	var idx Index
 	idx.Path = filepath.Join(idx.Path, root)
 	entries := GetDirEntries(idx.Path)
+
 	for _, e := range entries {
+		var child Index
+		fp := filepath.Join(idx.Path, e.Name())
 		if e.IsDir() {
-			child := MakeIndex(filepath.Join(idx.Path, e.Name()), ext...)
+			child = MakeIndex(fp, ext...)
+			child.Files = append(child.Files, GlobExt(fp, ext...)...)
 			idx.Children = append(idx.Children, child)
-		}
-		switch name := e.Name(); name {
-		case "body.html":
-			idx.Body = name
-		case "meta.toml":
-			idx.Meta = name
-		default:
-			fExt := filepath.Ext(name)
-			for _, fe := range ext {
-				if fExt == fe {
-					idx.Files = append(idx.Files, name)
-				}
-			}
 		}
 	}
 	return idx
+}
+
+func GlobExt(path string, ext ...string) []string {
+	var files []string
+	for _, entry := range GetDirEntries(path) {
+		ePath := filepath.Join(path, entry.Name())
+		if eExt := filepath.Ext(ePath); slices.Contains(ext, eExt) {
+			files = append(files, ePath)
+		}
+	}
+	return files
 }
 
 type Meta struct {

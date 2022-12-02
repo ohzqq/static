@@ -20,14 +20,15 @@ var genCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//var err error
 
-		//entries := GetDirEntries(args[0])
-		//idx := MakeIndex(entries...)
-		site := files.Site{Root: args[0]}
-		site.GetPages(args[0])
-		//entries := WalkSource(args[0])
+		for _, cat := range cfg.Categories {
+			col := cfg.Collection[cat]
+			path := filepath.Join(args[0], cat)
+			idx := files.MakePage(path, col.Ext...)
 
-		for _, c := range site.Index.Children {
-			fmt.Printf("%+V\n", c.Path)
+			fmt.Printf("%v idx %+V\n", idx.Path, idx.Files)
+			for _, c := range idx.Children {
+				fmt.Printf("%v idx.Children %+V\n", c.Path, c.Files)
+			}
 		}
 	},
 }
