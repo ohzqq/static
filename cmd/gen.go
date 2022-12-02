@@ -2,12 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"idxgen/page"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
-
-	"idxgen/files"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +22,9 @@ var genCmd = &cobra.Command{
 		for _, cat := range cfg.Categories {
 			col := cfg.Collection[cat]
 			path := filepath.Join(args[0], cat)
-			idx := files.MakePage(path, col.Ext...)
+			idx := page.New(path, col.Ext...)
+			idx.Collection = col
+			idx.Type = cat
 
 			fmt.Printf("%v idx %+V\n", idx.Path, idx.Files)
 			for _, c := range idx.Children {
