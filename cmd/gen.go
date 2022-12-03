@@ -28,7 +28,7 @@ var genCmd = &cobra.Command{
 
 			fmt.Printf("%v idx %+V\n", idx.Path, idx.Files)
 			for _, c := range idx.Children {
-				fmt.Printf("%v idx.Children %+V\n", c.Path, c.Files)
+				fmt.Printf("%v idx.Children %+V\n", c.Path, c.Meta)
 			}
 		}
 	},
