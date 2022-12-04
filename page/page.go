@@ -73,8 +73,8 @@ func (p Page) Body() string {
 	var buf bytes.Buffer
 
 	if p.Template != "" {
-		t := template.Must(template.New("imageBody").ParseFiles(p.Template))
-		err := t.ExecuteTemplate(&buf, "imageBody", p)
+		t := template.Must(template.New("body").ParseFiles(p.Template))
+		err := t.ExecuteTemplate(&buf, "body", p)
 		if err != nil {
 			log.Fatal(err)
 		}
