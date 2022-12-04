@@ -1,9 +1,10 @@
 {{define "list"}}
-	<div class="w3-content">
-		<ul>
+	<div class="w3-row w3-padding-64">
+		<ul class="w3-ul">
+			<li><h2>Children</h2></li>
 			{{range .Children}}
 			<li>
-				<a href="{{.Title}}/index.html">{{.Title}}</a>
+				<a href="{{.Title}}/index.html" class="w3-button w3-block">{{.Title}}</a>
 			</li>
 			{{end}}
 		</ul>

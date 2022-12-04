@@ -2,17 +2,17 @@
 	<main class="w3-mobile w3-content w3-main">
 		<div class="container">
 			<h1>{{.Title}}</h1>
-				<div class="content">
-		{{if .HasChildren}}
-			{{template "list" .}}
-		{{end}}
-					<div class="gallery">
+				<div class="w3-content">
+					<div class="w3-row">
 					{{range .Files}}
 						<div class="menu-img thumbnail" lightbox-toggle>
 							<img src="{{.}}">
 						</div>
 					{{end}}
 					</div>
+		{{if .HasChildren}}
+			{{template "list" .}}
+		{{end}}
 				</div>
 			</div>
 	</main>
