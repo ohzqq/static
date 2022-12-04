@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"idxgen/config"
 	"idxgen/files"
-	"idxgen/tmpl"
 	"log"
 	"os"
 	"path/filepath"
@@ -61,14 +60,9 @@ func (p Page) Title() string {
 	return filepath.Base(p.Path)
 }
 
-var TmplFuncs = template.FuncMap{
-	"colors": config.RenderColor,
-	"color":  config.Colors,
-}
-
-func (p Page) Parse() string {
+func (p Page) Render() string {
 	var buf bytes.Buffer
-	err := tmpl.Templates.ExecuteTemplate(&buf, "base", p)
+	err := Templates.ExecuteTemplate(&buf, "base", p)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,7 +71,7 @@ func (p Page) Parse() string {
 }
 
 func (p Page) Body() string {
-	t := template.Must(template.New("imageBody").Funcs(TmplFuncs).ParseFiles(p.Template))
+	t := template.Must(template.New("imageBody").ParseFiles(p.Template))
 
 	var buf bytes.Buffer
 	err := t.ExecuteTemplate(&buf, "imageBody", p)

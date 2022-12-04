@@ -1,4 +1,4 @@
-package tmpl
+package page
 
 import (
 	"embed"

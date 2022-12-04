@@ -17,7 +17,7 @@ var pageCmd = &cobra.Command{
 		collection := args[0]
 		dir := args[1]
 		p := page.NewPageWithChildren(dir, collection)
-		fmt.Println(p.Parse())
+		fmt.Println(p.Render())
 		println(p.Path)
 	},
 }
