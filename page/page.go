@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"idxgen/config"
 	"idxgen/files"
+	"idxgen/tmpl"
 	"log"
 	"os"
 	"path/filepath"
@@ -22,7 +23,6 @@ type Collection struct {
 
 type Page struct {
 	Meta     Meta
-	Body     string
 	Type     string
 	Path     string `toml:"path"`
 	Files    []string
@@ -63,13 +63,24 @@ func (p Page) Title() string {
 
 var TmplFuncs = template.FuncMap{
 	"colors": config.RenderColor,
+	"color":  config.Colors,
 }
 
 func (p Page) Parse() string {
-	t := template.Must(template.New("imagePage").Funcs(TmplFuncs).ParseFiles(p.Template))
+	var buf bytes.Buffer
+	err := tmpl.Templates.ExecuteTemplate(&buf, "base", p)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return buf.String()
+}
+
+func (p Page) Body() string {
+	t := template.Must(template.New("imageBody").Funcs(TmplFuncs).ParseFiles(p.Template))
 
 	var buf bytes.Buffer
-	err := t.ExecuteTemplate(&buf, "imagePage", p)
+	err := t.ExecuteTemplate(&buf, "imageBody", p)
 	if err != nil {
 		log.Fatal(err)
 	}

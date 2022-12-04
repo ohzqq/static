@@ -75,6 +75,10 @@ func Collections() map[string]Collection {
 	return Opts.Collection
 }
 
+func Colors() Color {
+	return Opts.Color
+}
+
 func GetCollection(col string) Collection {
 	if c, ok := Opts.Collection[col]; ok {
 		return c

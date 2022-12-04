@@ -1,0 +1,13 @@
+{{define "head"}}
+	<head>
+		<title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width">
+		{{template "colors" color}}
+		{{range .ReadCss}}
+			<style>{{.}}</style>
+		{{end}}
+		{{range .ReadScripts}}
+			<script>{{.}}</script>
+		{{end}}
+	</head>
+{{end}}

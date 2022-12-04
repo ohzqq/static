@@ -32,7 +32,8 @@ func RenderColor() string {
 	return buf.String()
 }
 
-const CssColorTmpl = `:root {
+const CssColorTmpl = `
+:root {
 	{{with .Bg}}--bg: {{.}};{{end}}
 	{{with .Fg}}--fg: {{.}};{{end}}
 	{{with .White}}--white: {{.}};{{end}}
