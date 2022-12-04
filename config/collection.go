@@ -11,6 +11,7 @@ type Collection struct {
 	Css      []string `toml:"css"`
 	Mime     string   `toml:"mime"`
 	Template string   `toml:"template"`
+	Video    Video    `toml:"video"`
 }
 
 func (c *Collection) AddScripts(scripts ...string) {

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -28,6 +29,7 @@ func ParseConfig(path string) error {
 		return err
 	}
 	Opts.Path = path
+	fmt.Printf("%+V\n", Opts)
 
 	dir := filepath.Dir(path)
 	Opts.Scripts = AbsolutePaths(dir, Opts.Scripts...)
