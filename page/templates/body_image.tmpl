@@ -3,6 +3,9 @@
 		<div class="container">
 			<h1>{{.Title}}</h1>
 				<div class="content">
+		{{if .HasChildren}}
+			{{template "list" .}}
+		{{end}}
 					<div class="gallery">
 					{{range .Files}}
 						<div class="menu-img thumbnail" lightbox-toggle>

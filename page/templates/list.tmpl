@@ -1,2 +1,11 @@
 {{define "list"}}
+	<div class="w3-content">
+		<ul>
+			{{range .Children}}
+			<li>
+				<a href="{{.Title}}/index.html">{{.Title}}</a>
+			</li>
+			{{end}}
+		</ul>
+	</div>
 {{end}}
