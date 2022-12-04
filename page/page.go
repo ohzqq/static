@@ -10,13 +10,18 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+type Meta struct {
+	Title string   `toml:"title"`
+	Tags  []string `toml:"tags"`
+}
+
 type Collection struct {
 	Page
 	Root string
 }
 
 type Page struct {
-	Meta
+	Meta     Meta
 	Body     string
 	Type     string
 	Path     string `toml:"path"`
@@ -25,20 +30,15 @@ type Page struct {
 	config.Collection
 }
 
-type Meta struct {
-	Title string
-	Tags  []string
-}
-
-func New(root string, ext ...string) *Collection {
+func NewCollection(root string, ext ...string) *Collection {
 	page := Collection{Root: root}
-	page.Page = MakeIndex(root, ext...)
+	page.Page = MakeIndexWithExt(root, ext...)
 	page.Files = append(page.Files, files.GlobExt(page.Path, ext...)...)
 
 	return &page
 }
 
-func MakeIndex(root string, ext ...string) Page {
+func MakeIndexWithExt(root string, ext ...string) Page {
 	var idx Page
 	idx.Path = filepath.Join(idx.Path, root)
 	entries := files.GetDirEntries(idx.Path)
@@ -47,13 +47,11 @@ func MakeIndex(root string, ext ...string) Page {
 		var child Page
 		fp := filepath.Join(idx.Path, e.Name())
 		if e.IsDir() {
-			child = MakeIndex(fp, ext...)
+			child = MakeIndexWithExt(fp, ext...)
 			child.Files = append(child.Files, files.GlobExt(fp, ext...)...)
 			idx.Children = append(idx.Children, child)
 		}
 		switch name := e.Name(); name {
-		case "body.html":
-			idx.Body = name
 		case "meta.toml":
 			t, err := os.ReadFile(fp)
 			if err != nil {
@@ -63,6 +61,52 @@ func MakeIndex(root string, ext ...string) Page {
 		}
 	}
 	return idx
+}
+
+func MakeIndexWithExt(root string, ext ...string) Page {
+	var idx Page
+	idx.Path = filepath.Join(idx.Path, root)
+	entries := files.GetDirEntries(idx.Path)
+
+	for _, e := range entries {
+		var child Page
+		fp := filepath.Join(idx.Path, e.Name())
+		if e.IsDir() {
+			child = MakeIndexWithExt(fp, ext...)
+			child.Files = append(child.Files, files.GlobExt(fp, ext...)...)
+			idx.Children = append(idx.Children, child)
+		}
+		switch name := e.Name(); name {
+		case "meta.toml":
+			t, err := os.ReadFile(fp)
+			if err != nil {
+				log.Fatal(err)
+			}
+			toml.Unmarshal(t, &idx.Meta)
+		}
+	}
+	return idx
+}
+
+func NewPage(root, collection string) Page {
+	page := Page{
+		Path:       root,
+		Collection: config.GetCollection(collection),
+	}
+	page.Files = append(page.Files, files.GlobMime(page.Path, page.Mime)...)
+
+	return page
+}
+
+func NewPageWithChildren(root, collection string) Page {
+	page := MakeIndexWithExt(root)
+	page := Page{
+		Path:       root,
+		Collection: config.GetCollection(collection),
+	}
+	page.Files = append(page.Files, files.GlobMime(page.Path, page.Mime)...)
+
+	return page
 }
 
 func (p Page) Title() string {

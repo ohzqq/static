@@ -22,13 +22,13 @@ var genCmd = &cobra.Command{
 		for _, cat := range cfg.Categories {
 			col := cfg.Collection[cat]
 			path := filepath.Join(args[0], cat)
-			idx := page.New(path, col.Ext...)
+			idx := page.NewCollection(path, col.Ext...)
 			idx.Collection = col
 			idx.Type = cat
 
-			fmt.Printf("%v idx %+V\n", idx.Path, idx.Files)
+			fmt.Printf("%v idx %+V\n", idx.Title(), idx.Files)
 			for _, c := range idx.Children {
-				fmt.Printf("%v idx.Children %+V\n", c.Path, c.Meta)
+				fmt.Printf("%v idx.Children %+V\n", c.Title(), c.Files)
 			}
 		}
 	},

@@ -57,7 +57,8 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".idxgen" (without extension).
-		viper.AddConfigPath(filepath.Join(home, ".config", "idxgen"))
+		path := filepath.Join(home, ".config", "idxgen")
+		viper.AddConfigPath(path)
 		viper.SetConfigType("toml")
 		viper.SetConfigName("config")
 	}
@@ -66,11 +67,16 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		cfile := viper.ConfigFileUsed()
+		fmt.Fprintln(os.Stderr, "Using config file:", cfile)
 		err := viper.Unmarshal(&cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%+V\n", cfg)
+		err = config.ParseConfig(cfile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		//fmt.Printf("%+V\n", config.GetCollection("image"))
 	}
 }
