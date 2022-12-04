@@ -2,4 +2,7 @@
 	{{range .ReadScripts}}
 		<script>{{.}}</script>
 	{{end}}
+	{{if eq .Mime "image"}}
+		{{template "swiperLightbox" "img"}}
+	{{end}}
 {{end}}

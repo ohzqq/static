@@ -34,12 +34,17 @@ func ParseConfig(path string) error {
 	Opts.Css = AbsolutePaths(dir, Opts.Css...)
 
 	for name, col := range Collections() {
-		col.Scripts = AbsolutePaths(dir, col.Scripts...)
-		col.Css = AbsolutePaths(dir, col.Css...)
-		col.Template = AbsolutePaths(dir, col.Template)[0]
+		if len(col.Scripts) > 0 {
+			col.Scripts = AbsolutePaths(dir, col.Scripts...)
+		}
+		if len(col.Css) > 0 {
+			col.Css = AbsolutePaths(dir, col.Css...)
+		}
+		if col.Template != "" {
+			col.Template = AbsolutePaths(dir, col.Template)[0]
+		}
 		col.Css = append(Opts.Css, col.Css...)
-		//col.AddCss(Opts.Css...)
-		col.AddScripts(Opts.Scripts...)
+		col.Scripts = append(Opts.Scripts, col.Scripts...)
 		Opts.Collection[name] = col
 	}
 
