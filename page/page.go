@@ -3,11 +3,7 @@ package page
 import (
 	"idxgen/config"
 	"idxgen/files"
-	"log"
-	"os"
 	"path/filepath"
-
-	"github.com/BurntSushi/toml"
 )
 
 type Meta struct {
@@ -38,56 +34,6 @@ func NewCollection(root string, ext ...string) *Collection {
 	return &page
 }
 
-func MakeIndexWithExt(root string, ext ...string) Page {
-	var idx Page
-	idx.Path = filepath.Join(idx.Path, root)
-	entries := files.GetDirEntries(idx.Path)
-
-	for _, e := range entries {
-		var child Page
-		fp := filepath.Join(idx.Path, e.Name())
-		if e.IsDir() {
-			child = MakeIndexWithExt(fp, ext...)
-			child.Files = append(child.Files, files.GlobExt(fp, ext...)...)
-			idx.Children = append(idx.Children, child)
-		}
-		switch name := e.Name(); name {
-		case "meta.toml":
-			t, err := os.ReadFile(fp)
-			if err != nil {
-				log.Fatal(err)
-			}
-			toml.Unmarshal(t, &idx.Meta)
-		}
-	}
-	return idx
-}
-
-func MakeIndexWithExt(root string, ext ...string) Page {
-	var idx Page
-	idx.Path = filepath.Join(idx.Path, root)
-	entries := files.GetDirEntries(idx.Path)
-
-	for _, e := range entries {
-		var child Page
-		fp := filepath.Join(idx.Path, e.Name())
-		if e.IsDir() {
-			child = MakeIndexWithExt(fp, ext...)
-			child.Files = append(child.Files, files.GlobExt(fp, ext...)...)
-			idx.Children = append(idx.Children, child)
-		}
-		switch name := e.Name(); name {
-		case "meta.toml":
-			t, err := os.ReadFile(fp)
-			if err != nil {
-				log.Fatal(err)
-			}
-			toml.Unmarshal(t, &idx.Meta)
-		}
-	}
-	return idx
-}
-
 func NewPage(root, collection string) Page {
 	page := Page{
 		Path:       root,
@@ -98,12 +44,10 @@ func NewPage(root, collection string) Page {
 	return page
 }
 
-func NewPageWithChildren(root, collection string) Page {
-	page := MakeIndexWithExt(root)
-	page := Page{
-		Path:       root,
-		Collection: config.GetCollection(collection),
-	}
+func NewPageWithChildren(root, col string) Page {
+	collection := config.GetCollection(col)
+	page := MakeIndexWithMime(root, collection.Mime)
+	page.Collection = collection
 	page.Files = append(page.Files, files.GlobMime(page.Path, page.Mime)...)
 
 	return page
