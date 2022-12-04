@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Path       string
+	Color      Color                 `toml:"color"`
 	Categories []string              `toml:"categories"`
 	Scripts    []string              `toml:"scripts"`
 	Css        []string              `toml:"css"`

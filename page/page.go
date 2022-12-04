@@ -61,8 +61,12 @@ func (p Page) Title() string {
 	return filepath.Base(p.Path)
 }
 
-func (p Page) Parse() []byte {
-	t := template.Must(template.New("imagePage").ParseFiles(p.Template))
+var TmplFuncs = template.FuncMap{
+	"colors": config.RenderColor,
+}
+
+func (p Page) Parse() string {
+	t := template.Must(template.New("imagePage").Funcs(TmplFuncs).ParseFiles(p.Template))
 
 	var buf bytes.Buffer
 	err := t.ExecuteTemplate(&buf, "imagePage", p)
@@ -70,7 +74,7 @@ func (p Page) Parse() []byte {
 		log.Fatal(err)
 	}
 
-	return buf.Bytes()
+	return buf.String()
 }
 
 func DumpFile(path string) []byte {
