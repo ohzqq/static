@@ -1,0 +1,16 @@
+{{define "bodyImage"}}
+	<main class="w3-mobile w3-content w3-main">
+		<div class="container">
+			<h1>{{.Title}}</h1>
+				<div class="content">
+					<div class="gallery">
+					{{range .Files}}
+						<div class="menu-img thumbnail" lightbox-toggle>
+							<img src="{{.}}">
+						</div>
+					{{end}}
+					</div>
+				</div>
+			</div>
+	</main>
+{{end}}
