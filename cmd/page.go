@@ -17,7 +17,10 @@ var pageCmd = &cobra.Command{
 		collection := args[0]
 		dir := args[1]
 		p := page.NewPageWithChildren(dir, collection)
-		fmt.Println(p.Render())
+		//fmt.Println(p.Render())
+		for _, c := range p.Children {
+			fmt.Printf("%+V\n", c.Path)
+		}
 		//fmt.Printf("%+V\n", config.GetCollection(collection).Html.Video)
 	},
 }
