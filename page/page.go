@@ -69,12 +69,12 @@ func (p Page) Render() string {
 	return buf.String()
 }
 
-func (p Page) Body() string {
+func (p Page) Content() string {
 	var buf bytes.Buffer
 
 	if p.Template != "" {
-		t := template.Must(template.New("body").ParseFiles(p.Template))
-		err := t.ExecuteTemplate(&buf, "body", p)
+		t := template.Must(template.New("content").ParseFiles(p.Template))
+		err := t.ExecuteTemplate(&buf, "content", p)
 		if err != nil {
 			log.Fatal(err)
 		}

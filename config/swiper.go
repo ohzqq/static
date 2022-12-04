@@ -1,7 +1,7 @@
 package config
 
-type Swiper struct {
-	Video `toml:"video"`
+type Html struct {
+	Video Video `toml:"video"`
 }
 
 type Video struct {
