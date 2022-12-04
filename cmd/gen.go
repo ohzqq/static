@@ -17,11 +17,12 @@ var genCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		dir := args[0]
 		//var err error
 
 		for _, cat := range cfg.Categories {
 			col := cfg.Collection[cat]
-			path := filepath.Join(args[0], cat)
+			path := filepath.Join(dir, cat)
 			idx := page.NewCollection(path, col.Ext...)
 			idx.Collection = col
 			idx.Type = cat

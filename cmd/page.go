@@ -1,11 +1,8 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
+	"idxgen/page"
 
 	"github.com/spf13/cobra"
 )
@@ -14,14 +11,14 @@ import (
 var pageCmd = &cobra.Command{
 	Use:   "page",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  ``,
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("page called")
+		collection := args[0]
+		dir := args[1]
+		p := page.NewPageWithChildren(dir, collection)
+		fmt.Println(string(p.Parse()))
+		//fmt.Printf("%+V\n", p.Children)
 	},
 }
 

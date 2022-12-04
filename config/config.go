@@ -14,10 +14,11 @@ type Config struct {
 }
 
 type Collection struct {
-	Ext     []string `toml:"ext"`
-	Scripts []string `toml:"scripts"`
-	Css     []string `toml:"css"`
-	Mime    string   `toml:"mime"`
+	Ext      []string `toml:"ext"`
+	Scripts  []string `toml:"scripts"`
+	Css      []string `toml:"css"`
+	Mime     string   `toml:"mime"`
+	Template string   `toml:"template"`
 }
 
 var Opts Config

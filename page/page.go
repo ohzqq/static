@@ -1,8 +1,12 @@
 package page
 
 import (
+	"bytes"
+	"html/template"
 	"idxgen/config"
 	"idxgen/files"
+	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -55,4 +59,24 @@ func NewPageWithChildren(root, col string) Page {
 
 func (p Page) Title() string {
 	return filepath.Base(p.Path)
+}
+
+func (p Page) Parse() []byte {
+	t := template.Must(template.New("imagePage").ParseFiles(p.Template))
+
+	var buf bytes.Buffer
+	err := t.Execute(&buf, p)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return buf.Bytes()
+}
+
+func DumpFile(path string) []byte {
+	t, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return t
 }
