@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"idxgen/config"
+	"idxgen/page"
 
 	"github.com/spf13/cobra"
 )
@@ -15,11 +15,11 @@ var pageCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		collection := args[0]
-		//dir := args[1]
-		//p := page.NewPageWithChildren(dir, collection)
-		//fmt.Println(p.Render())
-		fmt.Printf("%+V\n", config.Opts.Collection["image"])
-		fmt.Printf("%+V\n", config.GetCollection(collection))
+		dir := args[1]
+		p := page.NewPageWithChildren(dir, collection)
+		fmt.Println(p.Render())
+		//fmt.Printf("%+V\n", cfg)
+		//fmt.Printf("%+V\n", config.GetCollection(collection))
 	},
 }
 

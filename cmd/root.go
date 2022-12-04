@@ -58,6 +58,7 @@ func initConfig() {
 
 		// Search config in home directory with name ".idxgen" (without extension).
 		path := filepath.Join(home, ".config", "idxgen")
+		println(path)
 		viper.AddConfigPath(path)
 		viper.SetConfigType("toml")
 		viper.SetConfigName("config")
