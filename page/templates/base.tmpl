@@ -1,7 +1,10 @@
 {{define "base"}}
 <!doctype html>
 <html>
+	<body>
 	{{template "head" .}}
 	{{.Body}}
+	{{template "footer" .}}
+	</body>
 </html>
 {{end}}
