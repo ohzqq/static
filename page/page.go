@@ -2,12 +2,12 @@ package page
 
 import (
 	"bytes"
-	"html/template"
 	"idxgen/config"
 	"idxgen/files"
 	"log"
 	"os"
 	"path/filepath"
+	"text/template"
 )
 
 type Meta struct {
@@ -65,7 +65,7 @@ func (p Page) Parse() []byte {
 	t := template.Must(template.New("imagePage").ParseFiles(p.Template))
 
 	var buf bytes.Buffer
-	err := t.Execute(&buf, p)
+	err := t.ExecuteTemplate(&buf, "imagePage", p)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -18,7 +18,9 @@ var pageCmd = &cobra.Command{
 		dir := args[1]
 		p := page.NewPageWithChildren(dir, collection)
 		fmt.Println(string(p.Parse()))
-		//fmt.Printf("%+V\n", p.Children)
+		//for _, s := range p.ReadCss() {
+		//  fmt.Printf("%+V\n", s)
+		//}
 	},
 }
 
