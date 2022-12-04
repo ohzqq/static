@@ -79,7 +79,7 @@ func (p Page) Body() string {
 			log.Fatal(err)
 		}
 	} else {
-		err := Templates.ExecuteTemplate(&buf, "bodyImage", p)
+		err := Templates.ExecuteTemplate(&buf, "body"+p.Mime, p)
 		if err != nil {
 			log.Fatal(err)
 		}

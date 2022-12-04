@@ -82,9 +82,15 @@ if (initLightbox) {
       // Create html for lightbox carousel
 				lightboxImages.forEach(function ({{.}}) {
 					// Create clone of current image in loop
-					const image = document.createElement("{{.}}");
-					image.src = {{.}}.src.split("/").pop();
-					image.className = "swiper-zoom-target slide";
+					const media = document.createElement("{{.}}");
+					media.src = {{.}}.src.split("/").pop();
+					{{if eq . "video"}}
+						media.muted = true;
+						media.autoplay = true;
+						media.loop = true;
+						media.controls = false;
+					{{end}}
+					media.className = "swiper-zoom-target slide";
 					// Create divs
 					const slide = document.createElement("div");
 					const imageContainer = document.createElement("div");
@@ -94,9 +100,9 @@ if (initLightbox) {
 					imageContainer.classList.add("c-lightbox__image");
 					zoomContainer.classList.add("swiper-zoom-container");
 					// Append images to the slides, then slides to swiper wrapper
-					zoomContainer.appendChild(image);
-					slide.appendChild(imageContainer);
+					zoomContainer.appendChild(media);
 					imageContainer.appendChild(zoomContainer);
+					slide.appendChild(imageContainer);
 					globals.swiperWrapperRef.appendChild(slide);
 				});
 

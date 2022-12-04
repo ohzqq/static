@@ -5,4 +5,7 @@
 	{{if eq .Mime "image"}}
 		{{template "swiperLightbox" "img"}}
 	{{end}}
+	{{if eq .Mime "video"}}
+		{{template "swiperLightbox" "video"}}
+	{{end}}
 {{end}}

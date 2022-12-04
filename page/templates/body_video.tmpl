@@ -1,4 +1,4 @@
-{{define "bodyImage"}}
+{{define "bodyvideo"}}
 	<main class="w3-mobile w3-content w3-main">
 		<div class="container">
 			<h1>{{.Title}}</h1>
@@ -6,7 +6,7 @@
 					<div class="gallery">
 					{{range .Files}}
 						<div class="menu-img thumbnail" lightbox-toggle>
-							<img src="{{.}}">
+							<video src="{{.}}">
 						</div>
 					{{end}}
 					</div>
