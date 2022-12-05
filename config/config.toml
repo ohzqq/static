@@ -1,0 +1,46 @@
+categories = ["image", "video"]
+css = [
+	"swiper/w3pro.css",
+]
+scripts = [ ]
+
+[collection.image]
+mime = "image"
+css = [
+	"swiper/swiper-bundle.css",
+	"swiper/swiper.css",
+	"swiper/styles.css",
+]
+scripts = [
+	"swiper/swiper-bundle.min.js",
+]
+
+[collection.video]
+mime = "video"
+css = [
+	"swiper/swiper-bundle.css",
+	"swiper/swiper.css",
+	"swiper/styles.css",
+]
+scripts = [
+	"swiper/swiper-bundle.min.js",
+]
+[collection.video.html.video]
+	muted = true
+	controls = true
+
+[color]
+bg = "#262626"
+fg = "#ffbf00"
+white = "#ffffff"
+black = "#262626"
+grey = "#626262"
+yellow = "#ffff87"
+red = "#ff5f5f"
+pink = "#ffafff"
+cyan = "#afffff"
+blue = "#5fafff"
+green = "#afffaf"
+purple = "#af87ff"
+
+
