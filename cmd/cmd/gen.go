@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"idxgen/page"
+	"idx/page"
 
 	"github.com/spf13/cobra"
 )

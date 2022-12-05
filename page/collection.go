@@ -1,6 +1,6 @@
 package page
 
-import "idxgen/files"
+import "idx/files"
 
 type Collection struct {
 	Page

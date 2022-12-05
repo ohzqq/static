@@ -2,7 +2,7 @@ package page
 
 import (
 	"embed"
-	"idxgen/config"
+	"idx/config"
 	"text/template"
 )
 

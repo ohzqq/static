@@ -1,8 +1,8 @@
 package page
 
 import (
-	"idxgen/config"
-	"idxgen/files"
+	"idx/config"
+	"idx/files"
 	"log"
 	"os"
 	"path/filepath"

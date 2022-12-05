@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"idxgen/config"
+	"idx/config"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,7 +15,7 @@ var cfg config.Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "idxgen",
+	Use:   "idx",
 	Short: "A brief description of your application",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -38,7 +38,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.idxgen.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.idx.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -55,8 +55,8 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".idxgen" (without extension).
-		path := filepath.Join(home, ".config", "idxgen")
+		// Search config in home directory with name ".idx" (without extension).
+		path := filepath.Join(home, ".config", "idx")
 		viper.AddConfigPath(path)
 		viper.SetConfigType("toml")
 		viper.SetConfigName("config")

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"idxgen/page"
+	"idx/page"
 	"log"
 
 	"github.com/spf13/cobra"
