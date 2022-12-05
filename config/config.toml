@@ -27,6 +27,7 @@ scripts = [
 ]
 [collection.video.html.video]
 	muted = true
+	autoplay = false
 	controls = true
 
 [color]
