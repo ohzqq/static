@@ -1,6 +1,8 @@
 package config
 
 import (
+	"idx"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -20,20 +22,35 @@ type Config struct {
 	Collection map[string]Collection `toml:"collection"`
 }
 
-func ParseConfig(path string) error {
-	t, err := os.ReadFile(path)
-	if err != nil {
-		return err
+func ParseConfig(path string) (Config, error) {
+	var (
+		cfg  Config
+		data []byte
+		err  error
+	)
+
+	switch path {
+	case "default":
+		data, err = idx.Static.ReadFile("static/config.toml")
+		if err != nil {
+			return cfg, err
+		}
+	default:
+		data, err = os.ReadFile(path)
+		if err != nil {
+			return cfg, err
+		}
 	}
-	err = toml.Unmarshal(t, &Opts)
+
+	err = toml.Unmarshal(data, &cfg)
 	if err != nil {
-		return err
+		return cfg, err
 	}
-	Opts.Path = path
+	cfg.Path = path
 
 	dir := filepath.Dir(path)
-	Opts.Scripts = AbsolutePaths(dir, Opts.Scripts...)
-	Opts.Css = AbsolutePaths(dir, Opts.Css...)
+	cfg.Scripts = AbsolutePaths(dir, cfg.Scripts...)
+	cfg.Css = AbsolutePaths(dir, cfg.Css...)
 
 	for name, col := range Collections() {
 		if len(col.Scripts) > 0 {
@@ -45,12 +62,22 @@ func ParseConfig(path string) error {
 		if col.Template != "" {
 			col.Template = AbsolutePaths(dir, col.Template)[0]
 		}
-		col.Css = append(Opts.Css, col.Css...)
-		col.Scripts = append(Opts.Scripts, col.Scripts...)
-		Opts.Collection[name] = col
+		col.Css = append(cfg.Css, col.Css...)
+		col.Scripts = append(cfg.Scripts, col.Scripts...)
+		cfg.Collection[name] = col
 	}
 
-	return nil
+	Opts = cfg
+
+	return Opts, nil
+}
+
+func Default() Config {
+	cfg, err := ParseConfig("default")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return cfg
 }
 
 func AbsolutePaths(root string, path ...string) []string {

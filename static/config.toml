@@ -1,29 +1,29 @@
 categories = ["image", "video"]
 css = [
-	"swiper/w3pro.css",
+	"static/w3/w3pro.css",
 ]
 scripts = [ ]
 
 [collection.image]
 mime = "image"
 css = [
-	"swiper/swiper-bundle.css",
-	"swiper/swiper.css",
-	"swiper/styles.css",
+	"static/swiper/swiper-bundle.min.css",
+	"static/swiper/swiper.css",
+	"static/swiper/gallery.css",
 ]
 scripts = [
-	"swiper/swiper-bundle.min.js",
+	"static/swiper/swiper-bundle.min.js",
 ]
 
 [collection.video]
 mime = "video"
 css = [
-	"swiper/swiper-bundle.css",
-	"swiper/swiper.css",
-	"swiper/styles.css",
+	"static/swiper/swiper-bundle.min.css",
+	"static/swiper/swiper.css",
+	"static/swiper/gallery.css",
 ]
 scripts = [
-	"swiper/swiper-bundle.min.js",
+	"static/swiper/swiper-bundle.min.js",
 ]
 [collection.video.html.video]
 	muted = true

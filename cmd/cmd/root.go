@@ -38,11 +38,10 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.idx.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/idx/config.toml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -71,7 +70,7 @@ func initConfig() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = config.ParseConfig(cfile)
+		cfg, err = config.ParseConfig(cfile)
 		if err != nil {
 			log.Fatal(err)
 		}

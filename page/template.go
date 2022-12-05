@@ -1,15 +1,12 @@
 package page
 
 import (
-	"embed"
+	"idx"
 	"idx/config"
 	"text/template"
 )
 
 var (
-	//go:embed templates/*
-	templateDir embed.FS
-
 	TmplFuncs = template.FuncMap{
 		"colors": config.RenderColor,
 		"color":  config.Colors,
@@ -17,7 +14,7 @@ var (
 	}
 )
 
-var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(templateDir, "templates/*"))
+var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(idx.Static, "static/templates/*"))
 
 func Batch(og []string) [][]string {
 	var (
