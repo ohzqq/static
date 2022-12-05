@@ -7,7 +7,16 @@ type Collection struct {
 	Root string
 }
 
-func NewCollection(root string, ext ...string) *Collection {
+func NewCollection(root, col string) Collection {
+	page := Collection{
+		Root: root,
+		Page: NewPageWithChildren(root, col),
+	}
+
+	return page
+}
+
+func NewCollectionWithExt(root string, ext ...string) *Collection {
 	page := Collection{Root: root}
 	page.Page = MakeIndexWithExt(root, ext...)
 	page.Files = append(page.Files, files.GlobExt(page.Path, ext...)...)

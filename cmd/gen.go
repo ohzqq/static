@@ -3,9 +3,6 @@ package cmd
 import (
 	"fmt"
 	"idxgen/page"
-	"io/fs"
-	"log"
-	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -23,7 +20,7 @@ var genCmd = &cobra.Command{
 		for _, cat := range cfg.Categories {
 			col := cfg.Collection[cat]
 			path := filepath.Join(dir, cat)
-			idx := page.NewCollection(path, col.Ext...)
+			idx := page.NewCollectionWithExt(path, col.Ext...)
 			idx.Collection = col
 			idx.Type = cat
 
@@ -33,53 +30,6 @@ var genCmd = &cobra.Command{
 			}
 		}
 	},
-}
-
-func GetDirEntries(name string) []os.DirEntry {
-	//abs, err := filepath.Abs(name)
-	//if err != nil {
-	//log.Fatal(err)
-	//}
-	abs := name
-	println(abs)
-	entries, err := os.ReadDir(abs)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return entries
-}
-
-func WalkDir(root string) ([][]string, error) {
-	var files [][]string
-	var dirFiles []string
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() {
-			return nil
-		}
-
-		if d.Name() == "meta.toml" {
-			dirFiles = append(dirFiles, path)
-		}
-
-		if d.Name() == "body.html" {
-			dirFiles = append(dirFiles, path)
-		}
-
-		return nil
-	})
-	files = append(files, dirFiles)
-	return files, err
-}
-
-func DirCheck(f *os.File) {
-	stat, err := f.Stat()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if !stat.IsDir() {
-		log.Fatal("not a dir")
-	}
 }
 
 func init() {
