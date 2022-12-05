@@ -2,7 +2,7 @@
 {{$parent := .}}
 {{- if .HasChildren}}
 	<div class=""><span class="caret"></span>
-		<a href="{{.Path}}">{{.Title}}</a>
+		<a href="{{.Url}}">{{.Title}}</a>
 		<div class="nested">
 		{{- range .Children}}
 			{{template "nested" . -}}
@@ -11,7 +11,7 @@
 	</div><!--end {{.Title}} -->
 {{- else}}
 			<div>
-				<a href="{{.Path}}">{{.Title}}</a>
+				<a href="{{.Url}}">{{.Title}}</a>
 			</div>
 {{end -}}
 {{end -}}

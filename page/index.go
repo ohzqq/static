@@ -1,7 +1,6 @@
 package page
 
 import (
-	"fmt"
 	"idx/config"
 	"idx/files"
 	"log"
@@ -11,13 +10,13 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func MakeIndexWithExt(root string, ext ...string) Page {
-	var idx Page
+func MakeIndexWithExt(root string, ext ...string) *Page {
+	var idx *Page
 	idx.Path = filepath.Join(idx.Path, root)
 	entries := files.GetDirEntries(idx.Path)
 
 	for _, e := range entries {
-		var child Page
+		var child *Page
 		fp := filepath.Join(idx.Path, e.Name())
 		if e.IsDir() {
 			child = MakeIndexWithExt(fp, ext...)
@@ -36,15 +35,13 @@ func MakeIndexWithExt(root string, ext ...string) Page {
 	return idx
 }
 
-func MakeIndexWithMime(root string, col config.Collection) Page {
-	idx := Page{Collection: col}
-	fmt.Printf("root %s\n", root)
+func MakeIndexWithMime(root string, col config.Collection) *Page {
+	idx := &Page{Collection: col}
 	idx.Path = filepath.Join(idx.Path, root)
-	fmt.Printf("path %s\n", idx.Path)
 	entries := files.GetDirEntries(idx.Path)
 
 	for _, e := range entries {
-		var child Page
+		var child *Page
 		fp := filepath.Join(idx.Path, e.Name())
 		if e.IsDir() {
 			child = MakeIndexWithMime(fp, col)

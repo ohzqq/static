@@ -16,9 +16,12 @@ var genCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		collection := config.GetCollection(args[0])
 		dir := args[1]
-		p := page.NewPageWithChildren(dir, collection)
+		//p := page.NewPageWithChildren(dir, collection)
+		p := page.NewCollection(dir, collection)
 		//files := page.Batch(p.Files)
-		fmt.Printf("%+v\n", p.Tree())
+		//for _, pp := range p.Children {
+		fmt.Printf("child %+V\n", p.Children[0].Children[0].Url)
+		//}
 		//err := page.Write(p)
 		//if err != nil {
 		//log.Fatal(err)
