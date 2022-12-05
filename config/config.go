@@ -29,9 +29,10 @@ func ParseConfig(path string) (Config, error) {
 		err  error
 	)
 
+	println(path)
 	switch path {
-	case "default":
-		data, err = idx.Static.ReadFile("static/config.toml")
+	case "static/config.toml":
+		data, err = idx.Static.ReadFile(path)
 		if err != nil {
 			return cfg, err
 		}
@@ -52,7 +53,7 @@ func ParseConfig(path string) (Config, error) {
 	cfg.Scripts = AbsolutePaths(dir, cfg.Scripts...)
 	cfg.Css = AbsolutePaths(dir, cfg.Css...)
 
-	for name, col := range Collections() {
+	for name, col := range cfg.Collection {
 		if len(col.Scripts) > 0 {
 			col.Scripts = AbsolutePaths(dir, col.Scripts...)
 		}
@@ -73,7 +74,7 @@ func ParseConfig(path string) (Config, error) {
 }
 
 func Default() Config {
-	cfg, err := ParseConfig("default")
+	cfg, err := ParseConfig("static/config.toml")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,7 +88,8 @@ func AbsolutePaths(root string, path ...string) []string {
 		case true:
 			paths = append(paths, p)
 		case false:
-			paths = append(paths, filepath.Join(root, p))
+			abs := filepath.Join(root, p)
+			paths = append(paths, abs)
 		}
 	}
 	return paths
