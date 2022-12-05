@@ -1,14 +1,13 @@
 {{define "bodyvideo"}}
-<div class="container">
-	<h1>{{.Title}}</h1>
+<h1>{{.Title}}</h1>
 
-	<div class="w3-row">
-	{{range .Files}}
-		<div class="menu-img thumbnail" lightbox-toggle>
-			<video src="{{.}}">
-		</div>
-	{{end}}
-
+{{range Batch .Files}}
+<div class="w3-row">
+	{{range .}}
+	<div class="menu-img thumbnail w3-quarter" lightbox-toggle>
+		<video src="{{.}}">
 	</div>
+	{{end}}
 </div>
+{{end}}
 {{end}}

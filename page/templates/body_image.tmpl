@@ -1,15 +1,15 @@
 {{define "bodyimage"}}
-<div class="container">
 
-	<h1>{{.Title}}</h1>
+<h1>{{.Title}}</h1>
 
-	<div class="w3-row">
-	{{range .Files}}
-		<div class="menu-img thumbnail" lightbox-toggle>
-			<img src="{{.}}">
-		</div>
-	{{end}}
+{{range Batch .Files}}
+<div class="w3-row">
+	{{range .}}
+	<div class="thumbnail w3-quarter" lightbox-toggle>
+		<img src="{{.}}">
 	</div>
-
+	{{end}}
 </div>
+{{end}}
+
 {{end}}

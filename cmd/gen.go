@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"idxgen/page"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -12,23 +11,18 @@ import (
 var genCmd = &cobra.Command{
 	Use:   "gen",
 	Short: "A brief description of your command",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		dir := args[0]
-		//var err error
+		collection := args[0]
+		dir := args[1]
+		p := page.NewPage(dir, collection)
+		files := page.Batch(p.Files)
+		fmt.Printf("%+V\n", files)
+		//err := page.Write(p)
+		//if err != nil {
+		//log.Fatal(err)
+		//}
 
-		for _, cat := range cfg.Categories {
-			col := cfg.Collection[cat]
-			path := filepath.Join(dir, cat)
-			idx := page.NewCollectionWithExt(path, col.Ext...)
-			idx.Collection = col
-			idx.Type = cat
-
-			fmt.Printf("%v idx %+V\n", idx.Title(), idx.Files)
-			for _, c := range idx.Children {
-				fmt.Printf("%v idx.Children %+V\n", c.Title(), c.Files)
-			}
-		}
 	},
 }
 
