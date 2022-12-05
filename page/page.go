@@ -29,10 +29,6 @@ type Page struct {
 }
 
 func NewPage(root string, collection config.Collection) *Page {
-	//rel, err := filepath.Rel(root, root)
-	//if err != nil {
-	//  log.Fatal(err)
-	//}
 	page := Page{
 		Path:       root,
 		Collection: collection,
@@ -57,7 +53,7 @@ func (idx *Page) MakeIndexWithMime() *Page {
 		if e.IsDir() {
 			child := NewPage(fp, idx.Collection)
 			child.MakeIndexWithMime()
-			child.Files = append(child.Files, files.GlobMime(fp, idx.Collection.Mime)...)
+			//child.Files = append(child.Files, files.GlobMime(fp, idx.Collection.Mime)...)
 			idx.Children = append(idx.Children, child)
 		}
 		switch name := e.Name(); name {

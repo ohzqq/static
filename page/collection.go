@@ -18,6 +18,7 @@ func NewCollection(root string, collection config.Collection) Collection {
 		Root: root,
 		Page: NewPageWithChildren(root, collection),
 	}
+	col.Url = "./index.html"
 	for _, p := range col.Children {
 		RelativeUrls(root, p)
 	}

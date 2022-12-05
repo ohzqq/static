@@ -20,7 +20,7 @@ var genCmd = &cobra.Command{
 		p := page.NewCollection(dir, collection)
 		//files := page.Batch(p.Files)
 		//for _, pp := range p.Children {
-		fmt.Printf("child %+V\n", p.Children[0].Children[0].Url)
+		fmt.Printf("child %+V\n", p.RenderTree())
 		//}
 		//err := page.Write(p)
 		//if err != nil {
