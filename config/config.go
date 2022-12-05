@@ -1,10 +1,17 @@
 package config
 
 import (
+	"embed"
 	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+)
+
+var (
+	Opts Config
+	//go:embed ../static/*
+	Static embed.FS
 )
 
 type Config struct {
@@ -15,8 +22,6 @@ type Config struct {
 	Css        []string              `toml:"css"`
 	Collection map[string]Collection `toml:"collection"`
 }
-
-var Opts Config
 
 func ParseConfig(path string) error {
 	t, err := os.ReadFile(path)

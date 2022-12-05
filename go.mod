@@ -1,4 +1,4 @@
-module idxgen
+module idx
 
 go 1.18
 
