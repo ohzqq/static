@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/BurntSushi/toml"
 )
 
 type Meta struct {
@@ -25,41 +27,59 @@ type Page struct {
 	config.Collection
 }
 
-func NewPage(root, collection string) Page {
+func NewPage(root string, collection config.Collection) Page {
 	page := Page{
 		Path:       root,
-		Collection: config.GetCollection(collection),
+		Collection: collection,
 	}
 	page.Files = append(page.Files, files.GlobMime(page.Path, page.Mime)...)
 
 	return page
 }
 
-func NewPageWithChildren(root, col string) Page {
-	collection := config.GetCollection(col)
-	page := MakeIndexWithMime(root, collection)
-	page.Collection = collection
-	page.Files = append(page.Files, files.GlobMime(page.Path, page.Mime)...)
+func NewPageWithChildren(root string, collection config.Collection) Page {
+	//collection := config.GetCollection(col)
+	//page := MakeIndexWithMime(root, collection)
+	//page := Page{Collection: collection}
+	page := NewPage(root, collection)
+	page.MakeIndexWithMime()
+	//page.Collection = collection
+	//page.Files = append(page.Files, files.GlobMime(page.Path, page.Mime)...)
 
 	return page
 }
 
+func (idx *Page) MakeIndexWithMime() Page {
+	//fmt.Printf("root %s\n", root)
+	//idx.Path = filepath.Join(idx.Path, root)
+	//fmt.Printf("path %s\n", idx.Path)
+	entries := files.GetDirEntries(idx.Path)
+
+	for _, e := range entries {
+		fp := filepath.Join(idx.Path, e.Name())
+		if e.IsDir() {
+			child := NewPage(fp, idx.Collection)
+			child.MakeIndexWithMime()
+			child.Files = append(child.Files, files.GlobMime(fp, idx.Collection.Mime)...)
+			idx.Children = append(idx.Children, child)
+		}
+		switch name := e.Name(); name {
+		case "meta.toml":
+			t, err := os.ReadFile(fp)
+			if err != nil {
+				log.Fatal(err)
+			}
+			toml.Unmarshal(t, &idx.Meta)
+		}
+	}
+	return *idx
+}
 func (p Page) Title() string {
 	return filepath.Base(p.Path)
 }
 
 func (p Page) HasChildren() bool {
 	return len(p.Children) > 0
-}
-
-func (p Page) Tree() string {
-	var buf bytes.Buffer
-	err := Templates.ExecuteTemplate(&buf, "tree", p)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return buf.String()
 }
 
 func (p Page) Render() []byte {
@@ -116,6 +136,16 @@ func (p Page) Content() string {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+
+	return buf.String()
+}
+
+func (p Page) Tree() string {
+	var buf bytes.Buffer
+	err := Templates.ExecuteTemplate(&buf, "tree", p)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return buf.String()

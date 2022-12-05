@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"idx/config"
 	"idx/page"
 	"log"
 
@@ -19,7 +20,7 @@ var pageCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		collection := args[0]
+		collection := config.GetCollection(args[0])
 		dir := args[1]
 
 		switch recurse {

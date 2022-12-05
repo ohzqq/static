@@ -1,6 +1,9 @@
 package page
 
-import "idx/files"
+import (
+	"idx/config"
+	"idx/files"
+)
 
 type Collection struct {
 	Page
@@ -8,10 +11,10 @@ type Collection struct {
 	Filetree string
 }
 
-func NewCollection(root, col string) Collection {
+func NewCollection(root string, collection config.Collection) Collection {
 	page := Collection{
 		Root: root,
-		Page: NewPageWithChildren(root, col),
+		Page: NewPageWithChildren(root, collection),
 	}
 	page.Filetree = page.Tree()
 

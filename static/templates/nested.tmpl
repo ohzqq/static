@@ -1,7 +1,8 @@
 {{define "nested"}}
+{{$parent := .}}
 {{- if .HasChildren}}
 	<div class=""><span class="caret"></span>
-		{{.Title}}
+		<a href="{{.Path}}">{{.Title}}</a>
 		<div class="nested">
 		{{- range .Children}}
 			{{template "nested" . -}}
@@ -9,6 +10,8 @@
 		</div>
 	</div><!--end {{.Title}} -->
 {{- else}}
-			<div>{{.Title}}</div>
+			<div>
+				<a href="{{.Path}}">{{.Title}}</a>
+			</div>
 {{end -}}
 {{end -}}

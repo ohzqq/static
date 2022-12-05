@@ -136,12 +136,26 @@ strong {
 }
 
 /*filetree*/
+.navbutton {
+	position: fixed;
+	left: 0;
+	top: 0;
+	padding: 0.25em;
+	background-color: var(--green);
+}
+
 ul, #filetree {
 	list-style-type: none;
 }
+
 #filetree {
+	position: fixed;
+	left: 0;
+	top: 0;
 	margin: 0;
 	padding: 0;
+	dislay: none;
+	background-color: var(--grey);
 }
 
 

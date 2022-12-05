@@ -1,6 +1,7 @@
 package page
 
 import (
+	"fmt"
 	"idx/config"
 	"idx/files"
 	"log"
@@ -37,7 +38,9 @@ func MakeIndexWithExt(root string, ext ...string) Page {
 
 func MakeIndexWithMime(root string, col config.Collection) Page {
 	idx := Page{Collection: col}
+	fmt.Printf("root %s\n", root)
 	idx.Path = filepath.Join(idx.Path, root)
+	fmt.Printf("path %s\n", idx.Path)
 	entries := files.GetDirEntries(idx.Path)
 
 	for _, e := range entries {
