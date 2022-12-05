@@ -1,2 +1,181 @@
 {{define "galleryCss"}}
+<style>
+html, body, div, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, ol, ul, li, form, fieldset, legend, label, table, header, footer, nav, section, figure {
+  margin: 0;
+  padding: 0;
+}
+
+/* w3css stuff */
+
+.w3-button {
+	padding: 0;
+	margin: 0.25em 0 0.25em 0;
+	background-color: var(--green);
+	color: var(--black);
+}
+
+body {
+	background: var(--bg);
+  font-family: sans-serif;
+  font-size: 18px;
+  line-height: 26px;
+	color: var(--fg);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -moz-font-feature-settings: "liga", "kern";
+}
+
+figure {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--cyan);
+}
+
+a:hover {
+  color: var(--pink);
+}
+
+img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+
+video {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  border: 0;
+}
+
+#description {
+  font-size: 36px;
+  line-height: 1;
+	margin-bottom: 1em;
+  font-weight: 600;
+  text-align: center;
+}
+
+p {
+  margin: 0 0 12px;
+}
+
+ul {
+  list-style: disc;
+}
+
+ul, ol {
+  padding: 0;
+  margin: 0 0 12px 25px;
+}
+
+li {
+  margin: 0 0 12px 0;
+}
+
+h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 48px;
+  line-height: 1;
+	margin-top: 1em;
+  font-weight: 600;
+  text-align: center;
+}
+
+h1 a {
+  text-decoration: none;
+  color: var(--fg);
+}
+
+strong {
+  font-weight: 600;
+}
+
+.thumbnail {
+  width: 24%;
+  text-align: center;
+	margin: 0.25em;
+  float:left;
+}
+
+.thumbnail img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 5px 5px 5px;
+	border: 2px solid var(--green);
+  border-radius: 2px 2px 2px 2px;
+  padding: 0 0 2px;
+}
+
+.thumbnail video {
+  max-width: 100%;
+  height: auto;
+  margin: 0 2px 5px 2px;
+	border: 2px solid var(--green);
+  border-radius: 2px 2px 2px 2px;
+  padding: 0 0 2px;
+}
+
+.thumbnail video:hover {
+	border: 2px solid var(--purple);
+}
+
+.thumbnail img:hover {
+	border: 2px solid var(--purple);
+}
+
+.album_title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.video {
+  width: 100%;
+  margin: 0 0 24px 0;
+}
+
+footer {
+  width:100%;
+}
+
+footer p {
+  text-align: center;
+}
+
+@media screen and (max-width: 700px) {
+  h1 {
+    font-size: 40px;
+  }
+  .thumbnail,
+  .gallery__img--secondary {
+    width: 33%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .thumbnail,
+  .gallery__img--secondary {
+    width: 45%;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .thumbnail,
+  .gallery__img--secondary {
+    width: 100%;
+  }
+}
+</style>
 {{end}}
