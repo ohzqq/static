@@ -52,6 +52,16 @@ func (p Page) HasChildren() bool {
 	return len(p.Children) > 0
 }
 
+func (p Page) Tree() string {
+	var buf bytes.Buffer
+	err := Templates.ExecuteTemplate(&buf, "tree", p)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return buf.String()
+}
+
 func (p Page) Render() []byte {
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "base", p)

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"idx"
+	"idx/page"
 
 	"github.com/spf13/cobra"
 )
@@ -13,12 +13,11 @@ var genCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	//Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		//collection := args[0]
-		//dir := args[1]
-		//p := page.NewPage(dir, collection)
+		collection := args[0]
+		dir := args[1]
+		p := page.NewPageWithChildren(dir, collection)
 		//files := page.Batch(p.Files)
-		files, _ := idx.Static.ReadDir("static/swiper")
-		fmt.Printf("%+v\n", files)
+		fmt.Printf("%+v\n", p.Tree())
 		//err := page.Write(p)
 		//if err != nil {
 		//log.Fatal(err)
