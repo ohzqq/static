@@ -110,11 +110,19 @@ func Css() []string {
 }
 
 func Collections() map[string]Collection {
-	return Opts.Collection
+	col := Default.Collection
+	for n, c := range Opts.Collection {
+		col[n] = c
+	}
+	return col
 }
 
 func Colors() Color {
-	return Opts.Color
+	var c Color
+	if Opts.Color != c {
+		return Opts.Color
+	}
+	return Default.Color
 }
 
 func GetCollection(collection string) Collection {
