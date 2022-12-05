@@ -1,7 +1,6 @@
 package config
 
 import (
-	"embed"
 	"os"
 	"path/filepath"
 
@@ -10,8 +9,6 @@ import (
 
 var (
 	Opts Config
-	//go:embed ../static/*
-	Static embed.FS
 )
 
 type Config struct {
