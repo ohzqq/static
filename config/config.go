@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	Opts Config
+	Opts    Config
+	Default Config
 )
 
 type Config struct {
@@ -29,7 +30,6 @@ func ParseConfig(path string) (Config, error) {
 		err  error
 	)
 
-	println(path)
 	switch path {
 	case "static/config.toml":
 		data, err = idx.Static.ReadFile(path)
@@ -73,11 +73,13 @@ func ParseConfig(path string) (Config, error) {
 	return Opts, nil
 }
 
-func Default() Config {
+func ParseDefault() Config {
 	cfg, err := ParseConfig("static/config.toml")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	Default = cfg
 	return cfg
 }
 
@@ -115,8 +117,12 @@ func Colors() Color {
 	return Opts.Color
 }
 
-func GetCollection(col string) Collection {
-	if c, ok := Opts.Collection[col]; ok {
+func GetCollection(collection string) Collection {
+	if c, ok := Opts.Collection[collection]; ok {
+		return c
+	}
+
+	if c, ok := Default.Collection[collection]; ok {
 		return c
 	}
 	return Collection{}

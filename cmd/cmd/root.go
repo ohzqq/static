@@ -63,8 +63,10 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
+	config.ParseDefault()
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
+	err := viper.ReadInConfig()
+	if err == nil {
 		cfile := viper.ConfigFileUsed()
 		err := viper.Unmarshal(&cfg)
 		if err != nil {
@@ -74,6 +76,5 @@ func initConfig() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		//fmt.Printf("%+V\n", config.GetCollection("image"))
 	}
 }
