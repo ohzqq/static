@@ -50,14 +50,14 @@ func (p Page) HasChildren() bool {
 	return len(p.Children) > 0
 }
 
-func (p Page) Render() string {
+func (p Page) Render() []byte {
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "base", p)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return buf.String()
+	return buf.Bytes()
 }
 
 func (p Page) Content() string {

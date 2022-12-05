@@ -3,6 +3,9 @@ package cmd
 import (
 	"fmt"
 	"idxgen/page"
+	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +20,12 @@ var pageCmd = &cobra.Command{
 		collection := args[0]
 		dir := args[1]
 		p := page.NewPageWithChildren(dir, collection)
-		fmt.Println(p.Render())
+		out := filepath.Join(dir, "index.html")
+		err := os.WriteFile(out, p.Render(), 0600)
+		if err != nil {
+			log.Fatalf("Rendering %s failed with error %s\n", out, err)
+		}
+		fmt.Printf("Rendered %s\n", out)
 		//fmt.Printf("%+V\n", config.GetCollection(collection).Html.Video)
 	},
 }

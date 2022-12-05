@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"idxgen/config"
 	"log"
 	"os"
@@ -58,7 +57,6 @@ func initConfig() {
 
 		// Search config in home directory with name ".idxgen" (without extension).
 		path := filepath.Join(home, ".config", "idxgen")
-		println(path)
 		viper.AddConfigPath(path)
 		viper.SetConfigType("toml")
 		viper.SetConfigName("config")
@@ -69,7 +67,6 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		cfile := viper.ConfigFileUsed()
-		fmt.Fprintln(os.Stderr, "Using config file:", cfile)
 		err := viper.Unmarshal(&cfg)
 		if err != nil {
 			log.Fatal(err)

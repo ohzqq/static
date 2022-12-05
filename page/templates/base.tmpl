@@ -6,17 +6,32 @@
     <meta name="viewport" content="width=device-width">
 		{{template "color" color}}
 		{{range .ReadCss}}
-			<style>{{.}}</style>
+		<style>
+			{{.}}
+		</style>
 		{{end}}
 	</head>
 	<body>
-	{{.Content}}
-	{{range .ReadScripts}}
-		<script>{{.}}</script>
-	{{end}}
-	{{if eq .Mime "image" "video"}}
-		{{template "swiperLightbox" .Collection}}
-	{{end}}
+		<main class="w3-mobile w3-content w3-main">
+			{{.Content}}
+
+			{{range .ReadScripts}}
+			<script>
+				{{.}}
+			</script>
+			{{end}}
+
+			{{if eq .Mime "image" "video"}}
+				{{template "swiperLightbox" .Collection}}
+			{{end}}
+
+			<footer>
+				{{if .HasChildren}}
+					{{template "list" .}}
+				{{end}}
+			</footer>
+
+		</main>
 	</body>
 </html>
 {{end}}
