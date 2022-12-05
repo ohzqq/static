@@ -1,6 +1,7 @@
 package page
 
 import (
+	"idxgen/config"
 	"idxgen/files"
 	"log"
 	"os"
@@ -34,8 +35,8 @@ func MakeIndexWithExt(root string, ext ...string) Page {
 	return idx
 }
 
-func MakeIndexWithMime(root string, mime string) Page {
-	var idx Page
+func MakeIndexWithMime(root string, col config.Collection) Page {
+	idx := Page{Collection: col}
 	idx.Path = filepath.Join(idx.Path, root)
 	entries := files.GetDirEntries(idx.Path)
 
@@ -43,8 +44,8 @@ func MakeIndexWithMime(root string, mime string) Page {
 		var child Page
 		fp := filepath.Join(idx.Path, e.Name())
 		if e.IsDir() {
-			child = MakeIndexWithMime(fp, mime)
-			child.Files = append(child.Files, files.GlobMime(fp, mime)...)
+			child = MakeIndexWithMime(fp, col)
+			child.Files = append(child.Files, files.GlobMime(fp, col.Mime)...)
 			idx.Children = append(idx.Children, child)
 		}
 		switch name := e.Name(); name {

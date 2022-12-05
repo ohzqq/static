@@ -16,6 +16,13 @@ func NewCollection(root, col string) Collection {
 	return page
 }
 
+//func (c Collection) MakePages() {
+//  if c.HasChildren() {
+//    for _, page := range c.Children {
+//    }
+//  }
+//}
+
 func NewCollectionWithExt(root string, ext ...string) *Collection {
 	page := Collection{Root: root}
 	page.Page = MakeIndexWithExt(root, ext...)

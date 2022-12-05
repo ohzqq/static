@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"idxgen/page"
 	"log"
-	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -24,14 +21,21 @@ var pageCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		collection := args[0]
 		dir := args[1]
-		p := page.NewPageWithChildren(dir, collection)
-		out := filepath.Join(dir, "index.html")
-		err := os.WriteFile(out, p.Render(), 0600)
-		if err != nil {
-			log.Fatalf("Rendering %s failed with error %s\n", out, err)
+
+		switch recurse {
+		case true:
+			p := page.NewPageWithChildren(dir, collection)
+			err := page.RecursiveWrite(p)
+			if err != nil {
+				log.Fatal(err)
+			}
+		case false:
+			p := page.NewPage(dir, collection)
+			err := page.Write(p)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
-		fmt.Printf("Rendered %s\n", out)
-		//fmt.Printf("%+V\n", config.GetCollection(collection).Html.Video)
 	},
 }
 
