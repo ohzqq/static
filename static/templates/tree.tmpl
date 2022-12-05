@@ -1,20 +1,5 @@
 {{define "tree"}}
-{{if .HasChildren}}
-	<li><span class="caret">{{.Title}}</span>
-	<ul class="nested">
-{{else -}}
-	<li>{{.Title}}</li>
-{{end -}}
-{{if .HasChildren -}}
-	{{range .Children -}}
-		{{if .HasChildren -}}
-			{{template "tree" .}}
-		{{else}}
-			<li>{{.Title}}</li>
-		{{end -}}
-	{{end -}}
-{{end -}}
-{{if .HasChildren -}}
-	</li></ul>
-{{end}}
+<ul id="myUL">
+	{{- template "nested" .}}
+</ul>
 {{end}}
