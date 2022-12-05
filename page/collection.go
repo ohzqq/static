@@ -4,7 +4,8 @@ import "idx/files"
 
 type Collection struct {
 	Page
-	Root string
+	Root     string
+	Filetree string
 }
 
 func NewCollection(root, col string) Collection {
@@ -12,6 +13,7 @@ func NewCollection(root, col string) Collection {
 		Root: root,
 		Page: NewPageWithChildren(root, col),
 	}
+	page.Filetree = page.Tree()
 
 	return page
 }

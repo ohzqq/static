@@ -1,13 +1,14 @@
 {{define "nested"}}
 {{- if .HasChildren}}
-	<li><span class="caret">{{.Title}}</span>
-		<ul class="nested">
+	<div class=""><span class="caret"></span>
+		{{.Title}}
+		<div class="nested">
 		{{- range .Children}}
 			{{template "nested" . -}}
 		{{- end}}
-		</ul>
-	</li><!--end {{.Title}} -->
+		</div>
+	</div><!--end {{.Title}} -->
 {{- else}}
-			<li>{{.Title}}</li>
+			<div>{{.Title}}</div>
 {{end -}}
 {{end -}}

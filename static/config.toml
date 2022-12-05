@@ -13,6 +13,7 @@ css = [
 ]
 scripts = [
 	"swiper/swiper-bundle.min.js",
+	"js/filetree.js",
 ]
 
 [collection.video]
@@ -24,6 +25,7 @@ css = [
 ]
 scripts = [
 	"swiper/swiper-bundle.min.js",
+	"js/filetree.js",
 ]
 [collection.video.html.video]
 	muted = true

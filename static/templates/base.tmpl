@@ -13,22 +13,24 @@
 	</head>
 	<body>
 		<main class="w3-mobile w3-content w3-main">
-			{{.Content}}
+				{{if .HasChildren}}
+					{{.Tree}}
+					{{/* template "tree" . */}}
+				{{end}}
 
-			{{range .ReadScripts}}
-			<script>
-				{{.}}
-			</script>
-			{{end}}
+			{{.Content}}
 
 			{{if eq .Mime "image" "video"}}
 				{{template "swiperLightbox" .Collection}}
 			{{end}}
 
 			<footer>
-				{{if .HasChildren}}
-					{{template "list" .}}
-				{{end}}
+			{{range .ReadScripts}}
+			<script>
+				{{.}}
+			</script>
+			{{end}}
+
 			</footer>
 
 		</main>

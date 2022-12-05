@@ -3,15 +3,6 @@ html, body, div, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, ol, ul, 
   padding: 0;
 }
 
-/* w3css stuff */
-
-.w3-button {
-	padding: 0;
-	margin: 0.25em 0 0.25em 0;
-	background-color: var(--green);
-	color: var(--black);
-}
-
 body {
 	background: var(--bg);
   font-family: sans-serif;
@@ -144,6 +135,47 @@ strong {
   margin: 0 0 24px 0;
 }
 
+/*filetree*/
+ul, #filetree {
+	list-style-type: none;
+}
+#filetree {
+	margin: 0;
+	padding: 0;
+}
+
+
+/* Style the caret/arrow */
+.caret {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.caret::before {
+  content: "\25B6";
+  color: var(--cyan);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+/* Hide the nested list */
+.nested {
+  display: none;
+	padding-left: 1.4em;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+  display: block;
+}
+
+/*footer*/
 footer {
   width:100%;
 }
@@ -152,6 +184,16 @@ footer p {
   text-align: center;
 }
 
+/* w3css stuff */
+
+.w3-button {
+	padding: 0;
+	margin: 0.25em 0 0.25em 0;
+	background-color: var(--green);
+	color: var(--black);
+}
+
+/*Media Queries*/
 @media screen and (max-width: 700px) {
   h1 {
     font-size: 40px;
@@ -175,3 +217,4 @@ footer p {
     width: 100%;
   }
 }
+
