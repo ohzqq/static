@@ -11,7 +11,7 @@ import (
 var (
 	recurse   bool
 	children  bool
-	extension string
+	extension []string
 )
 
 // pageCmd represents the page command
@@ -28,8 +28,7 @@ var pageCmd = &cobra.Command{
 		case true:
 			p := page.NewPage(dir, collection).GlobMime().GetChildren()
 			if cmd.Flags().Changed("ext") {
-				println("ext")
-				p = page.NewPage(dir, collection).GlobExt(extension).GetChildren()
+				p = page.NewPage(dir, collection).GlobExt(extension...).GetChildren()
 			}
 			err := page.RecursiveWrite(p)
 			if err != nil {
@@ -49,5 +48,5 @@ func init() {
 	rootCmd.AddCommand(pageCmd)
 	pageCmd.Flags().BoolVarP(&recurse, "recurse", "r", false, "recursively generate index files")
 	pageCmd.Flags().BoolVarP(&children, "children", "c", false, "list child directories")
-	pageCmd.Flags().StringVarP(&extension, "ext", "e", "", "list child directories")
+	pageCmd.Flags().StringSliceVarP(&extension, "ext", "e", []string{}, "list child directories")
 }

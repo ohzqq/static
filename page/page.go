@@ -65,7 +65,6 @@ func (page *Page) GetChildren() *Page {
 	case mimeType:
 		page.GetChildrenByMimeType()
 	case extension:
-		println("ext")
 		page.GetChildrenByExt()
 	}
 	return page
