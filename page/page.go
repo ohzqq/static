@@ -95,7 +95,11 @@ func (p Page) Content() string {
 			log.Fatal(err)
 		}
 	} else {
-		err := Templates.ExecuteTemplate(&buf, "body"+p.Mime, p)
+		var err error
+		switch p.Mime {
+		case "video", "image":
+			err = Templates.ExecuteTemplate(&buf, "swiper", p)
+		}
 		if err != nil {
 			log.Fatal(err)
 		}

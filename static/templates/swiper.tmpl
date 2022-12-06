@@ -1,0 +1,17 @@
+{{define "swiper"}}
+{{$mime := .Mime -}}
+{{range Batch .Files -}}
+<div class="w3-row">
+	{{- range .}}
+	<div class="thumbnail w3-quarter" lightbox-toggle>
+	{{- if eq $mime "image"}}
+		<img src="{{.}}">
+	{{- else if eq $mime "video"}}
+		<video src="{{.}}">
+	{{- end}}
+	</div>
+	{{- end}}
+</div>
+{{end}}
+	{{template "swiperLightbox" .Collection -}}
+{{end -}}

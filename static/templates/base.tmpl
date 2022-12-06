@@ -11,7 +11,7 @@
 		</style>
 		{{end}}
 	</head>
-	<body>
+	<body class="w3-mobile">
 		<main class="w3-mobile w3-content w3-main">
 			<div>
 			<h1>{{.Title}}</h1>
@@ -22,9 +22,6 @@
 
 			{{.Content}}
 
-			{{if eq .Mime "image" "video"}}
-				{{template "swiperLightbox" .Collection}}
-			{{end}}
 
 			<footer>
 			{{range .ReadScripts}}

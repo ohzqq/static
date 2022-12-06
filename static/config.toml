@@ -1,6 +1,7 @@
 categories = ["image", "video"]
 css = [
 	"css/w3pro.css",
+	"css/base.css",
 	"css/filetree.css",
 ]
 scripts = [ 
