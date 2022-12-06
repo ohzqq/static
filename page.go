@@ -6,6 +6,7 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -59,6 +60,12 @@ func (p *Page) GlobExt(ext ...string) *Page {
 	p.glob = Extension
 	if len(ext) > 0 {
 		p.Mime = mime.TypeByExtension(ext[0])
+		if strings.Contains(p.Mime, "video") {
+			p.Mime = "video"
+		}
+		if strings.Contains(p.Mime, "image") {
+			p.Mime = "image"
+		}
 	}
 	p.Ext = ext
 	p.Files = append(p.Files, GlobExt(p.Path, p.Ext...)...)
