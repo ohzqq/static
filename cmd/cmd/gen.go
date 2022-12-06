@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	"idx/config"
 	"idx/page"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,11 @@ var genCmd = &cobra.Command{
 		p := page.NewCollection(dir, collection)
 		//files := page.Batch(p.Files)
 		//for _, pp := range p.Children {
-		fmt.Printf("child %+V\n", p.Tree())
+		err := page.Write(p.Path, p.Render())
+		if err != nil {
+			log.Fatal(err)
+		}
+		//fmt.Printf("child %+V\n", string(p.Render()))
 		//}
 		//err := page.Write(p)
 		//if err != nil {

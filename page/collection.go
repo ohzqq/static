@@ -23,7 +23,6 @@ func NewCollection(root string, collection config.Collection) Collection {
 	for _, p := range col.Children {
 		RelativeUrls(root, p)
 	}
-	col.Recurse = true
 	col.Filetree = col.Tree()
 	return col
 }
@@ -40,6 +39,16 @@ func (c Collection) Content() string {
 	}
 
 	return buf.String()
+}
+
+func (c Collection) Render() []byte {
+	var buf bytes.Buffer
+	err := Templates.ExecuteTemplate(&buf, "base", c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return buf.Bytes()
 }
 
 func RelativeUrls(root string, pages ...*Page) []*Page {
