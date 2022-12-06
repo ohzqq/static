@@ -1,4 +1,4 @@
-package page
+package static
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ type Collection struct {
 func NewCollection(root string) Collection {
 	col := Collection{
 		Root: root,
-		Page: New(root),
+		Page: NewPage(root),
 	}
 	col.Url = "./index.html"
 	for _, p := range col.Children {

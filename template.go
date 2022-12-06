@@ -1,7 +1,7 @@
 package static
 
 import (
-	"html/template"
+	"text/template"
 )
 
 var (

@@ -26,6 +26,7 @@ func (c Category) RenderPage(p *Page) []byte {
 	if err != nil {
 		log.Fatal(err)
 	}
+	println(buf.String())
 
 	return buf.Bytes()
 }

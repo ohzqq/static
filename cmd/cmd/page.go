@@ -20,22 +20,22 @@ var pageCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		collection := static.GetCollection(args[0])
+		cat := static.GetCollection(args[0])
 		dir := args[1]
 
 		switch recurse {
 		case true:
-			p := static.New(dir).GlobMime(collection.Mime).GetChildren()
+			p := static.NewPage(dir).GlobMime(cat.Mime).GetChildren()
 			if cmd.Flags().Changed("ext") {
-				p = static.New(dir).GlobExt(extension...).GetChildren()
+				p = static.NewPage(dir).GlobExt(extension...).GetChildren()
 			}
-			err := collection.RecursiveWrite(p)
+			err := cat.RecursiveWrite(p)
 			if err != nil {
 				log.Fatal(err)
 			}
 		case false:
-			p := static.New(dir).GlobMime(collection.Mime)
-			err := static.Write(p.Path, collection.RenderPage(p))
+			p := static.NewPage(dir).GlobMime(cat.Mime)
+			err := static.Write(p.Path, cat.RenderPage(p))
 			if err != nil {
 				log.Fatal(err)
 			}

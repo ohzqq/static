@@ -33,7 +33,7 @@ type Page struct {
 	Recurse  bool
 }
 
-func New(root string) *Page {
+func NewPage(root string) *Page {
 	page := Page{
 		Path: root,
 	}
@@ -60,7 +60,7 @@ func (p *Page) GetChildren() *Page {
 	for _, entry := range entries {
 		fp := filepath.Join(p.Path, entry.Name())
 		if entry.IsDir() {
-			child := New(fp)
+			child := NewPage(fp)
 			switch p.glob {
 			case MimeType:
 				child.GlobMime(p.Mime)

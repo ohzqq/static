@@ -13,12 +13,12 @@ var genCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	//Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		collection := static.GetCollection(args[0])
+		cat := static.GetCollection(args[0])
 		dir := args[1]
 		p := static.NewCollection(dir)
 		//files := page.Batch(p.Files)
 		//for _, pp := range p.Children {
-		err := static.Write(p.Path, collection.RenderPage(p))
+		err := static.Write(p.Path, cat.RenderPage(p.Page))
 		if err != nil {
 			log.Fatal(err)
 		}
