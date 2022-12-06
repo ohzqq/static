@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"idx/config"
-	"idx/page"
 	"log"
+	"static/config"
+	"static/page"
 
 	"github.com/spf13/cobra"
 )

@@ -1,8 +1,8 @@
 package page
 
 import (
-	"idx"
-	"idx/config"
+	"static"
+	"static/config"
 	"text/template"
 )
 
@@ -14,7 +14,7 @@ var (
 	}
 )
 
-var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(idx.Static, "static/templates/*"))
+var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(static.Static, "static/templates/*"))
 
 func Batch(og []string) [][]string {
 	var (

@@ -1,10 +1,10 @@
 package config
 
 import (
-	"idx"
 	"log"
 	"os"
 	"path/filepath"
+	"static"
 
 	"github.com/BurntSushi/toml"
 )
@@ -32,7 +32,7 @@ func ParseConfig(path string) (Config, error) {
 
 	switch path {
 	case "static/config.toml":
-		data, err = idx.Static.ReadFile(path)
+		data, err = static.Static.ReadFile(path)
 		if err != nil {
 			return cfg, err
 		}

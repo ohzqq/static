@@ -3,11 +3,11 @@ package page
 import (
 	"bytes"
 	"html/template"
-	"idx/config"
-	"idx/files"
 	"log"
 	"os"
 	"path/filepath"
+	"static/config"
+	"static/files"
 
 	"github.com/BurntSushi/toml"
 )
@@ -45,15 +45,15 @@ func NewPageWithChildren(root string, collection config.Collection) *Page {
 	return page
 }
 
-func (idx *Page) MakeIndexWithMime() *Page {
-	entries := files.GetDirEntries(idx.Path)
+func (p *Page) MakeIndexWithMime() *Page {
+	entries := files.GetDirEntries(p.Path)
 
 	for _, e := range entries {
-		fp := filepath.Join(idx.Path, e.Name())
+		fp := filepath.Join(p.Path, e.Name())
 		if e.IsDir() {
-			child := NewPage(fp, idx.Collection)
+			child := NewPage(fp, p.Collection)
 			child.MakeIndexWithMime()
-			idx.Children = append(idx.Children, child)
+			p.Children = append(p.Children, child)
 		}
 		switch name := e.Name(); name {
 		case "meta.toml":
@@ -61,10 +61,10 @@ func (idx *Page) MakeIndexWithMime() *Page {
 			if err != nil {
 				log.Fatal(err)
 			}
-			toml.Unmarshal(t, &idx.Meta)
+			toml.Unmarshal(t, &p.Meta)
 		}
 	}
-	return idx
+	return p
 }
 
 func (p Page) Title() string {

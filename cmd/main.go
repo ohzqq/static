@@ -1,8 +1,8 @@
 package main
 
 import (
-	"idx/cmd/cmd"
 	"log"
+	"static/cmd/cmd"
 )
 
 func main() {

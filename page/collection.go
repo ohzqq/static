@@ -2,10 +2,10 @@ package page
 
 import (
 	"bytes"
-	"idx/config"
-	"idx/files"
 	"log"
 	"path/filepath"
+	"static/config"
+	"static/files"
 )
 
 type Collection struct {

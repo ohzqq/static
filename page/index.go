@@ -1,11 +1,11 @@
 package page
 
 import (
-	"idx/config"
-	"idx/files"
 	"log"
 	"os"
 	"path/filepath"
+	"static/config"
+	"static/files"
 
 	"github.com/BurntSushi/toml"
 )
