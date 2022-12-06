@@ -131,8 +131,12 @@ func (p Page) Content() string {
 	)
 
 	switch p.Template {
-	case "swiper", "filetree":
-		err = Templates.ExecuteTemplate(&buf, p.Template, p)
+	case "filetree":
+		c := NewCollection(p.Path)
+		c.GlobMime("").GetChildren()
+		return c.Content()
+	case "swiper":
+		err = Templates.ExecuteTemplate(&buf, "swiper", p)
 	default:
 		t := template.Must(template.New("content").ParseFiles(p.Template))
 		err = t.ExecuteTemplate(&buf, "content", p)
