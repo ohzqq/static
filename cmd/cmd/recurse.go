@@ -10,7 +10,7 @@ import (
 // recurseCmd represents the recurse command
 var recurseCmd = &cobra.Command{
 	Use:   "recurse",
-	Short: "A brief description of your command",
+	Short: "recursively generate static, self-contained html pages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		cat := static.GetCategory(category)

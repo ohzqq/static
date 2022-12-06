@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"static"
 
@@ -16,11 +17,12 @@ var pageCmd = &cobra.Command{
 		cat := static.GetCategory(category)
 		dir := args[0]
 		p := static.NewPage(dir)
-		if cat.Mime != "" || cmd.Flags().Changed("mimetype") {
-			p.GlobMime(cat.Mime)
-		} else if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
+		if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
 			p.GlobExt(extension...)
+		} else if cat.Mime != "" || cmd.Flags().Changed("mimetype") {
+			p.GlobMime(cat.Mime)
 		}
+		fmt.Printf("%+V\n", p.Files)
 		err := static.Write(p.Path, cat.RenderPage(p))
 		if err != nil {
 			log.Fatal(err)

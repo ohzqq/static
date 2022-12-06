@@ -47,7 +47,7 @@ func init() {
 	rootCmd.PersistentFlags().StringSliceVarP(&extension, "ext", "e", []string{}, "glob by ext")
 	rootCmd.PersistentFlags().StringVarP(&mimetype, "mimetype", "m", "", "glob by mimetype")
 	rootCmd.PersistentFlags().StringVarP(&category, "category", "c", "", "config category")
-	rootCmd.MarkFlagsMutuallyExclusive("ext", "mimetype", "category")
+	rootCmd.MarkFlagsMutuallyExclusive("ext", "mimetype")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

@@ -37,7 +37,8 @@ func GlobMime(path, mtype string) []string {
 
 func GlobExt(path string, ext ...string) []string {
 	var files []string
-	for _, entry := range GetDirEntries(path) {
+	entries := GetDirEntries(path)
+	for _, entry := range entries {
 		ePath := filepath.Join(entry.Name())
 		eExt := filepath.Ext(ePath)
 		if slices.Contains(ext, eExt) {

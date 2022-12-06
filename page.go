@@ -3,6 +3,7 @@ package static
 import (
 	"bytes"
 	"log"
+	"mime"
 	"os"
 	"path/filepath"
 
@@ -33,6 +34,11 @@ type Page struct {
 	Recurse  bool
 }
 
+type File struct {
+	Name string
+	Mime string
+}
+
 func NewPage(root string) *Page {
 	page := Page{
 		Path: root,
@@ -50,6 +56,10 @@ func (p *Page) GlobMime(mime ...string) *Page {
 }
 
 func (p *Page) GlobExt(ext ...string) *Page {
+	p.glob = Extension
+	if len(ext) > 0 {
+		p.Mime = mime.TypeByExtension(ext[0])
+	}
 	p.Ext = ext
 	p.Files = append(p.Files, GlobExt(p.Path, p.Ext...)...)
 	return p
