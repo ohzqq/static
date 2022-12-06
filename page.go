@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/BurntSushi/toml"
 )
@@ -29,15 +30,11 @@ type Page struct {
 	Mime     string
 	Ext      []string
 	Url      string
+	Template string
 	Path     string `toml:"path"`
 	Files    []string
 	Children []*Page
 	Recurse  bool
-}
-
-type File struct {
-	Name string
-	Mime string
 }
 
 func NewPage(root string) *Page {
@@ -116,25 +113,30 @@ func (p Page) Render() []byte {
 	return buf.Bytes()
 }
 
+func (p *Page) SetTemplate(t string) *Page {
+	p.Template = t
+	return p
+}
+
 func (p Page) Content() string {
 	var buf bytes.Buffer
 
-	//if p.Template != "" {
-	//t := template.Must(template.New("content").ParseFiles(p.Template))
-	//err := t.ExecuteTemplate(&buf, "content", p)
-	//if err != nil {
-	//log.Fatal(err)
-	//}
-	//} else {
-	var err error
-	switch p.Mime {
-	case "video", "image":
-		err = Templates.ExecuteTemplate(&buf, "swiper", p)
+	if p.Template != "" {
+		t := template.Must(template.New("content").ParseFiles(p.Template))
+		err := t.ExecuteTemplate(&buf, "content", p)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		var err error
+		switch p.Mime {
+		case "video", "image":
+			err = Templates.ExecuteTemplate(&buf, "swiper", p)
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	//}
 
 	return buf.String()
 }

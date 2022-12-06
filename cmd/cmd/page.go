@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"static"
 
@@ -22,7 +21,6 @@ var pageCmd = &cobra.Command{
 		} else if cat.Mime != "" || cmd.Flags().Changed("mimetype") {
 			p.GlobMime(cat.Mime)
 		}
-		fmt.Printf("%+V\n", p.Mime)
 		err := static.Write(p.Path, cat.RenderPage(p))
 		if err != nil {
 			log.Fatal(err)
