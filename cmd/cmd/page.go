@@ -30,13 +30,13 @@ var pageCmd = &cobra.Command{
 			if cmd.Flags().Changed("ext") {
 				p = page.New(dir).GlobExt(extension...).GetChildren()
 			}
-			err := page.RecursiveWrite(p)
+			err := collection.RecursiveWrite(p)
 			if err != nil {
 				log.Fatal(err)
 			}
 		case false:
 			p := page.New(dir).GlobMime(collection.Mime)
-			err := page.Write(p.Path, p.Render())
+			err := page.Write(p.Path, collection.RenderPage(p))
 			if err != nil {
 				log.Fatal(err)
 			}
