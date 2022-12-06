@@ -1,6 +1,7 @@
 package static
 
 import (
+	"path/filepath"
 	"text/template"
 )
 
@@ -8,6 +9,7 @@ var (
 	TmplFuncs = template.FuncMap{
 		"color": Colors,
 		"Batch": Batch,
+		"Dir":   filepath.Dir,
 	}
 )
 

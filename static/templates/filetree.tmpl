@@ -13,5 +13,10 @@
 		<div>
 			<a href="{{.Url}}">{{.Title}}</a>
 		</div>
+		{{range .Files}}
+		<div>
+			<a href="{{Dir $parent.Url}}/{{.}}">{{.}}</a>
+		</div>
+	{{end}}
 {{end -}}
 {{end -}}
