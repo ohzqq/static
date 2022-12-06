@@ -1,11 +1,8 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"fmt"
+	"log"
+	"static"
 
 	"github.com/spf13/cobra"
 )
@@ -14,27 +11,21 @@ import (
 var recurseCmd = &cobra.Command{
 	Use:   "recurse",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("recurse called")
+		cat := static.GetCategory(args[0])
+		dir := args[1]
+		p := static.NewPage(dir).GlobMime(cat.Mime).GetChildren()
+		if cmd.Flags().Changed("ext") {
+			p = static.NewPage(dir).GlobExt(extension...).GetChildren()
+		}
+		err := cat.RecursiveWrite(p)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(recurseCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// recurseCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// recurseCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

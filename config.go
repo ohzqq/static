@@ -141,6 +141,12 @@ func DefaultHtml() Html {
 	return html
 }
 
+func DefaultCategory() Category {
+	return Category{
+		Html: DefaultHtml(),
+	}
+}
+
 func (c Category) RecursiveWrite(pages ...*Page) error {
 	for _, p := range pages {
 		err := Write(p.Path, c.RenderPage(p))
@@ -157,6 +163,7 @@ func (c Category) RecursiveWrite(pages ...*Page) error {
 	}
 	return nil
 }
+
 func Categories() map[string]Category {
 	col := Default.Category
 	for n, c := range Opts.Category {
@@ -173,12 +180,12 @@ func Colors() Color {
 	return Default.Color
 }
 
-func GetCollection(collection string) Category {
-	if c, ok := Opts.Category[collection]; ok {
+func GetCategory(cat string) Category {
+	if c, ok := Opts.Category[cat]; ok {
 		return c
 	}
 
-	if c, ok := Default.Category[collection]; ok {
+	if c, ok := Default.Category[cat]; ok {
 		return c
 	}
 	return Category{}

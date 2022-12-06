@@ -10,8 +10,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-var cfg static.Config
+var (
+	cfgFile   string
+	extension []string
+	mimetype  string
+	cfg       static.Config
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -39,6 +43,8 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/static/config.toml)")
+	pageCmd.PersistentFlags().StringSliceVarP(&extension, "ext", "e", []string{}, "glob by ext")
+	rootCmd.PersistentFlags().StringVarP(&mimetype, "mimetype", "m", "", "glob by mimetype")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
