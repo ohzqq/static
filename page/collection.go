@@ -3,6 +3,7 @@ package page
 import (
 	"bytes"
 	"log"
+	"os"
 	"path/filepath"
 	"static/config"
 	"static/files"
@@ -12,12 +13,18 @@ type Collection struct {
 	*Page
 	Root     string
 	Filetree string
+	Ext      []string    `toml:"ext"`
+	Scripts  []string    `toml:"scripts"`
+	Css      []string    `toml:"css"`
+	Mime     string      `toml:"mime"`
+	Template string      `toml:"template"`
+	Html     config.Html `toml:"html"`
 }
 
 func NewCollection(root string, collection config.Collection) Collection {
 	col := Collection{
 		Root: root,
-		Page: NewPageWithChildren(root, collection),
+		Page: NewPage(root, collection),
 	}
 	col.Url = "./index.html"
 	for _, p := range col.Children {
@@ -73,4 +80,36 @@ func NewCollectionWithExt(root string, ext ...string) *Collection {
 	page.Files = append(page.Files, files.GlobExt(page.Path, ext...)...)
 
 	return &page
+}
+
+func (c *Collection) AddScripts(scripts ...string) {
+	c.Scripts = append(c.Scripts, scripts...)
+}
+
+func (c *Collection) AddCss(css ...string) {
+	c.Css = append(c.Css, css...)
+}
+
+func (c Collection) ReadScripts() []string {
+	var scripts []string
+	for _, s := range c.Scripts {
+		t, err := os.ReadFile(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		scripts = append(scripts, string(t))
+	}
+	return scripts
+}
+
+func (c Collection) ReadCss() []string {
+	var css []string
+	for _, s := range c.Css {
+		t, err := os.ReadFile(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		css = append(css, string(t))
+	}
+	return css
 }

@@ -44,7 +44,7 @@ func NewPage(root string, collection config.Collection) *Page {
 	return &page
 }
 
-func (p *Page) GlobMime() *Page {
+func (p *Page) GlobMime(mime ...string) *Page {
 	p.glob = mimeType
 	p.Files = append(p.Files, files.GlobMime(p.Path, p.Mime)...)
 	return p
