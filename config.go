@@ -188,5 +188,8 @@ func GetCategory(cat string) Category {
 	if c, ok := Default.Category[cat]; ok {
 		return c
 	}
-	return Category{}
+
+	return Category{
+		Html: DefaultHtml(),
+	}
 }

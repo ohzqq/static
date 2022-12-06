@@ -14,6 +14,7 @@ var (
 	cfgFile   string
 	extension []string
 	mimetype  string
+	category  string
 	cfg       static.Config
 )
 
@@ -43,8 +44,10 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/static/config.toml)")
-	pageCmd.PersistentFlags().StringSliceVarP(&extension, "ext", "e", []string{}, "glob by ext")
+	rootCmd.PersistentFlags().StringSliceVarP(&extension, "ext", "e", []string{}, "glob by ext")
 	rootCmd.PersistentFlags().StringVarP(&mimetype, "mimetype", "m", "", "glob by mimetype")
+	rootCmd.PersistentFlags().StringVarP(&category, "category", "c", "", "config category")
+	rootCmd.MarkFlagsMutuallyExclusive("ext", "mimetype", "category")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
