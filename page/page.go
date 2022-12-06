@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"static/config"
+	"static/category"
 	"static/files"
 
 	"github.com/BurntSushi/toml"
@@ -33,7 +33,7 @@ type Page struct {
 	Files    []string
 	Children []*Page
 	Recurse  bool
-	config.Category
+	category.Category
 }
 
 func New(root string) *Page {
@@ -43,7 +43,7 @@ func New(root string) *Page {
 	return &page
 }
 
-func NewPage(root string, collection config.Category) *Page {
+func NewPage(root string, collection category.Category) *Page {
 	page := Page{
 		Path:     root,
 		Category: collection,

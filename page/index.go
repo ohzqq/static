@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"static/config"
+	"static/category"
 	"static/files"
 
 	"github.com/BurntSushi/toml"
@@ -35,7 +35,7 @@ func MakeIndexWithExt(root string, ext ...string) *Page {
 	return idx
 }
 
-func MakeIndexWithMime(root string, col config.Category) *Page {
+func MakeIndexWithMime(root string, col category.Category) *Page {
 	idx := &Page{Category: col}
 	idx.Path = filepath.Join(idx.Path, root)
 	entries := files.GetDirEntries(idx.Path)

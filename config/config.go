@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"static"
+	"static/category"
 
 	"github.com/BurntSushi/toml"
 )
@@ -16,11 +17,11 @@ var (
 
 type Config struct {
 	Path       string
-	Color      Color               `toml:"color"`
-	Categories []string            `toml:"categories"`
-	Scripts    []string            `toml:"scripts"`
-	Css        []string            `toml:"css"`
-	Collection map[string]Category `toml:"collection"`
+	Color      Color                        `toml:"color"`
+	Categories []string                     `toml:"categories"`
+	Scripts    []string                     `toml:"scripts"`
+	Css        []string                     `toml:"css"`
+	Category   map[string]category.Category `toml:"collection"`
 }
 
 func ParseConfig(path string) (Config, error) {
@@ -53,7 +54,7 @@ func ParseConfig(path string) (Config, error) {
 	cfg.Scripts = AbsolutePaths(dir, cfg.Scripts...)
 	cfg.Css = AbsolutePaths(dir, cfg.Css...)
 
-	for name, col := range cfg.Collection {
+	for name, col := range cfg.Category {
 		if len(col.Scripts) > 0 {
 			col.Scripts = AbsolutePaths(dir, col.Scripts...)
 		}
@@ -65,7 +66,7 @@ func ParseConfig(path string) (Config, error) {
 		}
 		col.Css = append(cfg.Css, col.Css...)
 		col.Scripts = append(cfg.Scripts, col.Scripts...)
-		cfg.Collection[name] = col
+		cfg.Category[name] = col
 	}
 
 	Opts = cfg
@@ -109,9 +110,9 @@ func Css() []string {
 	return Opts.Css
 }
 
-func Collections() map[string]Category {
-	col := Default.Collection
-	for n, c := range Opts.Collection {
+func Collections() map[string]category.Category {
+	col := Default.Category
+	for n, c := range Opts.Category {
 		col[n] = c
 	}
 	return col
@@ -125,13 +126,13 @@ func Colors() Color {
 	return Default.Color
 }
 
-func GetCollection(collection string) Category {
-	if c, ok := Opts.Collection[collection]; ok {
+func GetCollection(collection string) category.Category {
+	if c, ok := Opts.Category[collection]; ok {
 		return c
 	}
 
-	if c, ok := Default.Collection[collection]; ok {
+	if c, ok := Default.Category[collection]; ok {
 		return c
 	}
-	return Category{}
+	return category.Category{}
 }

@@ -1,4 +1,4 @@
-package config
+package category
 
 type Html struct {
 	Video Video `toml:"video"`

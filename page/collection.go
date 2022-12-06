@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"static/category"
 	"static/config"
 	"static/files"
 )
@@ -21,7 +22,7 @@ type Collection struct {
 	Html     config.Html `toml:"html"`
 }
 
-func NewCollection(root string, collection config.Category) Collection {
+func NewCollection(root string, collection category.Category) Collection {
 	col := Collection{
 		Root: root,
 		Page: NewPage(root, collection),

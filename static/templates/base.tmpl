@@ -15,9 +15,6 @@
 		<main class="w3-mobile w3-content w3-main">
 			<div>
 				<h1>{{.Title}}</h1>
-				{{if .Recurse -}}
-					{{template "sidebar" .Tree -}}
-				{{end -}}
 			</div>
 
 			{{.Content -}}
