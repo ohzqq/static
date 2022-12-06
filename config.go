@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+	"golang.org/x/exp/slices"
 )
 
 var (
@@ -110,19 +111,29 @@ func AbsolutePaths(root string, path ...string) []string {
 	return paths
 }
 
-func Categories() []string {
-	return Opts.Categories
+func DefaultHtml() Html {
+	html := Html{
+		Css:     Default.Css,
+		Scripts: Default.Scripts,
+	}
+
+	for _, css := range Opts.Css {
+		b := filepath.Base(css)
+		if !slices.Contains(html.BaseCss(), b) {
+			html.AddCss(css)
+		}
+	}
+
+	for _, script := range Opts.Scripts {
+		if !slices.Contains(html.BaseScripts(), filepath.Base(script)) {
+			html.AddScripts(script)
+		}
+	}
+
+	return html
 }
 
-func Scripts() []string {
-	return Opts.Scripts
-}
-
-func Css() []string {
-	return Opts.Css
-}
-
-func Collections() map[string]Category {
+func Categories() map[string]Category {
 	col := Default.Category
 	for n, c := range Opts.Category {
 		col[n] = c

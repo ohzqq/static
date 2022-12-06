@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"static"
 
 	"github.com/spf13/cobra"
@@ -15,11 +16,11 @@ var indexCmd = &cobra.Command{
 		dir := args[0]
 		p := static.NewCollection(dir)
 		p.GlobMime("").GetChildren()
-		println(p.Content())
-		//err := static.Write(p.Path, cat.RenderPage(p))
-		//if err != nil {
-		//  log.Fatal(err)
-		//}
+		//println(p.Content())
+		err := static.Write(p.Path, static.DefaultHtml().RenderPage(p))
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
