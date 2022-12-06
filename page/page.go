@@ -12,11 +12,11 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type globType int
+type GlobType int
 
 const (
-	mimeType globType = iota
-	extension
+	MimeType GlobType = iota
+	Extension
 )
 
 type Meta struct {
@@ -26,7 +26,7 @@ type Meta struct {
 
 type Page struct {
 	Meta     Meta
-	glob     globType
+	glob     GlobType
 	Type     string
 	Url      string
 	Path     string `toml:"path"`
@@ -34,6 +34,13 @@ type Page struct {
 	Children []*Page
 	Recurse  bool
 	config.Category
+}
+
+func New(root string) *Page {
+	page := Page{
+		Path: root,
+	}
+	return &page
 }
 
 func NewPage(root string, collection config.Category) *Page {
@@ -45,69 +52,35 @@ func NewPage(root string, collection config.Category) *Page {
 }
 
 func (p *Page) GlobMime(mime ...string) *Page {
-	p.glob = mimeType
-	p.Files = append(p.Files, files.GlobMime(p.Path, p.Mime)...)
+	p.glob = MimeType
+	var m string
+	if len(mime) > 0 {
+		m = mime[0]
+	}
+	p.Files = append(p.Files, files.GlobMime(p.Path, m)...)
 	return p
 }
 
 func (p *Page) GlobExt(ext ...string) *Page {
-	p.glob = extension
-	if len(ext) > 0 {
-		p.Ext = ext
-	}
-	p.Files = append(p.Files, files.GlobExt(p.Path, p.Ext...)...)
+	p.Files = append(p.Files, files.GlobExt(p.Path, ext...)...)
 	return p
 }
 
-func (page *Page) GetChildren() *Page {
-	page.Url = "./index.html"
-	switch page.glob {
-	case mimeType:
-		page.GetChildrenByMimeType()
-	case extension:
-		page.GetChildrenByExt()
-	}
-	return page
-}
-
-func NewPageWithChildren(root string, collection config.Category) *Page {
-	page := NewPage(root, collection)
-	page.Url = "./index.html"
-	page.GetChildrenByMimeType()
-	return page
-}
-
-func (p *Page) GetChildrenByExt() *Page {
+func (p *Page) GetChildren() *Page {
 	entries := files.GetDirEntries(p.Path)
-
-	for _, e := range entries {
-		fp := filepath.Join(p.Path, e.Name())
-		if e.IsDir() {
-			child := NewPage(fp, p.Category).GlobExt().GetChildren()
-			p.Children = append(p.Children, child)
-		}
-		switch name := e.Name(); name {
-		case "meta.toml":
-			t, err := os.ReadFile(fp)
-			if err != nil {
-				log.Fatal(err)
+	for _, entry := range entries {
+		fp := filepath.Join(p.Path, entry.Name())
+		if entry.IsDir() {
+			child := New(fp)
+			switch p.glob {
+			case MimeType:
+				child.GlobMime(p.Mime)
+			case Extension:
+				child.GlobExt(p.Ext...)
 			}
-			toml.Unmarshal(t, &p.Meta)
+			p.Children = append(p.Children, child.GetChildren())
 		}
-	}
-	return p
-}
-
-func (p *Page) GetChildrenByMimeType() *Page {
-	entries := files.GetDirEntries(p.Path)
-
-	for _, e := range entries {
-		fp := filepath.Join(p.Path, e.Name())
-		if e.IsDir() {
-			child := NewPage(fp, p.Category).GlobMime().GetChildren()
-			p.Children = append(p.Children, child)
-		}
-		switch name := e.Name(); name {
+		switch name := entry.Name(); name {
 		case "meta.toml":
 			t, err := os.ReadFile(fp)
 			if err != nil {
