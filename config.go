@@ -1,11 +1,9 @@
-package config
+package static
 
 import (
 	"log"
 	"os"
 	"path/filepath"
-	"static"
-	"static/category"
 
 	"github.com/BurntSushi/toml"
 )
@@ -17,11 +15,11 @@ var (
 
 type Config struct {
 	Path       string
-	Color      Color                        `toml:"color"`
-	Categories []string                     `toml:"categories"`
-	Scripts    []string                     `toml:"scripts"`
-	Css        []string                     `toml:"css"`
-	Category   map[string]category.Category `toml:"collection"`
+	Color      Color               `toml:"color"`
+	Categories []string            `toml:"categories"`
+	Scripts    []string            `toml:"scripts"`
+	Css        []string            `toml:"css"`
+	Category   map[string]Category `toml:"collection"`
 }
 
 func ParseConfig(path string) (Config, error) {
@@ -33,7 +31,7 @@ func ParseConfig(path string) (Config, error) {
 
 	switch path {
 	case "static/config.toml":
-		data, err = static.Static.ReadFile(path)
+		data, err = Static.ReadFile(path)
 		if err != nil {
 			return cfg, err
 		}
@@ -110,7 +108,7 @@ func Css() []string {
 	return Opts.Css
 }
 
-func Collections() map[string]category.Category {
+func Collections() map[string]Category {
 	col := Default.Category
 	for n, c := range Opts.Category {
 		col[n] = c
@@ -126,7 +124,7 @@ func Colors() Color {
 	return Default.Color
 }
 
-func GetCollection(collection string) category.Category {
+func GetCollection(collection string) Category {
 	if c, ok := Opts.Category[collection]; ok {
 		return c
 	}
@@ -134,5 +132,5 @@ func GetCollection(collection string) category.Category {
 	if c, ok := Default.Category[collection]; ok {
 		return c
 	}
-	return category.Category{}
+	return Category{}
 }
