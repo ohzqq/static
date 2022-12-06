@@ -35,8 +35,8 @@ func MakeIndexWithExt(root string, ext ...string) *Page {
 	return idx
 }
 
-func MakeIndexWithMime(root string, col config.Collection) *Page {
-	idx := &Page{Collection: col}
+func MakeIndexWithMime(root string, col config.Category) *Page {
+	idx := &Page{Category: col}
 	idx.Path = filepath.Join(idx.Path, root)
 	entries := files.GetDirEntries(idx.Path)
 

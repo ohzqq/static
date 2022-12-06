@@ -21,7 +21,7 @@ type Collection struct {
 	Html     config.Html `toml:"html"`
 }
 
-func NewCollection(root string, collection config.Collection) Collection {
+func NewCollection(root string, collection config.Category) Collection {
 	col := Collection{
 		Root: root,
 		Page: NewPage(root, collection),

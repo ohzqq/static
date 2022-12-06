@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type Collection struct {
+type Category struct {
 	Ext      []string `toml:"ext"`
 	Scripts  []string `toml:"scripts"`
 	Css      []string `toml:"css"`
@@ -14,15 +14,15 @@ type Collection struct {
 	Html     Html     `toml:"html"`
 }
 
-func (c *Collection) AddScripts(scripts ...string) {
+func (c *Category) AddScripts(scripts ...string) {
 	c.Scripts = append(c.Scripts, scripts...)
 }
 
-func (c *Collection) AddCss(css ...string) {
+func (c *Category) AddCss(css ...string) {
 	c.Css = append(c.Css, css...)
 }
 
-func (c Collection) ReadScripts() []string {
+func (c Category) ReadScripts() []string {
 	var scripts []string
 	for _, s := range c.Scripts {
 		t, err := os.ReadFile(s)
@@ -34,7 +34,7 @@ func (c Collection) ReadScripts() []string {
 	return scripts
 }
 
-func (c Collection) ReadCss() []string {
+func (c Category) ReadCss() []string {
 	var css []string
 	for _, s := range c.Css {
 		t, err := os.ReadFile(s)

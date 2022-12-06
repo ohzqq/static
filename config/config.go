@@ -16,11 +16,11 @@ var (
 
 type Config struct {
 	Path       string
-	Color      Color                 `toml:"color"`
-	Categories []string              `toml:"categories"`
-	Scripts    []string              `toml:"scripts"`
-	Css        []string              `toml:"css"`
-	Collection map[string]Collection `toml:"collection"`
+	Color      Color               `toml:"color"`
+	Categories []string            `toml:"categories"`
+	Scripts    []string            `toml:"scripts"`
+	Css        []string            `toml:"css"`
+	Collection map[string]Category `toml:"collection"`
 }
 
 func ParseConfig(path string) (Config, error) {
@@ -109,7 +109,7 @@ func Css() []string {
 	return Opts.Css
 }
 
-func Collections() map[string]Collection {
+func Collections() map[string]Category {
 	col := Default.Collection
 	for n, c := range Opts.Collection {
 		col[n] = c
@@ -125,7 +125,7 @@ func Colors() Color {
 	return Default.Color
 }
 
-func GetCollection(collection string) Collection {
+func GetCollection(collection string) Category {
 	if c, ok := Opts.Collection[collection]; ok {
 		return c
 	}
@@ -133,5 +133,5 @@ func GetCollection(collection string) Collection {
 	if c, ok := Default.Collection[collection]; ok {
 		return c
 	}
-	return Collection{}
+	return Category{}
 }

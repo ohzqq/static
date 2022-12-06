@@ -33,13 +33,13 @@ type Page struct {
 	Files    []string
 	Children []*Page
 	Recurse  bool
-	config.Collection
+	config.Category
 }
 
-func NewPage(root string, collection config.Collection) *Page {
+func NewPage(root string, collection config.Category) *Page {
 	page := Page{
-		Path:       root,
-		Collection: collection,
+		Path:     root,
+		Category: collection,
 	}
 	return &page
 }
@@ -70,7 +70,7 @@ func (page *Page) GetChildren() *Page {
 	return page
 }
 
-func NewPageWithChildren(root string, collection config.Collection) *Page {
+func NewPageWithChildren(root string, collection config.Category) *Page {
 	page := NewPage(root, collection)
 	page.Url = "./index.html"
 	page.GetChildrenByMimeType()
@@ -83,7 +83,7 @@ func (p *Page) GetChildrenByExt() *Page {
 	for _, e := range entries {
 		fp := filepath.Join(p.Path, e.Name())
 		if e.IsDir() {
-			child := NewPage(fp, p.Collection).GlobExt().GetChildren()
+			child := NewPage(fp, p.Category).GlobExt().GetChildren()
 			p.Children = append(p.Children, child)
 		}
 		switch name := e.Name(); name {
@@ -104,7 +104,7 @@ func (p *Page) GetChildrenByMimeType() *Page {
 	for _, e := range entries {
 		fp := filepath.Join(p.Path, e.Name())
 		if e.IsDir() {
-			child := NewPage(fp, p.Collection).GlobMime().GetChildren()
+			child := NewPage(fp, p.Category).GlobMime().GetChildren()
 			p.Children = append(p.Children, child)
 		}
 		switch name := e.Name(); name {
