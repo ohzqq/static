@@ -16,9 +16,11 @@ var genCmd = &cobra.Command{
 		cat := static.GetCollection(args[0])
 		dir := args[1]
 		p := static.NewCollection(dir)
+		p.GlobMime(cat.Mime).GetChildren()
 		//files := page.Batch(p.Files)
 		//for _, pp := range p.Children {
-		err := static.Write(p.Path, cat.RenderPage(p.Page))
+		//}
+		err := static.Write(p.Path, cat.RenderPage(p))
 		if err != nil {
 			log.Fatal(err)
 		}

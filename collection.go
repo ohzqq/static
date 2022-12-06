@@ -18,9 +18,6 @@ func NewCollection(root string) Collection {
 		Page: NewPage(root),
 	}
 	col.Url = "./index.html"
-	for _, p := range col.Children {
-		RelativeUrls(root, p)
-	}
 	col.Filetree = col.Tree()
 	return col
 }
@@ -30,6 +27,9 @@ func (c Collection) Tree() string {
 }
 
 func (c Collection) Content() string {
+	for _, p := range c.Children {
+		RelativeUrls(c.Root, p)
+	}
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "filetree", c)
 	if err != nil {
@@ -57,6 +57,7 @@ func RelativeUrls(root string, pages ...*Page) []*Page {
 		}
 		u := filepath.Join(rel, "index.html")
 		page.SetUrl("./" + u)
+		println(page.Url)
 
 		if page.HasChildren() {
 			page.Children = RelativeUrls(root, page.Children...)

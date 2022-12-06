@@ -1,6 +1,7 @@
 package static
 
 import (
+	"fmt"
 	"log"
 	"mime"
 	"os"
@@ -9,6 +10,17 @@ import (
 
 	"golang.org/x/exp/slices"
 )
+
+func Write(path string, page []byte) error {
+	out := filepath.Join(path, "index.html")
+
+	err := os.WriteFile(out, page, 0666)
+	if err != nil {
+		return fmt.Errorf("Rendering %s failed with error %s\n", out, err)
+	}
+	fmt.Printf("Rendered %s\n", out)
+	return nil
+}
 
 func GlobMime(path, mtype string) []string {
 	var files []string
