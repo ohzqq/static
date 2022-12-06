@@ -4,14 +4,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"static/config"
+	"static"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
-var cfg config.Config
+var cfg static.Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -63,7 +63,7 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	config.ParseDefault()
+	static.ParseDefault()
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {
@@ -72,7 +72,7 @@ func initConfig() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		cfg, err = config.ParseConfig(cfile)
+		cfg, err = static.ParseConfig(cfile)
 		if err != nil {
 			log.Fatal(err)
 		}

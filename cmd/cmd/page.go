@@ -2,8 +2,7 @@ package cmd
 
 import (
 	"log"
-	"static/config"
-	"static/page"
+	"static"
 
 	"github.com/spf13/cobra"
 )
@@ -21,22 +20,22 @@ var pageCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		collection := config.GetCollection(args[0])
+		collection := static.GetCollection(args[0])
 		dir := args[1]
 
 		switch recurse {
 		case true:
-			p := page.New(dir).GlobMime(collection.Mime).GetChildren()
+			p := static.New(dir).GlobMime(collection.Mime).GetChildren()
 			if cmd.Flags().Changed("ext") {
-				p = page.New(dir).GlobExt(extension...).GetChildren()
+				p = static.New(dir).GlobExt(extension...).GetChildren()
 			}
 			err := collection.RecursiveWrite(p)
 			if err != nil {
 				log.Fatal(err)
 			}
 		case false:
-			p := page.New(dir).GlobMime(collection.Mime)
-			err := page.Write(p.Path, collection.RenderPage(p))
+			p := static.New(dir).GlobMime(collection.Mime)
+			err := static.Write(p.Path, collection.RenderPage(p))
 			if err != nil {
 				log.Fatal(err)
 			}

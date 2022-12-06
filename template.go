@@ -11,7 +11,7 @@ var (
 	}
 )
 
-var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(static.Static, "static/templates/*"))
+var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(Static, "static/templates/*"))
 
 func Batch(og []string) [][]string {
 	var (

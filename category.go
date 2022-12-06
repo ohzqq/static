@@ -32,13 +32,13 @@ func (c Category) RenderPage(p *Page) []byte {
 
 func (c Category) RecursiveWrite(pages ...*Page) error {
 	for _, p := range pages {
-		err := Write(p.Path, c.RenderPage(page))
+		err := Write(p.Path, c.RenderPage(p))
 		if err != nil {
 			return err
 		}
 
 		if p.HasChildren() {
-			err := RecursiveWrite(p.Children...)
+			err := c.RecursiveWrite(p.Children...)
 			if err != nil {
 				return err
 			}

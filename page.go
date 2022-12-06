@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"static/files"
 
 	"github.com/BurntSushi/toml"
 )
@@ -46,18 +45,18 @@ func (p *Page) GlobMime(mime ...string) *Page {
 	if len(mime) > 0 {
 		p.Mime = mime[0]
 	}
-	p.Files = append(p.Files, files.GlobMime(p.Path, p.Mime)...)
+	p.Files = append(p.Files, GlobMime(p.Path, p.Mime)...)
 	return p
 }
 
 func (p *Page) GlobExt(ext ...string) *Page {
 	p.Ext = ext
-	p.Files = append(p.Files, files.GlobExt(p.Path, p.Ext...)...)
+	p.Files = append(p.Files, GlobExt(p.Path, p.Ext...)...)
 	return p
 }
 
 func (p *Page) GetChildren() *Page {
-	entries := files.GetDirEntries(p.Path)
+	entries := GetDirEntries(p.Path)
 	for _, entry := range entries {
 		fp := filepath.Join(p.Path, entry.Name())
 		if entry.IsDir() {

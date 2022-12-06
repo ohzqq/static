@@ -2,8 +2,7 @@ package cmd
 
 import (
 	"log"
-	"static/config"
-	"static/page"
+	"static"
 
 	"github.com/spf13/cobra"
 )
@@ -14,12 +13,12 @@ var genCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	//Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		collection := config.GetCollection(args[0])
+		collection := static.GetCollection(args[0])
 		dir := args[1]
-		p := page.NewCollection(dir)
+		p := static.NewCollection(dir)
 		//files := page.Batch(p.Files)
 		//for _, pp := range p.Children {
-		err := page.Write(p.Path, collection.RenderPage(p))
+		err := static.Write(p.Path, collection.RenderPage(p))
 		if err != nil {
 			log.Fatal(err)
 		}
