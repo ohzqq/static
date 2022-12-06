@@ -5,11 +5,6 @@ import (
 	"os"
 )
 
-type Page interface {
-	Content() string
-	Files() []string
-}
-
 type Category struct {
 	Ext      []string `toml:"ext"`
 	Scripts  []string `toml:"scripts"`

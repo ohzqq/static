@@ -2,11 +2,9 @@ package page
 
 import (
 	"bytes"
-	"html/template"
 	"log"
 	"os"
 	"path/filepath"
-	"static/category"
 	"static/files"
 
 	"github.com/BurntSushi/toml"
@@ -27,13 +25,13 @@ type Meta struct {
 type Page struct {
 	Meta     Meta
 	glob     GlobType
-	Type     string
+	Mime     string
+	Ext      []string
 	Url      string
 	Path     string `toml:"path"`
 	Files    []string
 	Children []*Page
 	Recurse  bool
-	category.Category
 }
 
 func New(root string) *Page {
@@ -45,16 +43,16 @@ func New(root string) *Page {
 
 func (p *Page) GlobMime(mime ...string) *Page {
 	p.glob = MimeType
-	var m string
 	if len(mime) > 0 {
-		m = mime[0]
+		p.Mime = mime[0]
 	}
-	p.Files = append(p.Files, files.GlobMime(p.Path, m)...)
+	p.Files = append(p.Files, files.GlobMime(p.Path, p.Mime)...)
 	return p
 }
 
 func (p *Page) GlobExt(ext ...string) *Page {
-	p.Files = append(p.Files, files.GlobExt(p.Path, ext...)...)
+	p.Ext = ext
+	p.Files = append(p.Files, files.GlobExt(p.Path, p.Ext...)...)
 	return p
 }
 
@@ -105,22 +103,22 @@ func (p Page) Render() []byte {
 func (p Page) Content() string {
 	var buf bytes.Buffer
 
-	if p.Template != "" {
-		t := template.Must(template.New("content").ParseFiles(p.Template))
-		err := t.ExecuteTemplate(&buf, "content", p)
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		var err error
-		switch p.Mime {
-		case "video", "image":
-			err = Templates.ExecuteTemplate(&buf, "swiper", p)
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
+	//if p.Template != "" {
+	//t := template.Must(template.New("content").ParseFiles(p.Template))
+	//err := t.ExecuteTemplate(&buf, "content", p)
+	//if err != nil {
+	//log.Fatal(err)
+	//}
+	//} else {
+	var err error
+	switch p.Mime {
+	case "video", "image":
+		err = Templates.ExecuteTemplate(&buf, "swiper", p)
 	}
+	if err != nil {
+		log.Fatal(err)
+	}
+	//}
 
 	return buf.String()
 }
