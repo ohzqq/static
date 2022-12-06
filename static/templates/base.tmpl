@@ -4,34 +4,32 @@
 	<head>
 		<title>{{.Title}}</title>
     <meta name="viewport" content="width=device-width">
-		{{template "color" color}}
-		{{range .ReadCss}}
+		{{template "color" color -}}
+		{{range .ReadCss -}}
 		<style>
 			{{.}}
 		</style>
-		{{end}}
+		{{end -}}
 	</head>
 	<body class="w3-mobile">
 		<main class="w3-mobile w3-content w3-main">
 			<div>
-			<h1>{{.Title}}</h1>
-				{{if .Recurse}}
-					{{template "sidebar" .Tree}}
-				{{end}}
+				<h1>{{.Title}}</h1>
+				{{if .Recurse -}}
+					{{template "sidebar" .Tree -}}
+				{{end -}}
 			</div>
 
-			{{.Content}}
-
+			{{.Content -}}
 
 			<footer>
-			{{range .ReadScripts}}
-			<script>
-				{{.}}
-			</script>
-			{{end}}
+			{{- range .ReadScripts}}
+				<script>
+					{{.}}
+				</script>
+			{{- end}}
 
 			</footer>
-
 		</main>
 	</body>
 </html>

@@ -3,8 +3,6 @@ package page
 import (
 	"idx"
 	"idx/config"
-	"log"
-	"path/filepath"
 	"text/template"
 )
 
@@ -13,7 +11,6 @@ var (
 		"colors": config.RenderColor,
 		"color":  config.Colors,
 		"Batch":  Batch,
-		"Rel":    RelPath,
 	}
 )
 
@@ -33,12 +30,4 @@ func Batch(og []string) [][]string {
 		files = append(files, og[i:j])
 	}
 	return files
-}
-
-func RelPath(b, p string) string {
-	path, err := filepath.Rel(b, p)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return path
 }
