@@ -19,7 +19,7 @@
 /* Create the caret/arrow with a unicode, and style it */
 .caret::before {
   content: "\25BC";
-  color: var(--cyan);
+  color: var(--fg);
   display: inline-block;
   margin-right: 6px;
 }
