@@ -28,7 +28,7 @@ var pageCmd = &cobra.Command{
 		case true:
 			p := page.New(dir).GlobMime(collection.Mime).GetChildren()
 			if cmd.Flags().Changed("ext") {
-				p = page.NewPage(dir, collection).GlobExt(extension...).GetChildren()
+				p = page.New(dir).GlobExt(extension...).GetChildren()
 			}
 			err := page.RecursiveWrite(p)
 			if err != nil {

@@ -43,14 +43,6 @@ func New(root string) *Page {
 	return &page
 }
 
-func NewPage(root string, collection category.Category) *Page {
-	page := Page{
-		Path:     root,
-		Category: collection,
-	}
-	return &page
-}
-
 func (p *Page) GlobMime(mime ...string) *Page {
 	p.glob = MimeType
 	var m string
