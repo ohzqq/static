@@ -1,4 +1,4 @@
-package category
+package static
 
 type Html struct {
 	Video Video `toml:"video"`
