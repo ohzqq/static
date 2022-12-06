@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"static/page"
 )
 
 type Category struct {
@@ -16,10 +15,10 @@ type Category struct {
 	Mime     string   `toml:"mime"`
 	Template string   `toml:"template"`
 	Html     Html     `toml:"html"`
-	*page.Page
+	*Page
 }
 
-func (c Category) RenderPage(p *page.Page) []byte {
+func (c Category) RenderPage(p *Page) []byte {
 	c.Page = p
 
 	var buf bytes.Buffer
@@ -31,7 +30,7 @@ func (c Category) RenderPage(p *page.Page) []byte {
 	return buf.Bytes()
 }
 
-func (c Category) RecursiveWrite(pages ...*page.Page) error {
+func (c Category) RecursiveWrite(pages ...*Page) error {
 	for _, p := range pages {
 		err := Write(p.Path, c.RenderPage(page))
 		if err != nil {

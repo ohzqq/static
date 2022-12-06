@@ -13,6 +13,20 @@ var (
 	Default Config
 )
 
+type Color struct {
+	Bg     string
+	Fg     string
+	White  string
+	Black  string
+	Grey   string
+	Yellow string
+	Red    string
+	Pink   string
+	Cyan   string
+	Blue   string
+	Green  string
+	Purple string
+}
 type Config struct {
 	Path       string
 	Color      Color               `toml:"color"`
