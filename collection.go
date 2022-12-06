@@ -57,7 +57,6 @@ func RelativeUrls(root string, pages ...*Page) []*Page {
 		}
 		u := filepath.Join(rel, "index.html")
 		page.SetUrl("./" + u)
-		println(page.Url)
 
 		if page.HasChildren() {
 			page.Children = RelativeUrls(root, page.Children...)

@@ -27,13 +27,13 @@ type Color struct {
 	Green  string
 	Purple string
 }
+
 type Config struct {
+	Html
 	Path       string
-	Color      Color               `toml:"color"`
 	Categories []string            `toml:"categories"`
-	Scripts    []string            `toml:"scripts"`
-	Css        []string            `toml:"css"`
-	Category   map[string]Category `toml:"collection"`
+	Color      Color               `toml:"color"`
+	Category   map[string]Category `toml:"category"`
 }
 
 func ParseConfig(path string) (Config, error) {

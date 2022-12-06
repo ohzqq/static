@@ -12,12 +12,10 @@ type Index interface {
 }
 
 type Category struct {
+	Html
 	Ext      []string `toml:"ext"`
-	Scripts  []string `toml:"scripts"`
-	Css      []string `toml:"css"`
 	Mime     string   `toml:"mime"`
 	Template string   `toml:"template"`
-	Html     Html     `toml:"html"`
 	Index
 	//*Page
 }

@@ -1,7 +1,13 @@
 package static
 
+type PageElements struct {
+	Html Html `toml:"html"`
+}
+
 type Html struct {
-	Video Video `toml:"video"`
+	Scripts []string `toml:"scripts"`
+	Css     []string `toml:"css"`
+	Video   Video    `toml:"video"`
 }
 
 type Video struct {
