@@ -39,7 +39,8 @@ type Page struct {
 
 func NewPage(root string) *Page {
 	page := Page{
-		Path: root,
+		Path:     root,
+		Template: "filetree",
 	}
 	return &page
 }
@@ -48,6 +49,9 @@ func (p *Page) GlobMime(mime ...string) *Page {
 	p.glob = MimeType
 	if len(mime) > 0 {
 		p.Mime = mime[0]
+		if p.Mime == "video" || p.Mime == "image" {
+			p.Template = "swiper"
+		}
 	}
 	p.Files = append(p.Files, GlobMime(p.Path, p.Mime)...)
 	return p
@@ -59,9 +63,11 @@ func (p *Page) GlobExt(ext ...string) *Page {
 		p.Mime = mime.TypeByExtension(ext[0])
 		if strings.Contains(p.Mime, "video") {
 			p.Mime = "video"
+			p.Template = "swiper"
 		}
 		if strings.Contains(p.Mime, "image") {
 			p.Mime = "image"
+			p.Template = "swiper"
 		}
 	}
 	p.Ext = ext
@@ -119,25 +125,22 @@ func (p *Page) SetTemplate(t string) *Page {
 }
 
 func (p Page) Content() string {
-	var buf bytes.Buffer
+	var (
+		buf bytes.Buffer
+		err error
+	)
 
-	if p.Template != "" {
+	switch p.Template {
+	case "swiper", "filetree":
+		err = Templates.ExecuteTemplate(&buf, p.Template, p)
+	default:
 		t := template.Must(template.New("content").ParseFiles(p.Template))
-		err := t.ExecuteTemplate(&buf, "content", p)
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		var err error
-		switch p.Mime {
-		case "video", "image":
-			err = Templates.ExecuteTemplate(&buf, "swiper", p)
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
+		err = t.ExecuteTemplate(&buf, "content", p)
 	}
 
+	if err != nil {
+		log.Fatal(err)
+	}
 	return buf.String()
 }
 
