@@ -5,13 +5,13 @@
 		<a href="{{.Url}}">{{.Title}}</a>
 		<div class="nested">
 		{{- range .Children}}
-			{{template "nested" . -}}
+			{{template "filetree" . -}}
 		{{- end}}
 		</div>
 	</div><!--end {{.Title}} -->
 {{- else}}
-			<div>
-				<a href="{{.Url}}">{{.Title}}</a>
-			</div>
+		<div>
+			<a href="{{.Url}}">{{.Title}}</a>
+		</div>
 {{end -}}
 {{end -}}

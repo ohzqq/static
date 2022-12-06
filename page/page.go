@@ -25,6 +25,7 @@ type Page struct {
 	Path     string `toml:"path"`
 	Files    []string
 	Children []*Page
+	Recurse  bool
 	config.Collection
 }
 
@@ -53,12 +54,9 @@ func (idx *Page) MakeIndexWithMime() *Page {
 		if e.IsDir() {
 			child := NewPage(fp, idx.Collection)
 			child.MakeIndexWithMime()
-			//child.Files = append(child.Files, files.GlobMime(fp, idx.Collection.Mime)...)
 			idx.Children = append(idx.Children, child)
 		}
 		switch name := e.Name(); name {
-		case "index.html":
-			idx.SetUrl(fp)
 		case "meta.toml":
 			t, err := os.ReadFile(fp)
 			if err != nil {
@@ -88,22 +86,20 @@ func (p Page) Render() []byte {
 	return buf.Bytes()
 }
 
-func Write(pages ...*Page) error {
-	for _, page := range pages {
-		out := filepath.Join(page.Path, "index.html")
+func Write(path string, page []byte) error {
+	out := filepath.Join(path, "index.html")
 
-		err := os.WriteFile(out, page.Render(), 0666)
-		if err != nil {
-			return fmt.Errorf("Rendering %s failed with error %s\n", out, err)
-		}
-		fmt.Printf("Rendered %s\n", out)
+	err := os.WriteFile(out, page, 0666)
+	if err != nil {
+		return fmt.Errorf("Rendering %s failed with error %s\n", out, err)
 	}
+	fmt.Printf("Rendered %s\n", out)
 	return nil
 }
 
 func RecursiveWrite(pages ...*Page) error {
 	for _, page := range pages {
-		err := Write(page)
+		err := Write(page.Path, page.Render())
 		if err != nil {
 			return err
 		}
@@ -139,14 +135,4 @@ func (p Page) Content() string {
 
 func (p *Page) SetUrl(u string) {
 	p.Url = u
-}
-
-func (p Page) Tree() string {
-	var buf bytes.Buffer
-	err := Templates.ExecuteTemplate(&buf, "filetree", p)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return buf.String()
 }

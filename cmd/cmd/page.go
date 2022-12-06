@@ -32,7 +32,7 @@ var pageCmd = &cobra.Command{
 			}
 		case false:
 			p := page.NewPage(dir, collection)
-			err := page.Write(p)
+			err := page.Write(p.Path, p.Render())
 			if err != nil {
 				log.Fatal(err)
 			}

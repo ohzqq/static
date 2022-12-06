@@ -2,6 +2,6 @@
 <button class="w3-xxxlarge navbutton" onclick="w3_open_sidebar()">☰</button>
 <div class="w3-sidebar w3-bar-block" id="filetree" style="display: none;">
 <button onclick="w3_close_sidebar()" class="w3-bar-item w3-button w3-large">Close &times;</button>
-	{{- template "filetree" .}}
+	{{.}}
 </div>
 {{end}}
