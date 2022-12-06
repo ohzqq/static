@@ -16,7 +16,6 @@ var genCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		collection := config.GetCollection(args[0])
 		dir := args[1]
-		//p := page.NewPageWithChildren(dir, collection)
 		p := page.NewCollection(dir, collection)
 		//files := page.Batch(p.Files)
 		//for _, pp := range p.Children {
@@ -24,13 +23,6 @@ var genCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		//fmt.Printf("child %+V\n", string(p.Render()))
-		//}
-		//err := page.Write(p)
-		//if err != nil {
-		//log.Fatal(err)
-		//}
-
 	},
 }
 
