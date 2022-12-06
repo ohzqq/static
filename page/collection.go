@@ -29,6 +29,10 @@ func NewCollection(root string, collection config.Collection) Collection {
 }
 
 func (c Collection) Tree() string {
+	return c.Content()
+}
+
+func (c Collection) Content() string {
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "filetree", c)
 	if err != nil {
