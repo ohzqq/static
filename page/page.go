@@ -141,9 +141,9 @@ func (p *Page) SetUrl(u string) {
 	p.Url = u
 }
 
-func (p Page) RenderTree() string {
+func (p Page) Tree() string {
 	var buf bytes.Buffer
-	err := Templates.ExecuteTemplate(&buf, "tree", p)
+	err := Templates.ExecuteTemplate(&buf, "filetree", p)
 	if err != nil {
 		log.Fatal(err)
 	}

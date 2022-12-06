@@ -22,7 +22,7 @@ func NewCollection(root string, collection config.Collection) Collection {
 	for _, p := range col.Children {
 		RelativeUrls(root, p)
 	}
-
+	col.Filetree = col.Tree()
 	return col
 }
 
