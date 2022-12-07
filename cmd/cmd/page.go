@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"static"
 
@@ -15,6 +16,7 @@ var pageCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := args[0]
 		p := MakePage(dir, cmd)
+		fmt.Printf("%+V\n", static.Opts.Html)
 
 		err := static.Write(p.Path, p.Render())
 		if err != nil {
