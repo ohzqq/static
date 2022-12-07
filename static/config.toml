@@ -23,17 +23,6 @@ scripts = [
 	controls = true
 	loop = false
 
-[category.image]
-mime = "image"
-
-[category.video]
-mime = "video"
-[category.video.video]
-	muted = true
-	autoplay = false
-	controls = true
-	loop = false
-
 [color]
 bg = "#262626"
 fg = "#ffbf00"

@@ -2,7 +2,6 @@ package static
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"mime"
 	"os"
@@ -123,8 +122,6 @@ func (p *Page) Render() []byte {
 	if p.Template == "swiper" && p.category == "" {
 		p.Category.Html = GetCategory("swiper").Html
 	}
-	fmt.Printf("mime %s\n", p.Mime)
-	fmt.Printf("template %s\n", p.Template)
 
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "base", p)
