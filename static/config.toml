@@ -8,6 +8,16 @@ scripts = [
 	"js/filetree.js",
 ]
 
+[category.swiper]
+css = [
+	"swiper/swiper-bundle.min.css",
+	"swiper/swiper.css",
+	"swiper/gallery.css",
+]
+scripts = [
+	"swiper/swiper-bundle.min.js",
+]
+
 [category.image]
 mime = "image"
 css = [

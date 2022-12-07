@@ -54,8 +54,10 @@ func (p *Page) GlobMime(mime ...string) *Page {
 	p.glob = MimeType
 	if len(mime) > 0 {
 		p.Mime = mime[0]
+	}
+	if p.Template == "" {
 		if p.Mime == "video" || p.Mime == "image" {
-			//p.Template = "swiper"
+			p.SetTemplate("swiper")
 		}
 	}
 	p.Files = append(p.Files, GlobMime(p.Path, p.Mime)...)
@@ -68,11 +70,11 @@ func (p *Page) GlobExt(ext ...string) *Page {
 		p.Mime = mime.TypeByExtension(ext[0])
 		if strings.Contains(p.Mime, "video") {
 			p.Mime = "video"
-			//p.Template = "swiper"
+			p.SetTemplate("swiper")
 		}
 		if strings.Contains(p.Mime, "image") {
 			p.Mime = "image"
-			//p.Template = "swiper"
+			p.SetTemplate("swiper")
 		}
 	}
 	p.Ext = ext
@@ -114,7 +116,12 @@ func (p Page) HasChildren() bool {
 	return len(p.Children) > 0
 }
 
-func (p Page) Render() []byte {
+func (p *Page) Render() []byte {
+	if p.Template == "swiper" && p.category == "" {
+		p.Category.Html = GetCategory("swiper").Html
+	}
+	println(p.Mime)
+
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "base", p)
 	if err != nil {
@@ -129,73 +136,29 @@ func (p *Page) SetTemplate(t string) *Page {
 	return p
 }
 
-func (p Page) Content() string {
+func (p *Page) Content() string {
 	var (
 		buf bytes.Buffer
 		err error
 	)
 
-	//if p.Template != "" {
-	//  t := template.Must(template.New("content").ParseFiles(p.Template))
-	//  err = t.ExecuteTemplate(&buf, "content", p)
-	//  if err != nil {
-	//    log.Fatal(err)
-	//  }
-	//} else {
-	//  switch p.glob {
-	//  case MimeType:
-	//    if p.Mime == "video" || p.Mime == "image" {
-	//      p.Template = "swiper"
-	//    }
-	//  case Extension:
-	//    p.Mime = mime.TypeByExtension(ext[0])
-	//    if strings.Contains(p.Mime, "video") {
-	//      p.Mime = "video"
-	//      p.Template = "swiper"
-	//    }
-	//    if strings.Contains(p.Mime, "image") {
-	//      p.Mime = "image"
-	//      p.Template = "swiper"
-	//    }
-	//  }
-	//}
-
-	if p.Template != "" {
-		t := template.Must(template.New("content").ParseFiles(p.Template))
-		err = t.ExecuteTemplate(&buf, "content", p)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return buf.String()
-	}
-
-	if p.Template == "" {
-		switch p.glob {
-		case MimeType:
-			if p.Mime == "video" || p.Mime == "image" {
-				p.Template = "swiper"
-			}
-		case Extension:
-			if strings.Contains(p.Mime, "video") {
-				p.Template = "swiper"
-			}
-			if strings.Contains(p.Mime, "image") {
-				p.Template = "swiper"
-			}
-		default:
-			p.Template = "filetree"
-		}
-	}
-
 	switch p.Template {
+	case "":
+		fallthrough
 	case "filetree":
 		c := NewCollection(p.Path)
 		c.GlobMime("").GetChildren()
 		return c.Content()
 	case "swiper":
 		err = Templates.ExecuteTemplate(&buf, "swiper", p)
+	default:
+		t := template.Must(template.New("content").ParseFiles(p.Template))
+		err = t.ExecuteTemplate(&buf, "content", p)
 	}
 
+	if err != nil {
+		log.Fatal(err)
+	}
 	return buf.String()
 }
 

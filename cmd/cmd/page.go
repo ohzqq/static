@@ -19,13 +19,20 @@ var pageCmd = &cobra.Command{
 		if cmd.Flags().Changed("category") {
 			p.SetCategory(category)
 		}
-		p.Html = cat.Html
+		//p.Html = cat.Html
 		if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
 			p.GlobExt(extension...)
-		} else if cat.Mime != "" || cmd.Flags().Changed("mimetype") {
-			p.GlobMime(cat.Mime)
+		} else {
+			var m string
+			if cat.Mime != "" {
+				m = cat.Mime
+			}
+			if cmd.Flags().Changed("mimetype") {
+				m = mimetype
+			}
+			p.GlobMime(m)
 		}
-		err := static.Write(p.Path, cat.RenderPage(p))
+		err := static.Write(p.Path, p.Render())
 		if err != nil {
 			log.Fatal(err)
 		}
