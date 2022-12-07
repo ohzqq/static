@@ -19,9 +19,9 @@ scripts = [
 ]
 [category.swiper.video]
 	muted = true
-	autoplay = false
-	controls = true
-	loop = false
+	autoplay = true
+	controls = false
+	loop = true
 
 [color]
 bg = "#262626"
