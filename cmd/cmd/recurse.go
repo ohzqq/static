@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"log"
-	"static"
 
 	"github.com/spf13/cobra"
 )
@@ -13,16 +12,11 @@ var recurseCmd = &cobra.Command{
 	Short: "recursively generate static, self-contained html pages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		cat := static.GetCategory(category)
 		dir := args[0]
-		p := static.NewPage(dir)
-		if cat.Mime != "" || cmd.Flags().Changed("mimetype") {
-			p.GlobMime(cat.Mime)
-		} else if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
-			p.GlobExt(extension...)
-		}
+		p := MakePage(dir, cmd)
+
 		p.GetChildren()
-		err := cat.RecursiveWrite(p)
+		err := p.Category.RecursiveWrite(p)
 		if err != nil {
 			log.Fatal(err)
 		}

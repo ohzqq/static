@@ -2,6 +2,7 @@ package static
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"mime"
 	"os"
@@ -44,6 +45,9 @@ func NewPage(root string) *Page {
 }
 
 func (p *Page) SetCategory(c string) *Page {
+	if c == "video" || c == "image" {
+		c = "swiper"
+	}
 	p.category = c
 	p.Category = GetCategory(c)
 	return p
@@ -59,6 +63,8 @@ func (p *Page) GlobMime(mime ...string) *Page {
 			p.SetTemplate("swiper")
 		}
 	}
+	fmt.Printf("mime %s\n", p.Mime)
+	fmt.Printf("template %s\n", p.Template)
 	p.Files = append(p.Files, GlobMime(p.Path, p.Mime)...)
 	return p
 }
@@ -119,6 +125,8 @@ func (p *Page) Render() []byte {
 	if p.Template == "swiper" && p.category == "" {
 		p.Category.Html = GetCategory("swiper").Html
 	}
+	fmt.Printf("mime %s\n", p.Mime)
+	fmt.Printf("template %s\n", p.Template)
 
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "base", p)

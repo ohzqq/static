@@ -17,6 +17,11 @@ css = [
 scripts = [
 	"swiper/swiper-bundle.min.js",
 ]
+[category.swiper.video]
+	muted = true
+	autoplay = false
+	controls = true
+	loop = false
 
 [category.image]
 mime = "image"
