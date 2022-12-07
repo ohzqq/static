@@ -62,26 +62,33 @@ func (c *Html) AddCss(css ...string) {
 	c.Css = append(c.Css, css...)
 }
 
-func (c Html) ReadScripts() []string {
+func (h Html) ReadScripts() []string {
 	var scripts []string
-	for _, s := range c.Scripts {
-		t, err := os.ReadFile(s)
-		if err != nil {
-			log.Fatal(err)
-		}
-		scripts = append(scripts, string(t))
+	for _, script := range h.Scripts {
+		scrips = append(scrips, ReadAsset(script))
 	}
 	return scripts
 }
 
-func (c Html) ReadCss() []string {
+func (h Html) ReadCss() []string {
 	var css []string
-	for _, s := range c.Css {
-		t, err := os.ReadFile(s)
-		if err != nil {
-			log.Fatal(err)
-		}
-		css = append(css, string(t))
+	for _, style := range h.Css {
+		css = append(css, ReadAsset(style))
 	}
 	return css
+}
+
+func ReadAsset(name string) string {
+	var data []byte
+	var err error
+	if filepath.IsAbs(name) {
+		data, err = os.ReadFile(name)
+	} else {
+		data, err = Static.ReadFile(name)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(data)
 }

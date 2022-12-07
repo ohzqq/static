@@ -34,6 +34,7 @@ type Page struct {
 	Path     string `toml:"path"`
 	Files    []string
 	Children []*Page
+	Html     Html
 	Recurse  bool
 }
 
@@ -136,6 +137,8 @@ func (p Page) Content() string {
 		c.GlobMime("").GetChildren()
 		return c.Content()
 	case "swiper":
+		cat := GetCategory(p.Mime)
+		p.Html = cat.Html
 		err = Templates.ExecuteTemplate(&buf, "swiper", p)
 	default:
 		t := template.Must(template.New("content").ParseFiles(p.Template))

@@ -31,8 +31,9 @@ scripts = [
 ]
 [category.video.html.video]
 	muted = true
-	autoplay = false
-	controls = true
+	autoplay = true
+	controls = false
+	loop = true
 
 [color]
 bg = "#262626"

@@ -5,7 +5,6 @@ type Category struct {
 	Ext      []string `toml:"ext"`
 	Mime     string   `toml:"mime"`
 	Template string   `toml:"template"`
-	Index
 }
 
 func DefaultCategory() Category {
