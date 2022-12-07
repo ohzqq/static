@@ -16,7 +16,7 @@ var indexCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := args[0]
 		p := static.NewCollection(dir)
-		p.GlobMime("").GetChildren()
+		p.GlobMime(".html").GetChildren()
 		html := static.DefaultHtml()
 		err := static.Write(p.Path, html.RenderPage(p))
 		if err != nil {

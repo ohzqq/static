@@ -41,7 +41,6 @@ func NewPage(root string) *Page {
 		Path:     root,
 		Category: DefaultCategory(),
 	}
-	page.Template = "filetree"
 	return &page
 }
 
@@ -56,7 +55,7 @@ func (p *Page) GlobMime(mime ...string) *Page {
 	if len(mime) > 0 {
 		p.Mime = mime[0]
 		if p.Mime == "video" || p.Mime == "image" {
-			p.Template = "swiper"
+			//p.Template = "swiper"
 		}
 	}
 	p.Files = append(p.Files, GlobMime(p.Path, p.Mime)...)
@@ -69,11 +68,11 @@ func (p *Page) GlobExt(ext ...string) *Page {
 		p.Mime = mime.TypeByExtension(ext[0])
 		if strings.Contains(p.Mime, "video") {
 			p.Mime = "video"
-			p.Template = "swiper"
+			//p.Template = "swiper"
 		}
 		if strings.Contains(p.Mime, "image") {
 			p.Mime = "image"
-			p.Template = "swiper"
+			//p.Template = "swiper"
 		}
 	}
 	p.Ext = ext
@@ -161,23 +160,42 @@ func (p Page) Content() string {
 	//  }
 	//}
 
+	if p.Template != "" {
+		t := template.Must(template.New("content").ParseFiles(p.Template))
+		err = t.ExecuteTemplate(&buf, "content", p)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return buf.String()
+	}
+
+	if p.Template == "" {
+		switch p.glob {
+		case MimeType:
+			if p.Mime == "video" || p.Mime == "image" {
+				p.Template = "swiper"
+			}
+		case Extension:
+			if strings.Contains(p.Mime, "video") {
+				p.Template = "swiper"
+			}
+			if strings.Contains(p.Mime, "image") {
+				p.Template = "swiper"
+			}
+		default:
+			p.Template = "filetree"
+		}
+	}
+
 	switch p.Template {
 	case "filetree":
 		c := NewCollection(p.Path)
 		c.GlobMime("").GetChildren()
 		return c.Content()
 	case "swiper":
-		cat := GetCategory(p.Mime)
-		p.Html = cat.Html
 		err = Templates.ExecuteTemplate(&buf, "swiper", p)
-	default:
-		t := template.Must(template.New("content").ParseFiles(p.Template))
-		err = t.ExecuteTemplate(&buf, "content", p)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
 	return buf.String()
 }
 
