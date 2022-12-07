@@ -63,8 +63,6 @@ func (p *Page) GlobMime(mime ...string) *Page {
 			p.SetTemplate("swiper")
 		}
 	}
-	fmt.Printf("mime %s\n", p.Mime)
-	fmt.Printf("template %s\n", p.Template)
 	p.Files = append(p.Files, GlobMime(p.Path, p.Mime)...)
 	return p
 }

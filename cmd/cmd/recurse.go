@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"static"
 
 	"github.com/spf13/cobra"
 )
@@ -23,6 +24,29 @@ var recurseCmd = &cobra.Command{
 	},
 }
 
+func MakePage(dir string, cmd *cobra.Command) *static.Page {
+	cat := static.GetCategory(category)
+	p := static.NewPage(dir)
+
+	if cmd.Flags().Changed("category") {
+		p.SetCategory(category)
+	}
+
+	if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
+		p.GlobExt(extension...)
+	} else {
+		var m string
+		if cat.Mime != "" {
+			m = cat.Mime
+		}
+		if cmd.Flags().Changed("mimetype") {
+			m = mimetype
+		}
+		p.GlobMime(m)
+	}
+
+	return p
+}
 func init() {
 	rootCmd.AddCommand(recurseCmd)
 }
