@@ -106,14 +106,10 @@ if (initLightbox) {
 					const media = document.createElement("{{$el}}");
 					media.src = {{$el}}.src.split("/").pop();
 					{{if eq $el "video"}}
-						media.muted = true
-						media.autoplay = true
-						media.loop = true
-						media.controls = false
-						//media.muted = {{.Html.Video.Muted}};
-						//media.autoplay = {{.Html.Video.Autoplay}};
-						//media.loop = {{.Html.Video.Loop}};
-						//media.controls = {{.Html.Video.Controls}};
+						media.muted = {{.Html.Video.Muted}};
+						media.autoplay = {{.Html.Video.Autoplay}};
+						media.loop = {{.Html.Video.Loop}};
+						media.controls = {{.Html.Video.Controls}};
 					{{end}}
 					media.className = "swiper-zoom-target slide";
 					// Create divs

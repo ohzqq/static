@@ -15,7 +15,7 @@ type Index interface {
 type Html struct {
 	Scripts []string `toml:"scripts"`
 	Css     []string `toml:"css"`
-	Video   Video    `toml:"video"`
+	Video   `toml:"video"`
 	Index
 }
 
@@ -65,7 +65,7 @@ func (c *Html) AddCss(css ...string) {
 func (h Html) ReadScripts() []string {
 	var scripts []string
 	for _, script := range h.Scripts {
-		scrips = append(scrips, ReadAsset(script))
+		scripts = append(scripts, ReadAsset(script))
 	}
 	return scripts
 }
@@ -79,13 +79,17 @@ func (h Html) ReadCss() []string {
 }
 
 func ReadAsset(name string) string {
-	var data []byte
-	var err error
+	var (
+		data []byte
+		err  error
+	)
+
 	if filepath.IsAbs(name) {
 		data, err = os.ReadFile(name)
 	} else {
 		data, err = Static.ReadFile(name)
 	}
+
 	if err != nil {
 		log.Fatal(err)
 	}

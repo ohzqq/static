@@ -16,6 +16,10 @@ var pageCmd = &cobra.Command{
 		cat := static.GetCategory(category)
 		dir := args[0]
 		p := static.NewPage(dir)
+		if cmd.Flags().Changed("category") {
+			p.SetCategory(category)
+		}
+		p.Html = cat.Html
 		if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
 			p.GlobExt(extension...)
 		} else if cat.Mime != "" || cmd.Flags().Changed("mimetype") {

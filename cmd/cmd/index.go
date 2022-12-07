@@ -17,7 +17,8 @@ var indexCmd = &cobra.Command{
 		dir := args[0]
 		p := static.NewCollection(dir)
 		p.GlobMime("").GetChildren()
-		err := static.Write(p.Path, static.DefaultHtml().RenderPage(p))
+		html := static.DefaultHtml()
+		err := static.Write(p.Path, html.RenderPage(p))
 		if err != nil {
 			log.Fatal(err)
 		}

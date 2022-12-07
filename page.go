@@ -27,23 +27,28 @@ type Meta struct {
 type Page struct {
 	Meta     Meta
 	glob     GlobType
-	Mime     string
-	Ext      []string
+	category string
+	Category
 	Url      string
-	Template string
 	Path     string `toml:"path"`
 	Files    []string
 	Children []*Page
-	Html     Html
 	Recurse  bool
 }
 
 func NewPage(root string) *Page {
 	page := Page{
 		Path:     root,
-		Template: "filetree",
+		Category: DefaultCategory(),
 	}
+	page.Template = "filetree"
 	return &page
+}
+
+func (p *Page) SetCategory(c string) *Page {
+	p.category = c
+	p.Category = GetCategory(c)
+	return p
 }
 
 func (p *Page) GlobMime(mime ...string) *Page {
@@ -130,6 +135,31 @@ func (p Page) Content() string {
 		buf bytes.Buffer
 		err error
 	)
+
+	//if p.Template != "" {
+	//  t := template.Must(template.New("content").ParseFiles(p.Template))
+	//  err = t.ExecuteTemplate(&buf, "content", p)
+	//  if err != nil {
+	//    log.Fatal(err)
+	//  }
+	//} else {
+	//  switch p.glob {
+	//  case MimeType:
+	//    if p.Mime == "video" || p.Mime == "image" {
+	//      p.Template = "swiper"
+	//    }
+	//  case Extension:
+	//    p.Mime = mime.TypeByExtension(ext[0])
+	//    if strings.Contains(p.Mime, "video") {
+	//      p.Mime = "video"
+	//      p.Template = "swiper"
+	//    }
+	//    if strings.Contains(p.Mime, "image") {
+	//      p.Mime = "image"
+	//      p.Template = "swiper"
+	//    }
+	//  }
+	//}
 
 	switch p.Template {
 	case "filetree":
