@@ -33,7 +33,6 @@ type Page struct {
 	Path     string `toml:"path"`
 	Files    []string
 	Children []*Page
-	Recurse  bool
 }
 
 func NewPage(root string) *Page {
@@ -120,7 +119,6 @@ func (p *Page) Render() []byte {
 	if p.Template == "swiper" && p.category == "" {
 		p.Category.Html = GetCategory("swiper").Html
 	}
-	println(p.Mime)
 
 	var buf bytes.Buffer
 	err := Templates.ExecuteTemplate(&buf, "base", p)

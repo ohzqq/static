@@ -15,7 +15,7 @@ func DefaultCategory() Category {
 
 func (c Category) RecursiveWrite(pages ...*Page) error {
 	for _, p := range pages {
-		err := Write(p.Path, c.RenderPage(p))
+		err := Write(p.Path, p.Render())
 		if err != nil {
 			return err
 		}
