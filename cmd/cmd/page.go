@@ -15,11 +15,13 @@ var pageCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cat := static.GetCategory(category)
 		dir := args[0]
+
 		p := static.NewPage(dir)
+
 		if cmd.Flags().Changed("category") {
 			p.SetCategory(category)
 		}
-		//p.Html = cat.Html
+
 		if len(cat.Ext) > 0 || cmd.Flags().Changed("ext") {
 			p.GlobExt(extension...)
 		} else {
@@ -32,6 +34,7 @@ var pageCmd = &cobra.Command{
 			}
 			p.GlobMime(m)
 		}
+
 		err := static.Write(p.Path, p.Render())
 		if err != nil {
 			log.Fatal(err)
