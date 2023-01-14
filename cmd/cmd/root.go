@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"static"
@@ -138,8 +137,8 @@ func initConfig() {
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {
-		fmt.Printf("%+V\n", viper.AllSettings())
-		fmt.Printf("%+V\n", viper.Get("gifv.html"))
+		//fmt.Printf("%+V\n", viper.AllSettings())
+		//fmt.Printf("%+V\n", viper.Get("gifv.html"))
 		//cfile := viper.ConfigFileUsed()
 		//err := viper.Unmarshal(&cfg)
 		//if err != nil {

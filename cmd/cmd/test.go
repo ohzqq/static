@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"static"
 
 	"github.com/ohzqq/fidi"
 	"github.com/spf13/cobra"
@@ -14,8 +15,14 @@ var testCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
-		dir := fidi.NewTree(d)
-		fmt.Printf("%s\n", dir)
+		tree := fidi.NewTree(d)
+		fmt.Printf("%s\n", tree.Path())
+
+		for _, node := range tree.Nodes {
+			page := static.NewPage(node)
+			fmt.Printf("%s\n", page.FilterByExt(".html", ".avif"))
+			fmt.Printf("%s\n", page.FilterByMime("image"))
+		}
 	},
 }
 
