@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 	"static"
@@ -55,6 +55,68 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	viper.SetDefault(
+		"global.css",
+		[]string{
+			"css/normalize.css",
+			"css/milligram.css",
+			"css/base.css",
+			"css/filetree.css",
+		},
+	)
+
+	viper.SetDefault(
+		"global.scripts",
+		[]string{
+			"js/filetree.js",
+			"js/w3.js",
+		},
+	)
+
+	viper.SetDefault(
+		"global.html.video",
+		map[string]bool{
+			"muted":    true,
+			"autoplay": false,
+			"controls": true,
+			"loop":     false,
+		},
+	)
+
+	viper.SetDefault(
+		"swiper.css",
+		[]string{
+			"swiper/swiper-bundle.min.css",
+			"swiper/swiper.css",
+			"swiper/gallery.css",
+		},
+	)
+
+	viper.SetDefault(
+		"swiper.scripts",
+		[]string{
+			"swiper/swiper-bundle.min.js",
+		},
+	)
+
+	viper.SetDefault(
+		"color",
+		map[string]string{
+			"bg":     "#262626",
+			"fg":     "#ffbf00",
+			"white":  "#ffffff",
+			"black":  "#262626",
+			"grey":   "#626262",
+			"yellow": "#ffff87",
+			"red":    "#ff5f5f",
+			"pink":   "#ffafff",
+			"cyan":   "#afffff",
+			"blue":   "#5fafff",
+			"green":  "#afffaf",
+			"purple": "#af87ff",
+		},
+	)
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -72,18 +134,20 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	static.ParseDefault()
+	//static.ParseDefault()
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {
-		cfile := viper.ConfigFileUsed()
-		err := viper.Unmarshal(&cfg)
-		if err != nil {
-			log.Fatal(err)
-		}
-		cfg, err = static.ParseConfig(cfile)
-		if err != nil {
-			log.Fatal(err)
-		}
+		fmt.Printf("%+V\n", viper.AllSettings())
+		fmt.Printf("%+V\n", viper.Get("gifv.html"))
+		//cfile := viper.ConfigFileUsed()
+		//err := viper.Unmarshal(&cfg)
+		//if err != nil {
+		//log.Fatal(err)
+		//}
+		//cfg, err = static.ParseConfig(cfile)
+		//if err != nil {
+		//  log.Fatal(err)
+		//}
 	}
 }
