@@ -1,5 +1,8 @@
 {{define "podlove"}}
+	<div class="podlove" id="podlove"></div>
 <script>
-  podlovePlayer('#example', '/path/to/episode/definition/or/object', '/path/to/configuration/or/object');
+  podlovePlayer('#podlove', 
+			'{{template "podloveEpisode" .}}', 
+			'{{template "podloveConfig" .Color}}');
 </script>
 {{end}}

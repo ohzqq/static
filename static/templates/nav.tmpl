@@ -1,10 +1,10 @@
-{{define "filetree"}}
+{{define "nav"}}
 {{$parent := .}}
 {{- if .HasChildren}}
 	<dt class="leaf">
 	<!--<span class="caret"></span>-->
 	<a href="{{.Url}}" class="button-clear">
-		{{$name := Dir .Url}}
+		{{$name := .Info.Base}}
 		{{if eq $name "."}}
 			home
 		{{else}}
@@ -13,20 +13,22 @@
 	</a>
 	<dl class="nested">
 	{{- range .Children}}
-		{{template "filetree" . -}}
+		{{template "nav" . -}}
 	{{- end}}
 	</dl>
 	</dt>
 {{- else}}
 	<dd class="leaf">
-		<a href="{{.Url}}" class="button-clear">{{Dir .Url}}</a>
+		<a href="{{.Url}}" class="button-clear">
+			{{.Info.Base}}
+		</a>
 	</dd>
 	{{range .Files}}
-		{{if ne . "index.html"}}
 	<dd class="leaf">
-		<a href="{{Dir $parent.Url}}/{{.}}" class="button-clear">{{.}}</a>
+		<a href="{{Dir $parent.Url}}/{{.}}" class="button-clear">
+			{{.Base}}
+		</a>
 	</dd>
-	{{end}}
 	{{end}}
 {{end -}}
 {{end -}}

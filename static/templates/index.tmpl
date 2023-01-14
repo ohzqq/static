@@ -1,0 +1,16 @@
+{{define "index"}}
+<div class="row">
+	<div class="column">
+		<input oninput="w3.filterHTML('#tree', 'a', this.value)"
+				 placeholder="Filter files...">
+	</div>
+	<div class="column">
+		<button onclick="w3.toggleShow('.nested')">Open/Close Tree</button>
+	</div>
+</div>
+<div class="row">
+<dl id="tree">
+	{{template "filetree" .}}
+</dl>
+</div>
+{{end}}

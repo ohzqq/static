@@ -9,9 +9,9 @@
 {{end}}
 
 {{range Batch .Files -}}
-<div class="w3-row">
+<div class="row">
 	{{- range .}}
-	<div class="thumbnail w3-quarter" lightbox-toggle>
+	<div class="thumbnail column" lightbox-toggle>
 	{{- if eq $mime "image"}}
 		<img src="{{.}}">
 	{{- else if eq $mime "video"}}
@@ -20,6 +20,9 @@
 	</div>
 	{{- end}}
 </div>
+{{end}}
+{{if .HasChildren}}
+	{{.Filetree}}
 {{end}}
 <!--
 	license for Swiper Lightbox:
@@ -111,17 +114,20 @@ if (initLightbox) {
 						media.loop = {{.Html.Video.Loop}};
 						media.controls = {{.Html.Video.Controls}};
 					{{end}}
-					media.className = "swiper-zoom-target slide";
+					media.className = "swiper-zoom-target slide swiper-lazy";
 					// Create divs
 					const slide = document.createElement("div");
 					const imageContainer = document.createElement("div");
 					const zoomContainer = document.createElement("div");
+					const lazyContainer = document.createElement("div");
 					// Add classes
 					slide.classList.add("swiper-slide");
 					imageContainer.classList.add("c-lightbox__image");
 					zoomContainer.classList.add("swiper-zoom-container");
+					lazyContainer.classList.add("swiper-lazy-preloader");
 					// Append images to the slides, then slides to swiper wrapper
 					zoomContainer.appendChild(media);
+					zoomContainer.appendChild(lazyContainer);
 					imageContainer.appendChild(zoomContainer);
 					slide.appendChild(imageContainer);
 					globals.swiperWrapperRef.appendChild(slide);
@@ -132,6 +138,8 @@ if (initLightbox) {
         initialSlide: index,
         loop: true,
         slidesPerView: 1,
+				preloadImages: false,
+				lazy: true,
         speed: 750,
         spaceBetween: 16,
         watchOverflow: true,
