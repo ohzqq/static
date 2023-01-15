@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"static"
 
-	"github.com/ohzqq/fidi"
 	"github.com/spf13/cobra"
 )
 
@@ -15,13 +14,24 @@ var testCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
-		tree := fidi.NewTree(d)
-		fmt.Printf("%s\n", tree.Path())
+		col := static.NewCollection(d)
+		fmt.Printf("%s\n", col.Path())
+		node, _ := col.GetNode(2)
+		fmt.Printf("cur %d\n", node.Rel())
 
-		for _, node := range tree.Nodes {
-			page := static.NewPage(node)
-			fmt.Printf("%s\n", page.FilterByExt(".html", ".avif"))
-			fmt.Printf("%s\n", page.FilterByMime("image"))
+		nodes := static.GetChildrenByDepth(col.Tree, 2)
+		fmt.Printf("nodes %+V\n", len(nodes))
+
+		for _, page := range nodes {
+			//page := static.NewPage(node)
+			fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())
+			//for _, child := range page.Children {
+			//fmt.Printf("%+V\n", child.Rel())
+			//}
+		}
+
+		for _, page := range static.GetParentsByDepth(col.Tree, 2) {
+			fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())
 		}
 	},
 }

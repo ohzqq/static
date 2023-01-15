@@ -4,6 +4,8 @@ import "github.com/ohzqq/fidi"
 
 type Page struct {
 	fidi.Dir
+	Children []fidi.File
+	Nav      []fidi.Dir
 }
 
 func NewPage(dir fidi.Dir) Page {
@@ -12,14 +14,12 @@ func NewPage(dir fidi.Dir) Page {
 	}
 }
 
-func (p Page) Children() []fidi.File {
-	return p.Files
+func (p *Page) FilterByExt(ext ...string) *Page {
+	p.Children = p.Filter(fidi.ExtFilter(ext...))
+	return p
 }
 
-func (p Page) FilterByExt(ext ...string) []fidi.File {
-	return p.Filter(fidi.ExtFilter(ext...))
-}
-
-func (p Page) FilterByMime(mime ...string) []fidi.File {
-	return p.Filter(fidi.MimeFilter(mime...))
+func (p *Page) FilterByMime(mime ...string) *Page {
+	p.Children = p.Filter(fidi.MimeFilter(mime...))
+	return p
 }
