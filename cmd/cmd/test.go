@@ -18,7 +18,7 @@ var testCmd = &cobra.Command{
 		fmt.Printf("%s\n", col.Index.Rel())
 		//node := col.Nodes[2]
 		//node, _ := col.GetNode(2)
-		pro := static.GetProfile("global")
+		pro := static.GetProfile("gifv")
 		fmt.Printf("cfg %v\n", pro)
 
 		for _, page := range col.Pages() {

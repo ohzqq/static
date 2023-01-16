@@ -2,7 +2,6 @@ package static
 
 import (
 	"embed"
-	"fmt"
 	"log"
 
 	"github.com/spf13/viper"
@@ -15,7 +14,7 @@ var (
 )
 
 var (
-	//go:embed static/*
+	//go:embed static
 	Public embed.FS
 )
 
@@ -65,7 +64,6 @@ func Profiles() []string {
 var defaultProfile Profile
 
 func GetProfile(pro string) Profile {
-	fmt.Printf("default %+V\n", defaultProfile)
 	p := viper.Sub(pro)
 
 	var profile Profile
@@ -73,11 +71,22 @@ func GetProfile(pro string) Profile {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return profile
+
+	merged := MergeProfiles(defaultProfile, profile)
+
+	return merged
 }
 
 func MergeProfiles(pro1, pro2 Profile) Profile {
-	var pro Profile
+	pro := Profile{
+		Css:     pro1.Css,
+		Scripts: pro1.Scripts,
+		Html:    pro1.Html,
+	}
+	pro.Css = append(pro.Css, pro2.Css...)
+	pro.Scripts = append(pro.Scripts, pro2.Scripts...)
+	maps.Copy(pro.Html, pro2.Html)
+	return pro
 }
 
 func SetDefaultProfile() {

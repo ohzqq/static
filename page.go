@@ -4,6 +4,7 @@ import "github.com/ohzqq/fidi"
 
 type Page struct {
 	fidi.Tree
+	Profile
 	Index    fidi.File
 	HasIndex bool
 	Assets   []fidi.File
@@ -25,6 +26,11 @@ func NewPage(dir fidi.Tree) Page {
 	}
 
 	return page
+}
+
+func (p *Page) SetProfile(pro string) *Page {
+	p.Profile = GetProfile(pro)
+	return p
 }
 
 func (p *Page) CreateIndex() *Page {

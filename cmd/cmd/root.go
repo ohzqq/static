@@ -57,18 +57,18 @@ func initConfig() {
 	viper.SetDefault(
 		"global.css",
 		[]string{
-			"css/normalize.css",
-			"css/milligram.css",
-			"css/base.css",
-			"css/filetree.css",
+			"static/css/normalize.css",
+			"static/css/milligram.css",
+			"static/css/base.css",
+			"static/css/filetree.css",
 		},
 	)
 
 	viper.SetDefault(
 		"global.scripts",
 		[]string{
-			"js/filetree.js",
-			"js/w3.js",
+			"static/js/filetree.js",
+			"static/js/w3.js",
 		},
 	)
 
@@ -85,16 +85,16 @@ func initConfig() {
 	viper.SetDefault(
 		"swiper.css",
 		[]string{
-			"swiper/swiper-bundle.min.css",
-			"swiper/swiper.css",
-			"swiper/gallery.css",
+			"static/swiper/swiper-bundle.min.css",
+			"static/swiper/swiper.css",
+			"static/swiper/gallery.css",
 		},
 	)
 
 	viper.SetDefault(
 		"swiper.scripts",
 		[]string{
-			"swiper/swiper-bundle.min.js",
+			"static/swiper/swiper-bundle.min.js",
 		},
 	)
 
