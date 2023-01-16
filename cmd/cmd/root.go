@@ -133,7 +133,7 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	//static.ParseDefault()
+	static.SetDefaultProfile()
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {

@@ -15,18 +15,16 @@ func NewPage(dir fidi.Tree) Page {
 	page := Page{
 		Tree: dir,
 	}
-	return page
-}
 
-func (p *Page) GetIndex() *Page {
-	files := p.Filter(fidi.ExtFilter(".html"))
+	files := page.Filter(fidi.ExtFilter(".html"))
 	for _, file := range files {
 		if file.Base == "index.html" {
-			p.HasIndex = true
-			p.Index = file
+			page.HasIndex = true
+			page.Index = file
 		}
 	}
-	return p
+
+	return page
 }
 
 func (p *Page) CreateIndex() *Page {

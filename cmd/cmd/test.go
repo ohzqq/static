@@ -18,7 +18,8 @@ var testCmd = &cobra.Command{
 		fmt.Printf("%s\n", col.Index.Rel())
 		//node := col.Nodes[2]
 		//node, _ := col.GetNode(2)
-		//fmt.Printf("cur %d\n", node.Rel())
+		pro := static.GetProfile("global")
+		fmt.Printf("cfg %v\n", pro)
 
 		for _, page := range col.Pages() {
 			page.FilterByMime("image")
@@ -26,7 +27,7 @@ var testCmd = &cobra.Command{
 			if page.HasIndex {
 				fmt.Printf("index %s\n", page.Index.Rel())
 			}
-			fmt.Printf("assets %+V\n", page.Assets)
+			//fmt.Printf("assets %+V\n", page.Assets)
 			//page := static.NewPage(node)
 			for _, child := range page.Parents() {
 				fmt.Printf("parent %+V\n", child.Info().Rel())
