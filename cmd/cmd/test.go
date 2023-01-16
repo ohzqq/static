@@ -15,24 +15,27 @@ var testCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
 		col := static.NewCollection(d)
-		fmt.Printf("%s\n", col.Path())
-		node, _ := col.GetNode(2)
-		fmt.Printf("cur %d\n", node.Rel())
+		fmt.Printf("%s\n", col.Index.Rel())
+		//node := col.Nodes[2]
+		//node, _ := col.GetNode(2)
+		//fmt.Printf("cur %d\n", node.Rel())
 
-		nodes := static.GetChildrenByDepth(col.Tree, 2)
-		fmt.Printf("nodes %+V\n", len(nodes))
-
-		for _, page := range nodes {
+		for _, page := range col.Pages() {
+			page.FilterByMime("image")
+			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
+			if page.HasIndex {
+				fmt.Printf("index %s\n", page.Index.Rel())
+			}
+			fmt.Printf("assets %+V\n", page.Assets)
 			//page := static.NewPage(node)
-			fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())
-			//for _, child := range page.Children {
-			//fmt.Printf("%+V\n", child.Rel())
-			//}
+			for _, child := range page.Parents() {
+				fmt.Printf("parent %+V\n", child.Info().Rel())
+			}
 		}
 
-		for _, page := range static.GetParentsByDepth(col.Tree, 2) {
-			fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())
-		}
+		//for _, page := range static.GetParentsByDepth(col.Tree, 2) {
+		//  fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())
+		//}
 	},
 }
 
