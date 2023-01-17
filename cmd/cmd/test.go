@@ -21,18 +21,18 @@ var testCmd = &cobra.Command{
 		pro := static.GetProfile("gifv")
 		fmt.Printf("cfg %v\n", pro)
 
-		for _, page := range col.Pages() {
-			page.FilterByMime("image")
-			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
-			if page.HasIndex {
-				fmt.Printf("index %s\n", page.Index.Rel())
-			}
-			//fmt.Printf("assets %+V\n", page.Assets)
-			//page := static.NewPage(node)
-			for _, child := range page.Parents() {
-				fmt.Printf("parent %+V\n", child.Info().Rel())
-			}
-		}
+		//for _, page := range col.Pages() {
+		//  page.FilterByMime("image")
+		//  fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
+		//  if page.HasIndex {
+		//    fmt.Printf("index %s\n", page.Index.Rel())
+		//  }
+		//  //fmt.Printf("assets %+V\n", page.Assets)
+		//  //page := static.NewPage(node)
+		//  for _, child := range page.Parents() {
+		//    fmt.Printf("parent %+V\n", child.Info().Rel())
+		//  }
+		//}
 
 		//for _, page := range static.GetParentsByDepth(col.Tree, 2) {
 		//  fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())

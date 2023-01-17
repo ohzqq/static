@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"static"
@@ -121,19 +122,30 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+		//home, err := os.UserHomeDir()
+		//cobra.CheckErr(err)
 
 		// Search config in home directory with name ".static" (without extension).
-		path := filepath.Join(home, ".config", "static")
+		cfgDir, err := os.UserConfigDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		path := filepath.Join(cfgDir, "static")
 		viper.AddConfigPath(path)
 		viper.SetConfigType("toml")
 		viper.SetConfigName("config")
+
+		static.UserCfg = os.DirFS(path)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	static.SetDefaultProfile()
+
+	//files, _ := fs.Glob(static.Public, "static/*")
+	//fmt.Printf("files %+V\n", files)
+	//usr, _ := fs.Glob(static.UserCfg, "swiper/*")
+	//fmt.Printf("files %+V\n", usr)
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {
