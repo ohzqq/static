@@ -13,7 +13,6 @@ func NewCollection(path string) Collection {
 	col := Collection{
 		Page: NewPage(tree),
 	}
-
 	return col
 }
 

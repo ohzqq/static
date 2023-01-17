@@ -4,7 +4,6 @@ import (
 	"embed"
 	"io/fs"
 	"log"
-	"strings"
 
 	"github.com/spf13/viper"
 	"golang.org/x/exp/maps"
@@ -12,8 +11,9 @@ import (
 
 var (
 	//go:embed static
-	Public  embed.FS
-	UserCfg fs.FS
+	Public         embed.FS
+	UserCfg        fs.FS
+	defaultProfile Profile
 )
 
 type Color struct {
@@ -59,8 +59,6 @@ func Profiles() []string {
 	return profiles
 }
 
-var defaultProfile Profile
-
 func GetProfile(pro string) Profile {
 	p := viper.Sub(pro)
 
@@ -73,42 +71,6 @@ func GetProfile(pro string) Profile {
 	merged := MergeProfiles(defaultProfile, profile)
 
 	return merged
-}
-
-func (p Profile) ReadCss() []string {
-	var assets []string
-	for _, css := range p.Css {
-		var f fs.FS
-		if strings.HasPrefix(css, "static") {
-			f = Public
-		} else {
-			f = UserCfg
-		}
-		d, err := fs.ReadFile(f, css)
-		if err != nil {
-			log.Fatal(err)
-		}
-		assets = append(assets, string(d))
-	}
-	return assets
-}
-
-func (p Profile) ReadScripts() []string {
-	var assets []string
-	for _, script := range p.Scripts {
-		var f fs.FS
-		if strings.HasPrefix(script, "static") {
-			f = Public
-		} else {
-			f = UserCfg
-		}
-		d, err := fs.ReadFile(f, script)
-		if err != nil {
-			log.Fatal(err)
-		}
-		assets = append(assets, string(d))
-	}
-	return assets
 }
 
 func MergeProfiles(pro1, pro2 Profile) Profile {
