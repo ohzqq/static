@@ -19,36 +19,42 @@ type Page struct {
 	Html     Html
 	HasIndex bool
 	Index    fidi.File
-	pages    []fidi.File
-	Url      map[string]any
 	Nav      []map[string]any
 	Items    []fidi.File
+	pages    []fidi.File
+	Url      string
 	root     string
 }
 
-func NewPage(dir fidi.Tree) *Page {
+func newPage(file fidi.File) *Page {
 	page := Page{
-		Tree:    dir,
+		Index:   file,
 		Css:     GetCss("global"),
 		Scripts: GetScripts("global"),
 		Html:    GetHtml("global"),
 		Color:   viper.GetStringMapString("color"),
-		Title:   dir.Info().Base,
-		Url:     make(map[string]any),
+		Title:   file.Base,
+		Url:     file.Rel(),
 	}
+	return &page
+}
 
-	files := page.Filter(fidi.ExtFilter(".html"))
+func NewPage(dir fidi.Tree) *Page {
+	//page := newPage()
+	var page *Page
+
+	//files := page.Filter(fidi.ExtFilter(".html"))
+	files := GetIndexFiles(dir)
 	for _, file := range files {
-		if file.Base == "index.html" {
-			page.HasIndex = true
-			page.Index = file
-			page.Url["href"] = "./" + file.Rel()
-			page.Url["text"] = page.Title
+		if i := file.Rel(); i == "index.html" {
+			page = newPage(file)
+			page.Tree = dir
+		} else {
 			page.pages = append(page.pages, file)
 		}
 	}
 
-	return &page
+	return page
 }
 
 func (p *Page) Profile(pro string) *Page {
@@ -69,6 +75,45 @@ func (p *Page) CreateIndex() *Page {
 		//Create filetree page
 	}
 	return p
+}
+
+func (p Page) url() map[string]any {
+	url := make(map[string]any)
+	url["depth"] = p.Info().Depth
+	url["href"] = p.RelUrl()
+	url["text"] = p.Title
+	return url
+}
+
+func (p *Page) Pages() []*Page {
+	var pages []*Page
+
+	curl := map[string]any{
+		"href":  "./index.html",
+		"text":  p.Title,
+		"depth": 0,
+	}
+	p.Nav = append(p.Nav, curl)
+
+	for _, dir := range p.Children() {
+		page := NewPage(dir)
+		if page.HasIndex {
+			p.Nav = append(p.Nav, page.url())
+			pages = append(pages, page)
+		}
+	}
+
+	return pages
+}
+
+func (p Page) AbsUrl() string {
+	url := "/"
+	url += filepath.Join(p.Info().Rel(), "index.html")
+	return url
+}
+
+func (p Page) RelUrl() string {
+	return "." + p.AbsUrl()
 }
 
 func (p Page) Breadcrumbs() []map[string]string {

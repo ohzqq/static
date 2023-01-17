@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"static"
 
+	"github.com/ohzqq/fidi"
 	"github.com/spf13/cobra"
 )
 
@@ -14,21 +15,24 @@ var testCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
+		dir, _ := fidi.NewDir(d, d)
+		p := static.NewPage(dir)
+		fmt.Printf("link %+V\n", p.Info().Rel())
+
 		col := static.NewCollection(d)
 		fmt.Printf("%s\n", col.Index.Rel())
-		fmt.Printf("nav %+V\n", col.Nav)
 		//node := col.Nodes[2]
 		//node, _ := col.GetNode(2)
 		//pro := static.GetProfile("gifv")
 		//fmt.Printf("cfg %v\n", pro)
 
-		for _, page := range col.Pages {
+		for _, page := range col.Pages() {
 			page.Profile("gifv")
 			page.FilterByExt(".jpg", ".png", ".avif")
 			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
 			fmt.Printf("title %s\n", page.Title)
 			if page.HasIndex {
-				fmt.Printf("url %+V\n", page.Url)
+				fmt.Printf("url %+V\n", page.RelUrl())
 			}
 			fmt.Printf("nav %+V\n", page.Nav)
 			//page := static.NewPage(node)
