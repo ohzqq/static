@@ -1,26 +1,40 @@
 package static
 
 import (
-	"io/fs"
-	"log"
+	"path/filepath"
 	"strings"
 
 	"github.com/ohzqq/fidi"
+	"github.com/spf13/viper"
+	"golang.org/x/exp/maps"
 )
 
 type Page struct {
 	fidi.Tree
-	Profile
+	//Profile
+	Title    string
+	Css      []string
+	Scripts  []string
+	Color    map[string]string
+	Html     Html
 	HasIndex bool
 	Index    fidi.File
-	Url      string
-	Assets   []fidi.File
-	Nav      []fidi.Dir
+	pages    []fidi.File
+	Url      map[string]any
+	Nav      []map[string]any
+	Items    []fidi.File
+	root     string
 }
 
-func NewPage(dir fidi.Tree) Page {
+func NewPage(dir fidi.Tree) *Page {
 	page := Page{
-		Tree: dir,
+		Tree:    dir,
+		Css:     GetCss("global"),
+		Scripts: GetScripts("global"),
+		Html:    GetHtml("global"),
+		Color:   viper.GetStringMapString("color"),
+		Title:   dir.Info().Base,
+		Url:     make(map[string]any),
 	}
 
 	files := page.Filter(fidi.ExtFilter(".html"))
@@ -28,15 +42,25 @@ func NewPage(dir fidi.Tree) Page {
 		if file.Base == "index.html" {
 			page.HasIndex = true
 			page.Index = file
-			page.Url = "./" + file.Rel()
+			page.Url["href"] = "./" + file.Rel()
+			page.Url["text"] = page.Title
+			page.pages = append(page.pages, file)
 		}
 	}
 
-	return page
+	return &page
 }
 
-func (p *Page) SetProfile(pro string) *Page {
-	p.Profile = GetProfile(pro)
+func (p *Page) Profile(pro string) *Page {
+	css := GetCss(pro)
+	p.Css = append(p.Css, css...)
+
+	scripts := GetScripts(pro)
+	p.Scripts = append(p.Scripts, scripts...)
+
+	html := GetHtml(pro)
+	maps.Copy(p.Html, html)
+
 	return p
 }
 
@@ -47,48 +71,44 @@ func (p *Page) CreateIndex() *Page {
 	return p
 }
 
+func (p Page) Breadcrumbs() []map[string]string {
+	var crumbs []map[string]string
+
+	totalP := len(p.Parents())
+	for _, parent := range p.Parents() {
+		totalP--
+
+		path := ".." + strings.Repeat("/..", totalP)
+		path = filepath.Join(path, "index.html")
+
+		name := parent.Info().Base
+		if parent.Info().Rel() == "." {
+			name = "Home"
+		}
+
+		link := map[string]string{
+			"href": path,
+			"text": name,
+		}
+		crumbs = append(crumbs, link)
+	}
+	return crumbs
+}
+
 func (p *Page) FilterByExt(ext ...string) *Page {
-	p.Assets = p.Filter(fidi.ExtFilter(ext...))
+	p.Items = p.Filter(fidi.ExtFilter(ext...))
 	return p
 }
 
 func (p *Page) FilterByMime(mime ...string) *Page {
-	p.Assets = p.Filter(fidi.MimeFilter(mime...))
+	p.Items = p.Filter(fidi.MimeFilter(mime...))
 	return p
 }
 
 func (p Page) ReadCss() []string {
-	var assets []string
-	for _, css := range p.Css {
-		var f fs.FS
-		if strings.HasPrefix(css, "static") {
-			f = Public
-		} else {
-			f = UserCfg
-		}
-		d, err := fs.ReadFile(f, css)
-		if err != nil {
-			log.Fatal(err)
-		}
-		assets = append(assets, string(d))
-	}
-	return assets
+	return p.Css
 }
 
 func (p Page) ReadScripts() []string {
-	var assets []string
-	for _, script := range p.Scripts {
-		var f fs.FS
-		if strings.HasPrefix(script, "static") {
-			f = Public
-		} else {
-			f = UserCfg
-		}
-		d, err := fs.ReadFile(f, script)
-		if err != nil {
-			log.Fatal(err)
-		}
-		assets = append(assets, string(d))
-	}
-	return assets
+	return p.Scripts
 }

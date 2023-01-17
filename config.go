@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"log"
+	"strings"
 
 	"github.com/spf13/viper"
 	"golang.org/x/exp/maps"
@@ -45,6 +46,8 @@ type Profile struct {
 	Html    map[string]map[string]any
 }
 
+type Html map[string]map[string]any
+
 func Profiles() []string {
 	cfg := viper.AllSettings()
 	keys := maps.Keys(cfg)
@@ -71,6 +74,43 @@ func GetProfile(pro string) Profile {
 	merged := MergeProfiles(defaultProfile, profile)
 
 	return merged
+}
+
+func GetCss(pro string) []string {
+	files := viper.GetStringSlice(pro + ".css")
+	return ReadScriptsAndStyles(files)
+}
+
+func GetScripts(pro string) []string {
+	files := viper.GetStringSlice(pro + ".scripts")
+	return ReadScriptsAndStyles(files)
+}
+
+func GetHtml(pro string) Html {
+	var html Html
+	err := viper.UnmarshalKey(pro+".html", &html)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return html
+}
+
+func ReadScriptsAndStyles(files []string) []string {
+	var assets []string
+	for _, asset := range files {
+		var f fs.FS
+		if strings.HasPrefix(asset, "static") {
+			f = Public
+		} else {
+			f = UserCfg
+		}
+		d, err := fs.ReadFile(f, asset)
+		if err != nil {
+			log.Fatal(err)
+		}
+		assets = append(assets, string(d))
+	}
+	return assets
 }
 
 func MergeProfiles(pro1, pro2 Profile) Profile {

@@ -16,22 +16,25 @@ var testCmd = &cobra.Command{
 		d := args[0]
 		col := static.NewCollection(d)
 		fmt.Printf("%s\n", col.Index.Rel())
+		fmt.Printf("nav %+V\n", col.Nav)
 		//node := col.Nodes[2]
 		//node, _ := col.GetNode(2)
-		pro := static.GetProfile("gifv")
-		fmt.Printf("cfg %v\n", pro)
+		//pro := static.GetProfile("gifv")
+		//fmt.Printf("cfg %v\n", pro)
 
-		for _, page := range col.Pages() {
-			page.FilterByMime("image")
+		for _, page := range col.Pages {
+			page.Profile("gifv")
+			page.FilterByExt(".jpg", ".png", ".avif")
 			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
+			fmt.Printf("title %s\n", page.Title)
 			if page.HasIndex {
-				fmt.Printf("url %s\n", page.Url)
+				fmt.Printf("url %+V\n", page.Url)
 			}
-			//fmt.Printf("assets %+V\n", page.Assets)
+			fmt.Printf("nav %+V\n", page.Nav)
 			//page := static.NewPage(node)
-			for _, child := range page.Parents() {
-				fmt.Printf("parent %+V\n", child.Info().Rel())
-			}
+			//for _, child := range page.Parents() {
+			//fmt.Printf("parent %+V\n", child.Info().Rel())
+			//}
 		}
 
 		//for _, page := range static.GetParentsByDepth(col.Tree, 2) {

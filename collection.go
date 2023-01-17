@@ -5,7 +5,8 @@ import (
 )
 
 type Collection struct {
-	Page
+	*Page
+	Pages []*Page
 }
 
 func NewCollection(path string) Collection {
@@ -13,16 +14,27 @@ func NewCollection(path string) Collection {
 	col := Collection{
 		Page: NewPage(tree),
 	}
-	return col
-}
+	col.Title = "Home"
 
-func (c Collection) Pages() []Page {
-	var pages []Page
-	for _, dir := range c.Children() {
+	col.Url = map[string]any{
+		"href":  "./index.html",
+		"text":  "Home",
+		"depth": 1,
+	}
+	col.Nav = append(col.Nav, col.Url)
+
+	for _, dir := range col.Children() {
 		page := NewPage(dir)
 		if page.HasIndex {
-			pages = append(pages, page)
+			page.Url["depth"] = page.Info().Depth
+			col.Nav = append(col.Nav, page.Url)
+			col.Pages = append(col.Pages, page)
 		}
 	}
-	return pages
+
+	for _, page := range col.Pages {
+		page.Nav = col.Nav
+	}
+
+	return col
 }
