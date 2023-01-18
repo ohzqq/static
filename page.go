@@ -20,6 +20,7 @@ type Page struct {
 	HasIndex bool
 	Index    fidi.File
 	Items    []fidi.File
+	Assets   []Asset
 	Children []*Page
 	root     string
 	profile  string
@@ -50,23 +51,6 @@ func NewPage(dir fidi.Tree) *Page {
 	return &page
 }
 
-func (page *Page) Nav() []map[string]any {
-	var nav []map[string]any
-	for _, p := range page.Children {
-		rel, err := filepath.Rel(page.Info().Rel(), p.Info().Rel())
-		if err != nil {
-			log.Fatal(err)
-		}
-		url := map[string]any{
-			"href":  filepath.Join(rel, "index.html"),
-			"text":  p.Title,
-			"depth": p.Info().Depth,
-		}
-		nav = append(nav, url)
-	}
-	return nav
-}
-
 func (page *Page) GetChildren() {
 	for _, dir := range page.Tree.Children() {
 		p := NewPage(dir)
@@ -77,6 +61,15 @@ func (page *Page) GetChildren() {
 			page.Children = append(page.Children, p)
 		}
 	}
+}
+
+func (p *Page) NewAsset(file fidi.File) *Page {
+	asset := Asset{
+		File: file,
+		Html: p.Html,
+	}
+	p.Assets = append(p.Assets, asset)
+	return p
 }
 
 func (p *Page) Profile(pro string) *Page {
@@ -90,6 +83,22 @@ func (p *Page) Profile(pro string) *Page {
 
 	html := GetHtml(pro)
 	maps.Copy(p.Html, html)
+
+	mt := pro + ".mime"
+	ext := pro + ".ext"
+	var items []fidi.File
+	switch {
+	case viper.IsSet(mt):
+		mimes := viper.GetStringSlice(mt)
+		items = p.FilterByMime(mimes...)
+	case viper.IsSet(ext):
+		exts := viper.GetStringSlice(ext)
+		items = p.FilterByExt(exts...)
+	}
+	p.Items = items
+	for _, i := range items {
+		p.NewAsset(i)
+	}
 
 	return p
 }
@@ -143,6 +152,25 @@ func (p Page) Breadcrumbs() []map[string]any {
 	}
 
 	return crumbs
+}
+
+func (page *Page) Nav() []map[string]any {
+	var nav []map[string]any
+	for _, p := range page.Children {
+		self := page.Info().Rel()
+		child := p.Info().Rel()
+		rel, err := filepath.Rel(self, child)
+		if err != nil {
+			log.Fatal(err)
+		}
+		url := map[string]any{
+			"href":  filepath.Join(rel, "index.html"),
+			"text":  p.Title,
+			"depth": p.Info().Depth,
+		}
+		nav = append(nav, url)
+	}
+	return nav
 }
 
 func (p *Page) FilterByExt(ext ...string) []fidi.File {

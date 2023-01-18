@@ -19,7 +19,7 @@ var testCmd = &cobra.Command{
 		p := static.NewPage(dir)
 		fmt.Printf("link %+V\n", p.Title)
 
-		col := static.NewCollection(d, "gifv")
+		col := static.NewCollection(d, "swiper")
 		fmt.Printf("collection %s\n", col.Title)
 		fmt.Printf("collection %s\n", col.Nav())
 		//node := col.Nodes[2]
@@ -28,18 +28,18 @@ var testCmd = &cobra.Command{
 		//fmt.Printf("cfg %v\n", pro)
 
 		for _, page := range col.Children {
-			page.FilterByExt(".jpg", ".png", ".avif")
+			//page.FilterByExt(".jpg", ".png", ".avif")
 			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
 			if page.HasIndex {
 				fmt.Printf("url %+V\n", page.RelUrl())
 			}
-			fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
-			fmt.Printf("nav %s\n", page.Nav())
+			//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
+			//fmt.Printf("nav %s\n", page.Nav())
 			//page := static.NewPage(node)
-			//for _, child := range page.Children {
-			//  fmt.Printf("title %d\n", len(child.Css))
-			//  fmt.Printf("parent %+V\n", child.Info().Rel())
-			//}
+			for _, child := range page.Assets {
+				fmt.Printf("asset %+V\n", child.Attributes)
+				fmt.Printf("html %+V\n", child.Render())
+			}
 		}
 
 		//for _, page := range static.GetParentsByDepth(col.Tree, 2) {

@@ -75,7 +75,7 @@ func initConfig() {
 
 	viper.SetDefault(
 		"global.html.video",
-		map[string]bool{
+		map[string]any{
 			"muted":    true,
 			"autoplay": false,
 			"controls": true,
@@ -91,6 +91,8 @@ func initConfig() {
 			"static/swiper/gallery.css",
 		},
 	)
+
+	viper.SetDefault("swiper.mime", []string{"image", "video"})
 
 	viper.SetDefault(
 		"swiper.scripts",
