@@ -19,7 +19,6 @@ type Page struct {
 	Html     Html
 	HasIndex bool
 	Index    fidi.File
-	Nav      []map[string]any
 	Items    []fidi.File
 	Children []*Page
 	root     string
@@ -35,16 +34,11 @@ func NewPage(dir fidi.Tree) *Page {
 		Color:   viper.GetStringMapString("color"),
 	}
 
-	url := page.Url()
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
-		url["depth"] = 1
 	} else {
 		page.Title = dir.Info().Base
 	}
-	url["text"] = page.Title
-
-	//page.Nav = []map[string]any{url}
 
 	for _, file := range page.FilterByExt(".html") {
 		if file.Base == "index.html" {
@@ -56,6 +50,23 @@ func NewPage(dir fidi.Tree) *Page {
 	return &page
 }
 
+func (page *Page) Nav() []map[string]any {
+	var nav []map[string]any
+	for _, p := range page.Children {
+		rel, err := filepath.Rel(page.Info().Rel(), p.Info().Rel())
+		if err != nil {
+			log.Fatal(err)
+		}
+		url := map[string]any{
+			"href":  filepath.Join(rel, "index.html"),
+			"text":  p.Title,
+			"depth": p.Info().Depth,
+		}
+		nav = append(nav, url)
+	}
+	return nav
+}
+
 func (page *Page) GetChildren() {
 	for _, dir := range page.Tree.Children() {
 		p := NewPage(dir)
@@ -63,16 +74,6 @@ func (page *Page) GetChildren() {
 			if page.profile != "" {
 				p.Profile(page.profile)
 			}
-			rel, err := filepath.Rel(page.Info().Rel(), p.Info().Rel())
-			if err != nil {
-				log.Fatal(err)
-			}
-			url := map[string]any{
-				"href":  filepath.Join(rel, "index.html"),
-				"text":  p.Title,
-				"depth": p.Info().Depth,
-			}
-			page.Nav = append(page.Nav, url)
 			page.Children = append(page.Children, p)
 		}
 	}

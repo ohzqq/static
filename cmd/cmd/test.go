@@ -21,7 +21,7 @@ var testCmd = &cobra.Command{
 
 		col := static.NewCollection(d, "gifv")
 		fmt.Printf("collection %s\n", col.Title)
-		fmt.Printf("collection %s\n", col.Nav)
+		fmt.Printf("collection %s\n", col.Nav())
 		//node := col.Nodes[2]
 		//node, _ := col.GetNode(2)
 		//pro := static.GetProfile("gifv")
@@ -34,7 +34,7 @@ var testCmd = &cobra.Command{
 				fmt.Printf("url %+V\n", page.RelUrl())
 			}
 			fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
-			fmt.Printf("nav %s\n", page.Nav)
+			fmt.Printf("nav %s\n", page.Nav())
 			//page := static.NewPage(node)
 			//for _, child := range page.Children {
 			//  fmt.Printf("title %d\n", len(child.Css))
