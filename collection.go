@@ -6,7 +6,6 @@ import (
 
 type Collection struct {
 	*Page
-	//Pages []*Page
 }
 
 func NewCollection(path string) Collection {
@@ -15,10 +14,11 @@ func NewCollection(path string) Collection {
 		Page: NewPage(tree),
 	}
 	col.root = path
+	col.GetChildren()
+
+	for _, page := range col.Children {
+		page.GetChildren()
+	}
 
 	return col
-}
-
-func GetHtmlFiles(tree fidi.Tree) []fidi.File {
-	return tree.Filter(fidi.ExtFilter(".html"))
 }

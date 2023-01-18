@@ -11,7 +11,6 @@ import (
 
 type Page struct {
 	fidi.Tree
-	//Profile
 	Title    string
 	Css      []string
 	Scripts  []string
@@ -21,7 +20,7 @@ type Page struct {
 	Index    fidi.File
 	Nav      []map[string]any
 	Items    []fidi.File
-	Pages    []*Page
+	Children []*Page
 	Url      string
 	root     string
 }
@@ -46,23 +45,22 @@ func NewPage(dir fidi.Tree) *Page {
 
 	page.Nav = []map[string]any{url}
 
-	for _, file := range GetHtmlFiles(dir) {
+	for _, file := range page.FilterByExt(".html") {
 		if file.Base == "index.html" {
 			page.HasIndex = true
 			page.Index = file
 		}
 	}
-	page.getPages()
 
 	return &page
 }
 
-func (page *Page) getPages() {
-	for _, dir := range page.Children() {
+func (page *Page) GetChildren() {
+	for _, dir := range page.Tree.Children() {
 		p := NewPage(dir)
 		if p.HasIndex {
 			page.Nav = append(page.Nav, p.url())
-			page.Pages = append(page.Pages, p)
+			page.Children = append(page.Children, p)
 		}
 	}
 }
@@ -130,14 +128,16 @@ func (p Page) Breadcrumbs() []map[string]string {
 	return crumbs
 }
 
-func (p *Page) FilterByExt(ext ...string) *Page {
-	p.Items = p.Filter(fidi.ExtFilter(ext...))
-	return p
+func (p *Page) FilterByExt(ext ...string) []fidi.File {
+	//p.Items = p.Filter(fidi.ExtFilter(ext...))
+	//return p
+	return p.Filter(fidi.ExtFilter(ext...))
 }
 
-func (p *Page) FilterByMime(mime ...string) *Page {
-	p.Items = p.Filter(fidi.MimeFilter(mime...))
-	return p
+func (p *Page) FilterByMime(mime ...string) []fidi.File {
+	return p.Filter(fidi.MimeFilter(mime...))
+	//p.Items = p.Filter(fidi.MimeFilter(mime...))
+	//return p
 }
 
 func (p Page) ReadCss() []string {

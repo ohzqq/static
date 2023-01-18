@@ -27,7 +27,7 @@ var testCmd = &cobra.Command{
 		//pro := static.GetProfile("gifv")
 		//fmt.Printf("cfg %v\n", pro)
 
-		for _, page := range col.Pages {
+		for _, page := range col.Children {
 			page.Profile("gifv")
 			page.FilterByExt(".jpg", ".png", ".avif")
 			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
@@ -35,11 +35,11 @@ var testCmd = &cobra.Command{
 			if page.HasIndex {
 				fmt.Printf("url %+V\n", page.RelUrl())
 			}
-			fmt.Printf("nav %+V\n", page.Nav)
+			//fmt.Printf("nav %+V\n", page.Nav)
 			//page := static.NewPage(node)
-			//for _, child := range page.Parents() {
-			//fmt.Printf("parent %+V\n", child.Info().Rel())
-			//}
+			for _, child := range page.Children {
+				fmt.Printf("parent %+V\n", child.Info().Rel())
+			}
 		}
 
 		//for _, page := range static.GetParentsByDepth(col.Tree, 2) {
