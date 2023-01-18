@@ -1,6 +1,7 @@
 package static
 
 import (
+	"bytes"
 	"log"
 	"path/filepath"
 	"strings"
@@ -32,6 +33,7 @@ func NewPage(dir fidi.Tree) *Page {
 		Css:     GetCss("global"),
 		Scripts: GetScripts("global"),
 		Html:    GetHtml("global"),
+		profile: "global",
 		Color:   viper.GetStringMapString("color"),
 	}
 
@@ -51,8 +53,28 @@ func NewPage(dir fidi.Tree) *Page {
 	return &page
 }
 
-//func (p Page) Content() string {
-//}
+func (p Page) Render() string {
+	var buf bytes.Buffer
+	err := Templates.ExecuteTemplate(&buf, "base", p)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return buf.String()
+}
+
+func (p Page) Content() string {
+	pro := p.profile
+	if ProfileInherits(p.profile) {
+		pro = InheritedProfile(p.profile)
+	}
+
+	var buf bytes.Buffer
+	err := Templates.ExecuteTemplate(&buf, pro, p)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return buf.String()
+}
 
 func (page *Page) GetChildren() {
 	for _, dir := range page.Tree.Children() {
@@ -99,6 +121,7 @@ func (p *Page) Profile(pro string) *Page {
 		items = p.FilterByExt(exts...)
 	}
 	p.Items = items
+
 	for _, i := range items {
 		p.NewAsset(i)
 	}

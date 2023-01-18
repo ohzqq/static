@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"static"
 
+	"github.com/ohzqq/fidi"
 	"github.com/spf13/cobra"
 )
 
@@ -14,10 +15,13 @@ var testCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
-		fmt.Printf("arg %s\n", d)
-		//dir, _ := fidi.NewDir(d, d)
-		//p := static.NewPage(dir)
-		static.GetTemplates()
+		//fmt.Printf("arg %s\n", d)
+		dir, _ := fidi.NewDir(d, d)
+		p := static.NewPage(dir)
+		p.Profile("swiper")
+
+		content := p.Render()
+		fmt.Println(content)
 
 		//collection(d)
 

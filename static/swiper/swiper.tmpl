@@ -1,29 +1,18 @@
 {{define "swiper"}}
-{{$mime := .Mime -}}
+{{$mime := .Info.Mime -}}
 
-{{$el := ""}}
-{{if eq $mime "video"}}
-	{{$el = "video"}}
-{{else if eq $mime "image"}}
-	{{$el = "img"}}
-{{end}}
-
-{{range Batch .Files -}}
+{{range Batch .Assets -}}
 <div class="row">
 	{{- range .}}
 	<div class="thumbnail column" lightbox-toggle>
-	{{- if eq $mime "image"}}
-		<img src="{{.}}">
-	{{- else if eq $mime "video"}}
-		<video src="{{.}}">
-	{{- end}}
+		{{.Render}}
 	</div>
 	{{- end}}
 </div>
 {{end}}
-{{if .HasChildren}}
-	{{.Filetree}}
-{{end}}
+{{/* if .HasChildren */}}
+	{{/* .Filetree */}}
+{{/* end */}}
 <!--
 	license for Swiper Lightbox:
 	Copyright (c) 2022 by Dalton Walsh (https://codepen.io/daltonw/pen/NWpGMrb)
@@ -42,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 let swiper;
 window.globals = {};
 const body = document.getElementsByTagName("body")[0];
-		const lightboxImages = document.querySelectorAll("[lightbox-toggle] {{$el}}");
+const lightboxImages = document.querySelectorAll("[lightbox-toggle] img, [lightbox-toggle] video");
 const initLightbox = lightboxImages.length > 0;
 const destroySwiper = (swiper, timeout) => {
   setTimeout(() => {
@@ -104,16 +93,16 @@ if (initLightbox) {
 
       // Loop through images with lightbox data attr
       // Create html for lightbox carousel
-				lightboxImages.forEach(function ({{$el}}) {
+				lightboxImages.forEach(function (asset) {
 					// Create clone of current image in loop
-					const media = document.createElement("{{$el}}");
-					media.src = {{$el}}.src.split("/").pop();
-					{{if eq $el "video"}}
-						media.muted = {{.Html.Video.Muted}};
-						media.autoplay = {{.Html.Video.Autoplay}};
-						media.loop = {{.Html.Video.Loop}};
-						media.controls = {{.Html.Video.Controls}};
-					{{end}}
+						const media = asset.cloneNode(true);
+						const type = media.nodeName;
+						//if (type.toLowerCase() === "video") {
+						//	media.muted = {{.Html.video.muted}};
+						//	media.autoplay = {{.Html.video.autoplay}};
+						//	media.loop = {{.Html.video.loop}};
+						//	media.controls = {{.Html.video.controls}};
+						// };
 					media.className = "swiper-zoom-target slide swiper-lazy";
 					// Create divs
 					const slide = document.createElement("div");
