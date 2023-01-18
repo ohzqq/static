@@ -93,6 +93,7 @@ func initConfig() {
 	)
 
 	viper.SetDefault("swiper.mime", []string{"image", "video"})
+	viper.SetDefault("swiper.template", "static/templates/swiper.tmpl")
 
 	viper.SetDefault(
 		"swiper.scripts",

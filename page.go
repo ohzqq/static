@@ -51,6 +51,9 @@ func NewPage(dir fidi.Tree) *Page {
 	return &page
 }
 
+func (p Page) Content() string {
+}
+
 func (page *Page) GetChildren() {
 	for _, dir := range page.Tree.Children() {
 		p := NewPage(dir)
