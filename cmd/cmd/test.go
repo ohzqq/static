@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"static"
 
-	"github.com/ohzqq/fidi"
 	"github.com/spf13/cobra"
 )
 
@@ -15,37 +14,40 @@ var testCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
-		dir, _ := fidi.NewDir(d, d)
-		p := static.NewPage(dir)
-		fmt.Printf("link %+V\n", p.Title)
+		fmt.Printf("arg %s\n", d)
+		//dir, _ := fidi.NewDir(d, d)
+		//p := static.NewPage(dir)
+		static.GetTemplates()
 
-		col := static.NewCollection(d, "swiper")
-		fmt.Printf("collection %s\n", col.Title)
-		fmt.Printf("collection %s\n", col.Nav())
-		//node := col.Nodes[2]
-		//node, _ := col.GetNode(2)
-		//pro := static.GetProfile("gifv")
-		//fmt.Printf("cfg %v\n", pro)
+		//collection(d)
 
-		for _, page := range col.Children {
-			//page.FilterByExt(".jpg", ".png", ".avif")
-			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
-			if page.HasIndex {
-				fmt.Printf("url %+V\n", page.RelUrl())
-			}
-			//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
-			//fmt.Printf("nav %s\n", page.Nav())
-			//page := static.NewPage(node)
-			for _, child := range page.Assets {
-				fmt.Printf("asset %+V\n", child.Attributes)
-				fmt.Printf("html %+V\n", child.Render())
-			}
-		}
-
-		//for _, page := range static.GetParentsByDepth(col.Tree, 2) {
-		//  fmt.Printf("depth %s: %s\n", page.Depth, page.Rel())
-		//}
 	},
+}
+
+func collection(d string) {
+	col := static.NewCollection(d, "gifv")
+	fmt.Printf("collection %s\n", col.Title)
+	fmt.Printf("collection %s\n", len(col.Css))
+	//node := col.Nodes[2]
+	//node, _ := col.GetNode(2)
+	//pro := static.GetProfile("gifv")
+	//fmt.Printf("cfg %v\n", pro)
+
+	for _, page := range col.Children {
+		//page.FilterByExt(".jpg", ".png", ".avif")
+		fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
+		if page.HasIndex {
+			fmt.Printf("url %+V\n", page.RelUrl())
+		}
+		//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
+		//fmt.Printf("nav %s\n", page.Nav())
+		//page := static.NewPage(node)
+		for _, child := range page.Assets {
+			fmt.Printf("asset %+V\n", child.Attributes)
+			fmt.Printf("html %+V\n", child.Render())
+		}
+	}
+
 }
 
 func init() {

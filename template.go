@@ -1,19 +1,27 @@
 package static
 
 import (
+	"fmt"
 	"path/filepath"
 	"text/template"
 )
 
 var (
 	TmplFuncs = template.FuncMap{
-		"color": Colors,
 		"Batch": Batch,
 		"Dir":   filepath.Dir,
 	}
 )
 
-var Templates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(Static, "static/templates/*"))
+var publicTemplates = template.Must(template.New("").Funcs(TmplFuncs).ParseFS(Public, "static/templates/*"))
+
+func GetTemplates() []string {
+	var tmpl []string
+	for _, pro := range Profiles() {
+	}
+	fmt.Printf("profiles %s\n", tmpl)
+	return tmpl
+}
 
 func Batch(og []string) [][]string {
 	var (

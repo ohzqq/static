@@ -63,12 +63,30 @@ func Profiles() []string {
 }
 
 func GetCss(pro string) []string {
-	files := viper.GetStringSlice(pro + ".css")
+	var files []string
+
+	if viper.IsSet(pro + ".inherit") {
+		in := viper.GetString(pro + ".inherit")
+		files = viper.GetStringSlice(in + ".css")
+	}
+
+	proF := viper.GetStringSlice(pro + ".css")
+	files = append(files, proF...)
+
 	return ReadScriptsAndStyles(files)
 }
 
 func GetScripts(pro string) []string {
-	files := viper.GetStringSlice(pro + ".scripts")
+	var files []string
+
+	if viper.IsSet(pro + ".inherit") {
+		in := viper.GetString(pro + ".inherit")
+		files = viper.GetStringSlice(in + ".scripts")
+	}
+
+	proF := viper.GetStringSlice(pro + ".scripts")
+	files = append(files, proF...)
+
 	return ReadScriptsAndStyles(files)
 }
 
