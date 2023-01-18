@@ -21,40 +21,50 @@ type Page struct {
 	Index    fidi.File
 	Nav      []map[string]any
 	Items    []fidi.File
-	pages    []fidi.File
+	Pages    []*Page
 	Url      string
 	root     string
 }
 
-func newPage(file fidi.File) *Page {
+func NewPage(dir fidi.Tree) *Page {
 	page := Page{
-		Index:   file,
+		Tree:    dir,
 		Css:     GetCss("global"),
 		Scripts: GetScripts("global"),
 		Html:    GetHtml("global"),
 		Color:   viper.GetStringMapString("color"),
-		Title:   file.Base,
-		Url:     file.Rel(),
 	}
+
+	url := page.url()
+	if dir.Info().Rel() == "." {
+		page.Title = "Home"
+		url["depth"] = 1
+		url["text"] = page.Title
+	} else {
+		page.Title = dir.Info().Base
+	}
+
+	page.Nav = []map[string]any{url}
+
+	for _, file := range GetHtmlFiles(dir) {
+		if file.Base == "index.html" {
+			page.HasIndex = true
+			page.Index = file
+		}
+	}
+	page.getPages()
+
 	return &page
 }
 
-func NewPage(dir fidi.Tree) *Page {
-	//page := newPage()
-	var page *Page
-
-	//files := page.Filter(fidi.ExtFilter(".html"))
-	files := GetIndexFiles(dir)
-	for _, file := range files {
-		if i := file.Rel(); i == "index.html" {
-			page = newPage(file)
-			page.Tree = dir
-		} else {
-			page.pages = append(page.pages, file)
+func (page *Page) getPages() {
+	for _, dir := range page.Children() {
+		p := NewPage(dir)
+		if p.HasIndex {
+			page.Nav = append(page.Nav, p.url())
+			page.Pages = append(page.Pages, p)
 		}
 	}
-
-	return page
 }
 
 func (p *Page) Profile(pro string) *Page {
@@ -83,27 +93,6 @@ func (p Page) url() map[string]any {
 	url["href"] = p.RelUrl()
 	url["text"] = p.Title
 	return url
-}
-
-func (p *Page) Pages() []*Page {
-	var pages []*Page
-
-	curl := map[string]any{
-		"href":  "./index.html",
-		"text":  p.Title,
-		"depth": 0,
-	}
-	p.Nav = append(p.Nav, curl)
-
-	for _, dir := range p.Children() {
-		page := NewPage(dir)
-		if page.HasIndex {
-			p.Nav = append(p.Nav, page.url())
-			pages = append(pages, page)
-		}
-	}
-
-	return pages
 }
 
 func (p Page) AbsUrl() string {
@@ -137,6 +126,7 @@ func (p Page) Breadcrumbs() []map[string]string {
 		}
 		crumbs = append(crumbs, link)
 	}
+
 	return crumbs
 }
 

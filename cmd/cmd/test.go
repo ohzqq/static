@@ -17,16 +17,17 @@ var testCmd = &cobra.Command{
 		d := args[0]
 		dir, _ := fidi.NewDir(d, d)
 		p := static.NewPage(dir)
-		fmt.Printf("link %+V\n", p.Info().Rel())
+		fmt.Printf("link %+V\n", p.Title)
 
 		col := static.NewCollection(d)
-		fmt.Printf("%s\n", col.Index.Rel())
+		fmt.Printf("collection %s\n", col.Title)
+		fmt.Printf("collection %s\n", col.Nav)
 		//node := col.Nodes[2]
 		//node, _ := col.GetNode(2)
 		//pro := static.GetProfile("gifv")
 		//fmt.Printf("cfg %v\n", pro)
 
-		for _, page := range col.Pages() {
+		for _, page := range col.Pages {
 			page.Profile("gifv")
 			page.FilterByExt(".jpg", ".png", ".avif")
 			fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
