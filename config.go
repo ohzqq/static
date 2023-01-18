@@ -62,20 +62,6 @@ func Profiles() []string {
 	return profiles
 }
 
-func GetProfile(pro string) Profile {
-	p := viper.Sub(pro)
-
-	var profile Profile
-	err := p.Unmarshal(&profile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	merged := MergeProfiles(defaultProfile, profile)
-
-	return merged
-}
-
 func GetCss(pro string) []string {
 	files := viper.GetStringSlice(pro + ".css")
 	return ReadScriptsAndStyles(files)
@@ -111,25 +97,4 @@ func ReadScriptsAndStyles(files []string) []string {
 		assets = append(assets, string(d))
 	}
 	return assets
-}
-
-func MergeProfiles(pro1, pro2 Profile) Profile {
-	pro := Profile{
-		Css:     pro1.Css,
-		Scripts: pro1.Scripts,
-		Html:    pro1.Html,
-	}
-	pro.Css = append(pro.Css, pro2.Css...)
-	pro.Scripts = append(pro.Scripts, pro2.Scripts...)
-	maps.Copy(pro.Html, pro2.Html)
-	return pro
-}
-
-func SetDefaultProfile() {
-	p := viper.Sub("global")
-
-	err := p.Unmarshal(&defaultProfile)
-	if err != nil {
-		log.Fatal(err)
-	}
 }

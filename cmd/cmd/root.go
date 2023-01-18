@@ -140,8 +140,6 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	static.SetDefaultProfile()
-
 	//files, _ := fs.Glob(static.Public, "static/*")
 	//fmt.Printf("files %+V\n", files)
 	//usr, _ := fs.Glob(static.UserCfg, "swiper/*")
