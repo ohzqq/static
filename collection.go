@@ -1,11 +1,6 @@
 package static
 
 import (
-	"bytes"
-	"log"
-	"strings"
-	"text/template"
-
 	"github.com/ohzqq/fidi"
 )
 
@@ -33,47 +28,3 @@ func NewCollection(path string, profile ...string) Collection {
 
 	return col
 }
-
-type Asset struct {
-	fidi.File
-	Attributes map[string]any
-	Html       Html
-	Tag        string
-}
-
-func (a Asset) IsAudio() bool {
-	return strings.Contains(a.Mime, "audio")
-}
-
-func (a Asset) IsVideo() bool {
-	return strings.Contains(a.Mime, "video")
-}
-
-func (a Asset) IsImage() bool {
-	return strings.Contains(a.Mime, "image")
-}
-
-func (a *Asset) Render() string {
-	switch {
-	case a.IsAudio():
-		a.Tag = "audio"
-	case a.IsImage():
-		a.Tag = "img"
-	case a.IsVideo():
-		a.Tag = "video"
-	}
-
-	if at, ok := a.Html[a.Tag]; ok {
-		a.Attributes = at
-	}
-
-	var buf bytes.Buffer
-	err := assetTmpl.Execute(&buf, a)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return buf.String()
-}
-
-var assetTmpl = template.Must(template.New("asset").Parse(`<{{.Tag}}{{range $key, $val := .Attributes}} {{$key}}="{{$val}}"{{end}} src="{{.Base}}"></{{.Tag}}>`))
