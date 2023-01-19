@@ -2,9 +2,11 @@ package static
 
 import (
 	"embed"
+	"fmt"
 	"io/fs"
 	"log"
 	"strings"
+	"text/template"
 
 	"github.com/spf13/viper"
 	"golang.org/x/exp/maps"
@@ -96,6 +98,21 @@ func GetScripts(pro string) []string {
 	files = append(files, proF...)
 
 	return ReadScriptsAndStyles(files)
+}
+
+func GetTemplate(pro string) *template.Template {
+	if ProfileInherits(pro) {
+		pro = InheritedProfile(pro)
+	}
+
+	fmt.Printf("tmpl %+V\n", Templates.Templates())
+
+	tmpl := Templates.Lookup(pro)
+	if tmpl == nil {
+		log.Fatalf("template %s not found\n", pro)
+	}
+
+	return tmpl
 }
 
 func GetHtml(pro string) Html {

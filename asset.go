@@ -52,8 +52,9 @@ func (a *Asset) Render() string {
 		a.Tag = "video"
 		if at, ok := a.Html[a.Tag]; ok {
 			a.Attributes = at
-			a.Attributes["src"] = a.Base
 		}
+		a.Attributes["src"] = a.Base
+		a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
 	}
 
 	var buf bytes.Buffer
@@ -69,17 +70,20 @@ func ExtractThumbFromVideo(file fidi.File) string {
 	out := file.Copy().Ext(".jpg").Prefix("thumb-")
 	tmp := filepath.Base(out.String())
 	tmp = filepath.Join(os.TempDir(), tmp)
+	defer os.Remove(tmp)
 
-	ff := ffmpeg.Input(file.Path()).
+	ff := ffmpeg.Input(file.Path(), ffmpeg.KwArgs{"y": ""}).
 		Filter("thumbnail", ffmpeg.Args{}).
-		Output(tmp)
+		Output(tmp, ffmpeg.KwArgs{"frames:v": 1})
 
 	err := ff.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return tmp
+	base := Thumbnail(tmp)
+
+	return base
 }
 
 func Thumbnail(path string) string {
@@ -102,4 +106,14 @@ func Thumbnail(path string) string {
 	return base
 }
 
-var assetTmpl = template.Must(template.New("asset").Parse(`<{{.Tag}}{{range $key, $val := .Attributes}} {{$key}}="{{$val}}"{{end}}></{{.Tag}}>`))
+var assetTmpl = template.Must(template.New("asset").Parse(
+	`<{{.Tag}}
+	{{- range $key, $val := .Attributes}} 
+	{{- if ne $key "autoplay"}}
+	{{- if ne $key "controls"}}
+	{{$key}}="{{$val}}"
+	{{- end -}}
+	{{- end -}}
+	{{- end -}}
+	></{{.Tag}}>
+`))

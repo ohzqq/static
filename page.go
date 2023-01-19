@@ -3,8 +3,10 @@ package static
 import (
 	"bytes"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/ohzqq/fidi"
 	"github.com/spf13/viper"
@@ -23,6 +25,7 @@ type Page struct {
 	Items    []fidi.File
 	Assets   []Asset
 	Children []*Page
+	tmpl     *template.Template
 	root     string
 	profile  string
 }
@@ -37,6 +40,8 @@ func NewPage(dir fidi.Tree) *Page {
 		Color:   viper.GetStringMapString("color"),
 	}
 
+	//println(page.Info().Path())
+
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
 	} else {
@@ -50,29 +55,48 @@ func NewPage(dir fidi.Tree) *Page {
 		}
 	}
 
+	if !page.HasIndex {
+		page.CreateIndex()
+	}
+
 	return &page
 }
 
+func (p *Page) SetTmpl(tmpl *template.Template) *Page {
+	p.tmpl = tmpl
+	return p
+}
+
 func (p Page) Render() string {
-	var buf bytes.Buffer
-	err := Templates.ExecuteTemplate(&buf, "base", p)
+	tmpl := Templates.Lookup("base")
+	name := filepath.Join(p.Info().Path(), "index.html")
+
+	file, err := os.Create(name)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return buf.String()
+	defer file.Close()
+
+	err = tmpl.Execute(file, p)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return name
 }
 
 func (p Page) Content() string {
-	pro := p.profile
-	if ProfileInherits(p.profile) {
-		pro = InheritedProfile(p.profile)
+	tmpl := GetTemplate(p.profile)
+	if p.tmpl != nil {
+		tmpl = p.tmpl
 	}
 
 	var buf bytes.Buffer
-	err := Templates.ExecuteTemplate(&buf, pro, p)
+	err := tmpl.Execute(&buf, p)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return buf.String()
 }
 
@@ -132,7 +156,9 @@ func (p *Page) Profile(pro string) *Page {
 
 func (p *Page) CreateIndex() *Page {
 	if !p.HasIndex {
-		//Create filetree page
+		name := p.Render()
+		p.Index = fidi.NewFile(name)
+		p.HasIndex = true
 	}
 	return p
 }

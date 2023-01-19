@@ -79,6 +79,7 @@ func initConfig() {
 			"muted":    true,
 			"autoplay": false,
 			"loop":     false,
+			"controls": true,
 		},
 	)
 
