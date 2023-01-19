@@ -90,8 +90,9 @@ func (page *Page) GetChildren() {
 
 func (p *Page) NewAsset(file fidi.File) *Page {
 	asset := Asset{
-		File: file,
-		Html: p.Html,
+		File:       file,
+		Html:       p.Html,
+		Attributes: make(map[string]any),
 	}
 	p.Assets = append(p.Assets, asset)
 	return p

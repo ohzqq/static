@@ -78,7 +78,6 @@ func initConfig() {
 		map[string]any{
 			"muted":    true,
 			"autoplay": false,
-			"controls": true,
 			"loop":     false,
 		},
 	)

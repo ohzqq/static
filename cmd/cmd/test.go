@@ -15,17 +15,24 @@ var testCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		d := args[0]
-		//fmt.Printf("arg %s\n", d)
-		dir, _ := fidi.NewDir(d, d)
-		p := static.NewPage(dir)
-		p.Profile("swiper")
+		fmt.Printf("arg %s\n", d)
+		tn := static.ExtractThumbFromVideo(fidi.NewFile(d))
+		println(tn)
 
-		content := p.Render()
-		fmt.Println(content)
-
+		//page(d)
 		//collection(d)
 
 	},
+}
+
+func page(d string) {
+	dir, _ := fidi.NewDir(d, d)
+	p := static.NewPage(dir)
+	p.Profile("swiper")
+	//fmt.Printf("html %+V\n", p.Html)
+
+	content := p.Render()
+	fmt.Println(content)
 }
 
 func collection(d string) {

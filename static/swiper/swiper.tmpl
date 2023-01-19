@@ -1,9 +1,10 @@
 {{define "swiper"}}
-{{$mime := .Info.Mime -}}
+{{$mime := "" -}}
 
 {{range Batch .Assets -}}
 <div class="row">
 	{{- range .}}
+		{{$mime := .Mime -}}
 	<div class="thumbnail column" lightbox-toggle>
 		{{.Render}}
 	</div>
@@ -95,14 +96,21 @@ if (initLightbox) {
       // Create html for lightbox carousel
 				lightboxImages.forEach(function (asset) {
 					// Create clone of current image in loop
-						const media = asset.cloneNode(true);
-						const type = media.nodeName;
-						//if (type.toLowerCase() === "video") {
-						//	media.muted = {{.Html.video.muted}};
-						//	media.autoplay = {{.Html.video.autoplay}};
-						//	media.loop = {{.Html.video.loop}};
-						//	media.controls = {{.Html.video.controls}};
-						// };
+					const media = asset.cloneNode(true);
+					const type = asset.nodeName;
+					if (type.toLowerCase() === "video") {
+						//var media = document.createElement("video");
+						//media.muted = {{.Html.video.muted}};
+						//media.autoplay = {{.Html.video.autoplay}};
+						//media.loop = {{.Html.video.loop}};
+						{{if eq .Html.video.controls true}}
+						//media.controls = true;
+						{{end}}
+					} else if (type.toLowerCase() === "img") {
+						//var media = document.createElement("img");
+						media.src = asset.alt
+					};
+					//media.src = asset.src
 					media.className = "swiper-zoom-target slide swiper-lazy";
 					// Create divs
 					const slide = document.createElement("div");
