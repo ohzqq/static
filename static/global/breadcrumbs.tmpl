@@ -1,0 +1,7 @@
+{{define "breadcrumbs"}}
+	{{if .HasParents}}
+		{{range $crumb := .Breadcrumbs}}
+			<a href="{{.href}}">{{.text}}</a>
+		{{end}}
+	{{end}}
+{{end}}

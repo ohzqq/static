@@ -51,8 +51,8 @@ func collection(d string) {
 		if page.HasIndex() {
 			fmt.Printf("url %+V\n", page.RelUrl())
 		}
-		//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
-		//fmt.Printf("nav %s\n", page.Nav())
+		fmt.Printf("nav %s\n", page.Tree.Parents())
+		fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs)
 		//page := static.NewPage(node)
 		//for _, child := range page.Assets {
 		//  fmt.Printf("html %+V\n", child.Render())

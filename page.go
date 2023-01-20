@@ -16,23 +16,24 @@ import (
 
 type Page struct {
 	fidi.Tree
-	Title     string
-	Css       []string
-	Scripts   []string
-	Color     map[string]string
-	Html      Html
-	buildOpts []BuildOpt
-	HtmlFiles []fidi.File
-	hasIndex  bool
-	regen     bool
-	gen       bool
-	index     fidi.File
-	Items     []fidi.File
-	Assets    []Asset
-	Children  []*Page
-	tmpl      *template.Template
-	root      string
-	profile   string
+	Title       string
+	Css         []string
+	Scripts     []string
+	Color       map[string]string
+	Html        Html
+	buildOpts   []BuildOpt
+	HtmlFiles   []fidi.File
+	hasIndex    bool
+	regen       bool
+	gen         bool
+	index       fidi.File
+	Items       []fidi.File
+	Assets      []Asset
+	Children    []*Page
+	Breadcrumbs []map[string]any
+	tmpl        *template.Template
+	root        string
+	profile     string
 }
 
 type BuildOpt func(p *Page) BuildOpt
@@ -49,6 +50,9 @@ func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
+	if page.HasParents() {
+		page.Breadcrumbs = page.breadcrumbs()
+	}
 
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
@@ -258,7 +262,7 @@ func (p Page) RelUrl() string {
 	return "." + p.AbsUrl()
 }
 
-func (p Page) Breadcrumbs() []map[string]any {
+func (p *Page) breadcrumbs() []map[string]any {
 	var crumbs []map[string]any
 
 	totalP := len(p.Parents())

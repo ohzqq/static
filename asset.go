@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -76,7 +77,9 @@ func ExtractThumbFromVideo(file fidi.File) string {
 		Filter("thumbnail", ffmpeg.Args{}).
 		Output(tmp, ffmpeg.KwArgs{"frames:v": 1})
 
-	err := ff.Run()
+	args := ff.GetArgs()
+	cmd := exec.Command("ffmpeg", args...)
+	err := cmd.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
