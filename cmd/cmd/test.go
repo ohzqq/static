@@ -35,10 +35,11 @@ func page(d string) {
 }
 
 func collection(d string) {
-	col := static.NewCollection(d, static.Profile("swiper"), static.Gen())
+	col := static.NewCollection(d, static.Profile("swiper"), static.Regen(), static.FullNav())
 	//col.BuildOpts()
 	col.Build()
 	fmt.Printf("collection %s\n", col.Title)
+	fmt.Printf("collection %s\n", col.Leaves())
 	//fmt.Printf("collection %s\n", len(col.Css))
 	//node := col.Nodes[2]
 	//node, _ := col.GetNode(2)

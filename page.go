@@ -23,10 +23,11 @@ type Page struct {
 	buildOpts   []BuildOpt
 	HtmlFiles   []fidi.File
 	hasIndex    bool
+	FullNav     bool
 	regen       bool
 	gen         bool
 	index       fidi.File
-	Items       []fidi.File
+	Files       []fidi.File
 	Assets      []Asset
 	Children    []*Page
 	Nav         []map[string]any
@@ -50,6 +51,7 @@ func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
+	page.Files = page.Leaves()
 
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
@@ -94,6 +96,18 @@ func Regen() BuildOpt {
 			p.gen = true
 		}
 		return Regen()
+	}
+}
+
+func FullNav() BuildOpt {
+	return func(p *Page) BuildOpt {
+		switch {
+		//case p.FullNav:
+		//  p.FullNav = false
+		default:
+			p.FullNav = true
+		}
+		return FullNav()
 	}
 }
 
@@ -207,38 +221,6 @@ func (p *Page) NewAsset(file fidi.File) *Page {
 		Attributes: make(map[string]any),
 	}
 	p.Assets = append(p.Assets, asset)
-	return p
-}
-
-func (p *Page) Profile(pro string) *Page {
-	p.profile = pro
-
-	css := GetCss(pro)
-	p.Css = append(p.Css, css...)
-
-	scripts := GetScripts(pro)
-	p.Scripts = append(p.Scripts, scripts...)
-
-	html := GetHtml(pro)
-	maps.Copy(p.Html, html)
-
-	mt := pro + ".mime"
-	ext := pro + ".ext"
-	var items []fidi.File
-	switch {
-	case viper.IsSet(mt):
-		mimes := viper.GetStringSlice(mt)
-		items = p.FilterByMime(mimes...)
-	case viper.IsSet(ext):
-		exts := viper.GetStringSlice(ext)
-		items = p.FilterByExt(exts...)
-	}
-	p.Items = items
-
-	for _, i := range items {
-		p.NewAsset(i)
-	}
-
 	return p
 }
 

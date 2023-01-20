@@ -1,9 +1,27 @@
 {{define "nav"}}
 	{{if .HasChildren}}
-		<dl>
-		{{range .Nav}}
-		<dt><a href="{{.href}}">{{.text}}</a></dt>
-		{{end}}
-		</dl>
+<style type="text/css">
+	.sidebar {
+			padding: 0 .5rem;
+	}
+
+	.sidebar div:not(:first-of-type)::before {
+			content: '\21B3';
+	}
+</style>
+
+<nav class="sidebar">
+{{range .Nav}}
+	<div style="padding-left:{{.depth}}rem;">
+		<a href="{{.href}}">{{.text}}</a>
+	</div>
+	{{range .files}}
+		<div style="padding-left:{{.depth}}rem;">
+			<a href="{{.href}}">{{.text}}</a>
+		</div>
+	{{end}}
+{{end}}
+</nav>
+
 	{{end}}
 {{end}}
