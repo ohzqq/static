@@ -35,7 +35,7 @@ func page(d string) {
 }
 
 func collection(d string) {
-	col := static.NewCollection(d, static.Profile("swiper"), static.Regen())
+	col := static.NewCollection(d, static.Profile("swiper"), static.Gen())
 	//col.BuildOpts()
 	col.Build()
 	fmt.Printf("collection %s\n", col.Title)

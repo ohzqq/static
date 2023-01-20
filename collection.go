@@ -1,11 +1,13 @@
 package static
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
 
 	"github.com/ohzqq/fidi"
+	"github.com/samber/lo"
 )
 
 type Collection struct {
@@ -79,8 +81,8 @@ func getBreadcrumbs(tree fidi.Tree) []map[string]any {
 }
 
 func getNav(page *Page) []map[string]any {
+	var depth []int
 	var nav []map[string]any
-
 	for _, p := range page.Children {
 		self := page.Info().Rel()
 		child := p.Info().Rel()
@@ -88,6 +90,8 @@ func getNav(page *Page) []map[string]any {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		depth = append(depth, p.Info().Depth)
 
 		url := map[string]any{
 			"href":  filepath.Join(rel, "index.html"),
@@ -98,47 +102,8 @@ func getNav(page *Page) []map[string]any {
 		nav = append(nav, url)
 	}
 
+	depth = lo.Uniq(depth)
+	fmt.Printf("depht %v\n", depth)
+
 	return nav
-}
-
-func (col *Collection) getBreadcrumbs() *Collection {
-	totalP := len(col.Parents())
-	for _, parent := range col.Parents() {
-		totalP--
-
-		path := ".." + strings.Repeat("/..", totalP)
-		path = filepath.Join(path, "index.html")
-
-		name := parent.Info().Base
-		if parent.Info().Rel() == "." {
-			name = "Home"
-		}
-
-		link := map[string]any{
-			"href":  path,
-			"text":  name,
-			"depth": parent.Info().Depth,
-		}
-		col.Breadcrumbs = append(col.Breadcrumbs, link)
-	}
-
-	return col
-}
-
-func (col *Collection) getNav() *Collection {
-	for _, p := range col.Children {
-		self := col.Info().Rel()
-		child := p.Info().Rel()
-		rel, err := filepath.Rel(self, child)
-		if err != nil {
-			log.Fatal(err)
-		}
-		url := map[string]any{
-			"href":  filepath.Join(rel, "index.html"),
-			"text":  p.Title,
-			"depth": p.Info().Depth,
-		}
-		col.Nav = append(col.Nav, url)
-	}
-	return col
 }

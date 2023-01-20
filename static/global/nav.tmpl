@@ -1,0 +1,9 @@
+{{define "nav"}}
+	{{if .HasChildren}}
+		<dl>
+		{{range .Nav}}
+		<dt><a href="{{.href}}">{{.text}}</a></dt>
+		{{end}}
+		</dl>
+	{{end}}
+{{end}}
