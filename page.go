@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"text/template"
 
 	"github.com/ohzqq/fidi"
@@ -30,6 +29,7 @@ type Page struct {
 	Items       []fidi.File
 	Assets      []Asset
 	Children    []*Page
+	Nav         []map[string]any
 	Breadcrumbs []map[string]any
 	tmpl        *template.Template
 	root        string
@@ -50,9 +50,6 @@ func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
-	if page.HasParents() {
-		page.Breadcrumbs = page.breadcrumbs()
-	}
 
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
@@ -195,11 +192,12 @@ func (p Page) Content() string {
 	return buf.String()
 }
 
-func (page *Page) GetChildren() {
+func (page *Page) GetChildren() []*Page {
 	for _, dir := range page.Tree.Children() {
 		p := NewPage(dir, page.buildOpts...)
 		page.Children = append(page.Children, p)
 	}
+	return page.Children
 }
 
 func (p *Page) NewAsset(file fidi.File) *Page {
@@ -260,51 +258,6 @@ func (p Page) AbsUrl() string {
 
 func (p Page) RelUrl() string {
 	return "." + p.AbsUrl()
-}
-
-func (p *Page) breadcrumbs() []map[string]any {
-	var crumbs []map[string]any
-
-	totalP := len(p.Parents())
-	for _, parent := range p.Parents() {
-		totalP--
-
-		path := ".." + strings.Repeat("/..", totalP)
-		path = filepath.Join(path, "index.html")
-
-		name := parent.Info().Base
-		if parent.Info().Rel() == "." {
-			name = "Home"
-		}
-
-		link := map[string]any{
-			"href":  path,
-			"text":  name,
-			"depth": parent.Info().Depth,
-		}
-		crumbs = append(crumbs, link)
-	}
-
-	return crumbs
-}
-
-func (page *Page) Nav() []map[string]any {
-	var nav []map[string]any
-	for _, p := range page.Children {
-		self := page.Info().Rel()
-		child := p.Info().Rel()
-		rel, err := filepath.Rel(self, child)
-		if err != nil {
-			log.Fatal(err)
-		}
-		url := map[string]any{
-			"href":  filepath.Join(rel, "index.html"),
-			"text":  p.Title,
-			"depth": p.Info().Depth,
-		}
-		nav = append(nav, url)
-	}
-	return nav
 }
 
 func (p *Page) FilterByExt(ext ...string) []fidi.File {

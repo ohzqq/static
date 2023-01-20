@@ -39,7 +39,7 @@ func collection(d string) {
 	//col.BuildOpts()
 	col.Build()
 	fmt.Printf("collection %s\n", col.Title)
-	fmt.Printf("collection %s\n", len(col.Css))
+	//fmt.Printf("collection %s\n", len(col.Css))
 	//node := col.Nodes[2]
 	//node, _ := col.GetNode(2)
 	//pro := static.GetProfile("gifv")
@@ -51,8 +51,8 @@ func collection(d string) {
 		if page.HasIndex() {
 			fmt.Printf("url %+V\n", page.RelUrl())
 		}
-		fmt.Printf("nav %s\n", page.Tree.Parents())
-		fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs)
+		fmt.Printf("nav %s\n", page.Nav)
+		//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs)
 		//page := static.NewPage(node)
 		//for _, child := range page.Assets {
 		//  fmt.Printf("html %+V\n", child.Render())
