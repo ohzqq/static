@@ -2,6 +2,7 @@ package static
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,32 +16,39 @@ import (
 
 type Page struct {
 	fidi.Tree
-	Title    string
-	Css      []string
-	Scripts  []string
-	Color    map[string]string
-	Html     Html
-	HasIndex bool
-	Index    fidi.File
-	Items    []fidi.File
-	Assets   []Asset
-	Children []*Page
-	tmpl     *template.Template
-	root     string
-	profile  string
+	Title     string
+	Css       []string
+	Scripts   []string
+	Color     map[string]string
+	Html      Html
+	buildOpts []BuildOpt
+	HtmlFiles []fidi.File
+	hasIndex  bool
+	regen     bool
+	gen       bool
+	index     fidi.File
+	Items     []fidi.File
+	Assets    []Asset
+	Children  []*Page
+	tmpl      *template.Template
+	root      string
+	profile   string
 }
 
-func NewPage(dir fidi.Tree) *Page {
-	page := Page{
-		Tree:    dir,
-		Css:     GetCss("global"),
-		Scripts: GetScripts("global"),
-		Html:    GetHtml("global"),
-		profile: "global",
-		Color:   viper.GetStringMapString("color"),
-	}
+type BuildOpt func(p *Page) BuildOpt
 
-	//println(page.Info().Path())
+func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
+	page := Page{
+		Tree:      dir,
+		Css:       GetCss("global"),
+		Scripts:   GetScripts("global"),
+		Html:      GetHtml("global"),
+		profile:   "global",
+		Color:     viper.GetStringMapString("color"),
+		buildOpts: opts,
+	}
+	page.HtmlFiles = page.FilterByExt(".html")
+	page.Index()
 
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
@@ -48,18 +56,108 @@ func NewPage(dir fidi.Tree) *Page {
 		page.Title = dir.Info().Base
 	}
 
-	for _, file := range page.FilterByExt(".html") {
+	return &page
+}
+
+func (page *Page) BuildOpts(opts ...BuildOpt) *Page {
+	page.buildOpts = append(page.buildOpts, opts...)
+	return page
+}
+
+func (p *Page) Build() {
+	fmt.Printf("building %s\n", p.Info().Name)
+	for _, opt := range p.buildOpts {
+		opt(p)
+	}
+	p.Render()
+
+	for _, child := range p.Children {
+		fmt.Printf("opts %s\n", len(child.buildOpts))
+		child.Build()
+	}
+}
+
+func Gen() BuildOpt {
+	return func(p *Page) BuildOpt {
+		switch {
+		case !p.hasIndex:
+			p.gen = true
+		default:
+			p.gen = false
+		}
+		return Gen()
+	}
+}
+
+func Regen() BuildOpt {
+	return func(p *Page) BuildOpt {
+		switch {
+		case p.gen:
+			p.gen = false
+		default:
+			p.gen = true
+		}
+		return Regen()
+	}
+}
+
+func Profile(pro string) BuildOpt {
+	return func(p *Page) BuildOpt {
+		p.tmpl = GetTemplate(pro)
+		p.profile = pro
+		if pro == "global" {
+			p.Css = GetCss("global")
+			p.Scripts = GetScripts("global")
+			p.Html = GetHtml("global")
+			//p.profile = "global"
+		} else {
+			css := GetCss(pro)
+			p.Css = append(p.Css, css...)
+
+			scripts := GetScripts(pro)
+			p.Scripts = append(p.Scripts, scripts...)
+
+			html := GetHtml(pro)
+			maps.Copy(p.Html, html)
+		}
+
+		mt := pro + ".mime"
+		ext := pro + ".ext"
+		var items []fidi.File
+		switch {
+		case viper.IsSet(mt):
+			mimes := viper.GetStringSlice(mt)
+			items = p.FilterByMime(mimes...)
+		case viper.IsSet(ext):
+			exts := viper.GetStringSlice(ext)
+			items = p.FilterByExt(exts...)
+		}
+
+		for _, i := range items {
+			p.NewAsset(i)
+		}
+
+		return Profile("global")
+	}
+}
+
+func (p *Page) Index() *Page {
+	for _, file := range p.HtmlFiles {
 		if file.Base == "index.html" {
-			page.HasIndex = true
-			page.Index = file
+			p.index = file
+			p.hasIndex = true
 		}
 	}
+	return p
+}
 
-	if !page.HasIndex {
-		page.CreateIndex()
+func (p Page) HasIndex() bool {
+	for _, file := range p.HtmlFiles {
+		if file.Base == "index.html" {
+			return true
+		}
 	}
-
-	return &page
+	return false
 }
 
 func (p *Page) SetTmpl(tmpl *template.Template) *Page {
@@ -68,31 +166,29 @@ func (p *Page) SetTmpl(tmpl *template.Template) *Page {
 }
 
 func (p Page) Render() string {
-	tmpl := Templates.Lookup("base")
-	name := filepath.Join(p.Info().Path(), "index.html")
+	if p.gen {
+		tmpl := Templates.Lookup("base")
+		name := filepath.Join(p.Info().Path(), "index.html")
 
-	file, err := os.Create(name)
-	if err != nil {
-		log.Fatal(err)
+		file, err := os.Create(name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+
+		err = tmpl.Execute(file, p)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return name
 	}
-	defer file.Close()
 
-	err = tmpl.Execute(file, p)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return name
+	return ""
 }
 
 func (p Page) Content() string {
-	tmpl := GetTemplate(p.profile)
-	if p.tmpl != nil {
-		tmpl = p.tmpl
-	}
-
 	var buf bytes.Buffer
-	err := tmpl.Execute(&buf, p)
+	err := p.tmpl.Execute(&buf, p)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -102,13 +198,8 @@ func (p Page) Content() string {
 
 func (page *Page) GetChildren() {
 	for _, dir := range page.Tree.Children() {
-		p := NewPage(dir)
-		if p.HasIndex {
-			if page.profile != "" {
-				p.Profile(page.profile)
-			}
-			page.Children = append(page.Children, p)
-		}
+		p := NewPage(dir, page.buildOpts...)
+		page.Children = append(page.Children, p)
 	}
 }
 
@@ -151,15 +242,6 @@ func (p *Page) Profile(pro string) *Page {
 		p.NewAsset(i)
 	}
 
-	return p
-}
-
-func (p *Page) CreateIndex() *Page {
-	if !p.HasIndex {
-		name := p.Render()
-		p.Index = fidi.NewFile(name)
-		p.HasIndex = true
-	}
 	return p
 }
 

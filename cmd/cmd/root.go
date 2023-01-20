@@ -11,11 +11,13 @@ import (
 )
 
 var (
-	cfgFile   string
-	extension []string
-	mimetype  string
-	category  string
-	cfg       static.Config
+	cfgFile    string
+	extension  []string
+	mimetype   string
+	profile    string
+	regenerate bool
+	generate   bool
+	cfg        static.Config
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -43,10 +45,11 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/static/config.toml)")
+	rootCmd.PersistentFlags().BoolVarP(&regenerate, "regenerate", "G", false, "regenerate index files")
+	rootCmd.PersistentFlags().BoolVarP(&generate, "generate", "g", false, "generate index files")
 	rootCmd.PersistentFlags().StringSliceVarP(&extension, "ext", "e", []string{}, "glob by ext")
 	rootCmd.PersistentFlags().StringVarP(&mimetype, "mimetype", "m", "", "glob by mimetype")
-	rootCmd.PersistentFlags().StringVarP(&category, "category", "c", "", "config category")
+	rootCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "", "config category")
 	rootCmd.MarkFlagsMutuallyExclusive("ext", "mimetype")
 
 	// Cobra also supports local flags, which will only run

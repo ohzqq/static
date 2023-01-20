@@ -19,8 +19,8 @@ var testCmd = &cobra.Command{
 		//tn := static.ExtractThumbFromVideo(fidi.NewFile(d))
 		//println(tn)
 
-		page(d)
-		//collection(d)
+		//page(d)
+		collection(d)
 
 	},
 }
@@ -28,14 +28,16 @@ var testCmd = &cobra.Command{
 func page(d string) {
 	dir, _ := fidi.NewDir(d, d)
 	p := static.NewPage(dir)
-	p.Profile("swiper")
-	//fmt.Printf("html %+V\n", p.Html)
+	p.BuildOpts(static.Profile("swiper"), static.Regen())
+	fmt.Printf("html %+V\n", p.Info().Path())
 
-	//p.Render()
+	p.Build()
 }
 
 func collection(d string) {
-	col := static.NewCollection(d, "gifv")
+	col := static.NewCollection(d, static.Profile("swiper"), static.Regen())
+	//col.BuildOpts()
+	col.Build()
 	fmt.Printf("collection %s\n", col.Title)
 	fmt.Printf("collection %s\n", len(col.Css))
 	//node := col.Nodes[2]
@@ -46,16 +48,15 @@ func collection(d string) {
 	for _, page := range col.Children {
 		//page.FilterByExt(".jpg", ".png", ".avif")
 		fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
-		if page.HasIndex {
+		if page.HasIndex() {
 			fmt.Printf("url %+V\n", page.RelUrl())
 		}
 		//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs())
 		//fmt.Printf("nav %s\n", page.Nav())
 		//page := static.NewPage(node)
-		for _, child := range page.Assets {
-			fmt.Printf("asset %+V\n", child.Attributes)
-			fmt.Printf("html %+V\n", child.Render())
-		}
+		//for _, child := range page.Assets {
+		//  fmt.Printf("html %+V\n", child.Render())
+		//}
 	}
 
 }

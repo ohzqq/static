@@ -2,7 +2,6 @@ package static
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
 	"log"
 	"strings"
@@ -14,9 +13,9 @@ import (
 
 var (
 	//go:embed static
-	Public         embed.FS
-	UserCfg        fs.FS
-	defaultProfile Profile
+	Public  embed.FS
+	UserCfg fs.FS
+	//defaultProfile Profile
 )
 
 type Color struct {
@@ -42,11 +41,11 @@ type Config struct {
 	//Category   map[string]Category `toml:"category"`
 }
 
-type Profile struct {
-	Css     []string
-	Scripts []string
-	Html    map[string]map[string]any
-}
+//type Profile struct {
+//  Css     []string
+//  Scripts []string
+//  Html    map[string]map[string]any
+//}
 
 type Html map[string]map[string]any
 
@@ -104,8 +103,6 @@ func GetTemplate(pro string) *template.Template {
 	if ProfileInherits(pro) {
 		pro = InheritedProfile(pro)
 	}
-
-	fmt.Printf("tmpl %+V\n", Templates.Templates())
 
 	tmpl := Templates.Lookup(pro)
 	if tmpl == nil {
