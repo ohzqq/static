@@ -1,8 +1,6 @@
 package static
 
 import (
-	"fmt"
-
 	"github.com/ohzqq/fidi"
 )
 
@@ -17,7 +15,6 @@ func NewCollection(path string, opts ...BuildOpt) Collection {
 		Page: NewPage(tree),
 	}
 	col.BuildOpts(opts...)
-	fmt.Printf("opts %s\n", len(opts))
 	col.root = path
 
 	col.GetChildren()
@@ -27,4 +24,11 @@ func NewCollection(path string, opts ...BuildOpt) Collection {
 	}
 
 	return col
+}
+
+func (col Collection) Build() {
+	col.Page.Build()
+	for _, page := range col.Children {
+		page.Build()
+	}
 }

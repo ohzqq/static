@@ -70,11 +70,6 @@ func (p *Page) Build() {
 		opt(p)
 	}
 	p.Render()
-
-	for _, child := range p.Children {
-		fmt.Printf("opts %s\n", len(child.buildOpts))
-		child.Build()
-	}
 }
 
 func Gen() BuildOpt {

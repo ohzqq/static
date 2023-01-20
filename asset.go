@@ -87,7 +87,6 @@ func ExtractThumbFromVideo(file fidi.File) string {
 }
 
 func Thumbnail(path string) string {
-	println(path)
 	src, err := imaging.Open(path)
 	if err != nil {
 		log.Fatal(err)
