@@ -15,29 +15,42 @@ import (
 
 type Page struct {
 	fidi.Tree
-	Title       string
-	Css         []string
-	Scripts     []string
-	Color       map[string]string
-	Html        Html
-	buildOpts   []BuildOpt
-	HtmlFiles   []fidi.File
-	hasIndex    bool
-	FullNav     bool
-	regen       bool
-	gen         bool
-	index       fidi.File
-	Files       []fidi.File
-	Assets      []Asset
-	Children    []*Page
-	Nav         []map[string]any
-	Breadcrumbs []map[string]any
-	tmpl        *template.Template
-	root        string
-	profile     string
+	Title        string
+	Css          []string
+	Scripts      []string
+	Color        map[string]string
+	Html         Html
+	buildOpts    []BuildOpt
+	HtmlFiles    []fidi.File
+	hasIndex     bool
+	FullNav      bool
+	regen        bool
+	gen          bool
+	index        fidi.File
+	Files        []fidi.File
+	Assets       []Asset
+	Children     []*Page
+	isCollection bool
+	Nav          []map[string]any
+	Breadcrumbs  []map[string]any
+	tmpl         *template.Template
+	root         string
+	profile      string
+	Opts         *Builder
 }
 
-type BuildOpt func(p *Page) BuildOpt
+type BuildOpt func(p *Page)
+
+func newPage() *Page {
+	return &Page{
+		Css:     GetCss("global"),
+		Scripts: GetScripts("global"),
+		Html:    GetHtml("global"),
+		profile: "global",
+		Color:   viper.GetStringMapString("color"),
+		Opts:    &Builder{},
+	}
+}
 
 func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 	page := Page{
@@ -47,6 +60,7 @@ func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 		Html:      GetHtml("global"),
 		profile:   "global",
 		Color:     viper.GetStringMapString("color"),
+		Opts:      &Builder{},
 		buildOpts: opts,
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
@@ -75,61 +89,75 @@ func (p *Page) Build() {
 	p.Render()
 }
 
+func Input(tree fidi.Tree) BuildOpt {
+	return func(p *Page) {
+		p.Tree = tree
+		p.HtmlFiles = p.FilterByExt(".html")
+		p.Files = p.Leaves()
+		p.Index()
+		if tree.Info().Rel() == "." {
+			p.Title = "Home"
+		} else {
+			p.Title = tree.Info().Base
+		}
+	}
+}
+
 func Gen() BuildOpt {
-	return func(p *Page) BuildOpt {
+	return func(p *Page) {
 		switch {
 		case !p.hasIndex:
 			p.gen = true
 		default:
 			p.gen = false
 		}
-		return Gen()
 	}
 }
 
 func Regen() BuildOpt {
-	return func(p *Page) BuildOpt {
+	return func(p *Page) {
 		switch {
 		case p.gen:
 			p.gen = false
 		default:
 			p.gen = true
 		}
-		return Regen()
 	}
 }
 
-func FullNav() BuildOpt {
-	return func(p *Page) BuildOpt {
-		switch {
-		//case p.FullNav:
-		//  p.FullNav = false
-		default:
-			p.FullNav = true
-		}
-		return FullNav()
+func Nav(full bool) BuildOpt {
+	return func(p *Page) {
+		p.Opts.FullNav = full
+		p.Opts.Nav = true
+		p.Breadcrumbs = getBreadcrumbs(p.Tree)
+		p.Nav = getNav(p)
+	}
+}
+
+func Breadcrumbs(tree fidi.Tree) BuildOpt {
+	return func(p *Page) {
+	}
+}
+
+func Collection() BuildOpt {
+	return func(p *Page) {
+		p.isCollection = true
 	}
 }
 
 func Profile(pro string) BuildOpt {
-	return func(p *Page) BuildOpt {
+	return func(p *Page) {
 		p.tmpl = GetTemplate(pro)
 		p.profile = pro
-		if pro == "global" {
-			p.Css = GetCss("global")
-			p.Scripts = GetScripts("global")
-			p.Html = GetHtml("global")
-			//p.profile = "global"
-		} else {
-			css := GetCss(pro)
-			p.Css = append(p.Css, css...)
 
-			scripts := GetScripts(pro)
-			p.Scripts = append(p.Scripts, scripts...)
+		css := GetCss(pro)
+		p.Css = append(p.Css, css...)
 
-			html := GetHtml(pro)
-			maps.Copy(p.Html, html)
-		}
+		scripts := GetScripts(pro)
+		p.Scripts = append(p.Scripts, scripts...)
+
+		html := GetHtml(pro)
+		maps.Copy(p.Html, html)
 
 		mt := pro + ".mime"
 		ext := pro + ".ext"
@@ -146,8 +174,6 @@ func Profile(pro string) BuildOpt {
 		for _, i := range items {
 			p.NewAsset(i)
 		}
-
-		return Profile("global")
 	}
 }
 
@@ -243,15 +269,11 @@ func (p Page) RelUrl() string {
 }
 
 func (p *Page) FilterByExt(ext ...string) []fidi.File {
-	//p.Items = p.Filter(fidi.ExtFilter(ext...))
-	//return p
 	return p.Filter(fidi.ExtFilter(ext...))
 }
 
 func (p *Page) FilterByMime(mime ...string) []fidi.File {
 	return p.Filter(fidi.MimeFilter(mime...))
-	//p.Items = p.Filter(fidi.MimeFilter(mime...))
-	//return p
 }
 
 func (p Page) ReadCss() []string {

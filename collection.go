@@ -5,19 +5,92 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/ohzqq/fidi"
 	"github.com/samber/lo"
 )
 
-type Collection struct {
+type Col struct {
 	*Page
 }
 
-func NewCollection(path string, opts ...BuildOpt) Collection {
+type Builder struct {
+	Nav        bool
+	FullNav    bool
+	Gen        bool
+	Regen      bool
+	collection bool
+	Tmpl       *template.Template
+	Profile    string
+	Input      string
+}
+
+func New(path string) *Builder {
+	return &Builder{
+		Input: path,
+	}
+}
+
+func (b *Builder) Collection() *Builder {
+	b.collection = true
+	b.Nav = true
+	return b
+}
+
+func (b *Builder) Page() *Builder {
+	b.collection = false
+	return b
+}
+
+func (b Builder) Opts() []BuildOpt {
+	var opts []BuildOpt
+
+	if b.collection {
+		opts = append(opts, Collection())
+	}
+
+	if b.Nav {
+		opts = append(opts, Nav(b.FullNav))
+	}
+
+	switch {
+	case b.Gen:
+		opts = append(opts, Gen())
+	case b.Regen:
+		opts = append(opts, Regen())
+	}
+
+	if b.Profile != "" {
+		opts = append(opts, Profile(b.Profile))
+	}
+
+	return opts
+}
+
+func (b *Builder) Build() {
+	if b.Input == "" {
+		log.Fatal("no input")
+	}
+	tree := fidi.NewTree(b.Input)
+
+	page := NewPage(tree, b.Opts()...)
+	page.Build()
+
+	if b.collection {
+		for _, dir := range page.Tree.Children() {
+			p := NewPage(dir, b.Opts()...)
+			p.Opts = b
+			page.Children = append(page.Children, p)
+			p.Build()
+		}
+	}
+}
+
+func NewCollection(path string, opts ...BuildOpt) Col {
 	tree := fidi.NewTree(path)
 
-	col := Collection{
+	col := Col{
 		Page: NewPage(tree),
 	}
 	col.BuildOpts(opts...)
@@ -27,7 +100,7 @@ func NewCollection(path string, opts ...BuildOpt) Collection {
 	return col
 }
 
-func (col Collection) Build() {
+func (col Col) Build() {
 	col.Page.Build()
 	for _, page := range col.Children {
 		page.Build()
@@ -47,7 +120,7 @@ func cfgCollectionPage(p *Page) *Page {
 	return p
 }
 
-func (col *Collection) getChildren() *Collection {
+func (col *Col) getChildren() *Col {
 	col.GetChildren()
 	for _, page := range col.Children {
 		page.GetChildren()

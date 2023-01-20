@@ -20,7 +20,12 @@ var testCmd = &cobra.Command{
 		//println(tn)
 
 		//page(d)
-		collection(d)
+		//collection(d)
+		p := static.New(d)
+		p.Profile = "gifv"
+		p.Regen = true
+		p.FullNav = true
+		p.Collection().Build()
 
 	},
 }
@@ -35,7 +40,7 @@ func page(d string) {
 }
 
 func collection(d string) {
-	col := static.NewCollection(d, static.Profile("swiper"), static.Regen(), static.FullNav())
+	col := static.NewCollection(d, static.Profile("swiper"), static.Regen(), static.Nav(true))
 	//col.BuildOpts()
 	col.Build()
 	fmt.Printf("collection %s\n", col.Title)

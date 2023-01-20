@@ -18,6 +18,7 @@ var (
 	regenerate bool
 	generate   bool
 	cfg        static.Config
+	Builder    *static.Builder
 )
 
 // rootCmd represents the base command when called without any subcommands
