@@ -22,7 +22,11 @@ type Asset struct {
 	Tag        string
 }
 
-func NewAsset(file fidi.File, html Html) Asset {
+func NewAsset(file fidi.File, tags ...Html) Asset {
+	var html Html
+	if len(tags) > 0 {
+		html = tags[0]
+	}
 	asset := Asset{
 		File:       file,
 		Html:       html,

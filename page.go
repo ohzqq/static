@@ -12,6 +12,7 @@ import (
 	"github.com/ohzqq/fidi"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/maps"
 )
 
 type Page struct {
@@ -65,26 +66,26 @@ func NewPage(dir fidi.Tree) *Page {
 	return &page
 }
 
-func (p *Page) Build(opts ...BuildOpt) {
-	fmt.Printf("building %s\n", p.Info().Name)
+func (pg *Page) Build(opts ...BuildOpt) {
+	fmt.Printf("building %s\n", pg.Info().Name)
 	for _, opt := range opts {
-		opt(p)
+		opt(pg)
 	}
-	p.Render()
+	pg.Render()
 }
 
-func (p *Page) Index() *Page {
-	for _, file := range p.HtmlFiles {
+func (pg *Page) Index() *Page {
+	for _, file := range pg.HtmlFiles {
 		if file.Base == "index.html" {
-			p.index = file
-			p.hasIndex = true
+			pg.index = file
+			pg.hasIndex = true
 		}
 	}
-	return p
+	return pg
 }
 
-func (p Page) HasIndex() bool {
-	for _, file := range p.HtmlFiles {
+func (pg Page) HasIndex() bool {
+	for _, file := range pg.HtmlFiles {
 		if file.Base == "index.html" {
 			return true
 		}
@@ -92,15 +93,15 @@ func (p Page) HasIndex() bool {
 	return false
 }
 
-func (p *Page) SetTmpl(tmpl *template.Template) *Page {
-	p.tmpl = tmpl
-	return p
+func (pg *Page) SetTmpl(tmpl *template.Template) *Page {
+	pg.tmpl = tmpl
+	return pg
 }
 
-func (p Page) Render() string {
-	if p.gen {
+func (pg Page) Render() string {
+	if pg.gen {
 		tmpl := Templates.Lookup("base")
-		name := filepath.Join(p.Info().Path(), "index.html")
+		name := filepath.Join(pg.Info().Path(), "index.html")
 
 		file, err := os.Create(name)
 		if err != nil {
@@ -108,7 +109,7 @@ func (p Page) Render() string {
 		}
 		defer file.Close()
 
-		err = tmpl.Execute(file, p)
+		err = tmpl.Execute(file, pg)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -118,9 +119,9 @@ func (p Page) Render() string {
 	return ""
 }
 
-func (p Page) Content() string {
+func (pg Page) Content() string {
 	var buf bytes.Buffer
-	err := p.tmpl.Execute(&buf, p)
+	err := pg.tmpl.Execute(&buf, pg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -128,29 +129,51 @@ func (p Page) Content() string {
 	return buf.String()
 }
 
-func (page *Page) GetChildren() []*Page {
-	for _, dir := range page.Tree.Children() {
+func (pg *Page) GetChildren() []*Page {
+	for _, dir := range pg.Tree.Children() {
 		p := NewPage(dir)
-		page.Children = append(page.Children, p)
+		pg.Children = append(pg.Children, p)
 	}
-	return page.Children
+	return pg.Children
 }
 
-func (p *Page) NewAsset(file fidi.File) *Page {
-	asset := Asset{
-		File:       file,
-		Html:       p.Html,
-		Attributes: make(map[string]any),
+func (pg *Page) SetProfile(pro string) *Page {
+	pg.tmpl = GetTemplate(pro)
+	pg.profile = pro
+
+	css := GetCss(pro)
+	pg.Css = append(pg.Css, css...)
+
+	scripts := GetScripts(pro)
+	pg.Scripts = append(pg.Scripts, scripts...)
+
+	html := GetHtml(pro)
+	maps.Copy(pg.Html, html)
+
+	mt := pro + ".mime"
+	ext := pro + ".ext"
+	var items []fidi.File
+	switch {
+	case viper.IsSet(mt):
+		mimes := viper.GetStringSlice(mt)
+		items = pg.FilterByMime(mimes...)
+	case viper.IsSet(ext):
+		exts := viper.GetStringSlice(ext)
+		items = pg.FilterByExt(exts...)
 	}
-	p.Assets = append(p.Assets, asset)
-	return p
+
+	for _, i := range items {
+		asset := NewAsset(i, pg.Html)
+		pg.Assets = append(pg.Assets, asset)
+	}
+	return pg
 }
 
-func (tree *Page) getBreadcrumbs() *Page {
+func (pg *Page) getBreadcrumbs() *Page {
 	var crumbs []map[string]any
 
-	totalP := len(tree.Parents())
-	for _, parent := range tree.Parents() {
+	totalP := len(pg.Parents())
+	for _, parent := range pg.Parents() {
 		totalP--
 
 		path := ".." + strings.Repeat("/..", totalP)
@@ -168,14 +191,14 @@ func (tree *Page) getBreadcrumbs() *Page {
 		}
 		crumbs = append(crumbs, link)
 	}
-	tree.Breadcrumbs = crumbs
+	pg.Breadcrumbs = crumbs
 
-	return tree
+	return pg
 }
 
-func (page *Page) getFiles(rel string) []map[string]any {
+func (pg *Page) getFiles(rel string) []map[string]any {
 	var files []map[string]any
-	for _, file := range page.Leaves() {
+	for _, file := range pg.Leaves() {
 		if base := file.Base; base != "index.html" {
 			url := map[string]any{
 				"href":   filepath.Join(rel, base),
@@ -188,11 +211,11 @@ func (page *Page) getFiles(rel string) []map[string]any {
 	return files
 }
 
-func (page *Page) getNav() *Page {
+func (pg *Page) getNav() *Page {
 	var depth []int
 	var nav []map[string]any
-	for _, p := range page.Children {
-		self := page.Info().Rel()
+	for _, p := range pg.Children {
+		self := pg.Info().Rel()
 		child := p.Info().Rel()
 
 		rel, err := filepath.Rel(self, child)
@@ -208,7 +231,7 @@ func (page *Page) getNav() *Page {
 			"indent": p.Info().Depth,
 		}
 
-		if page.FullNav {
+		if pg.FullNav {
 			url["children"] = p.getFiles(rel)
 		}
 
@@ -220,7 +243,7 @@ func (page *Page) getNav() *Page {
 			if n["indent"].(int) == d {
 				n["indent"] = idx
 			}
-			if page.FullNav {
+			if pg.FullNav {
 				files := n["children"].([]map[string]any)
 				if len(files) > 0 {
 					for _, f := range files {
@@ -233,15 +256,15 @@ func (page *Page) getNav() *Page {
 		}
 	}
 
-	page.Nav = nav
+	pg.Nav = nav
 
-	return page
+	return pg
 }
 
-func (p *Page) FilterByExt(ext ...string) []fidi.File {
-	return p.Filter(fidi.ExtFilter(ext...))
+func (pg *Page) FilterByExt(ext ...string) []fidi.File {
+	return pg.Filter(fidi.ExtFilter(ext...))
 }
 
-func (p *Page) FilterByMime(mime ...string) []fidi.File {
-	return p.Filter(fidi.MimeFilter(mime...))
+func (pg *Page) FilterByMime(mime ...string) []fidi.File {
+	return pg.Filter(fidi.MimeFilter(mime...))
 }

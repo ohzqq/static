@@ -5,8 +5,6 @@ import (
 	"text/template"
 
 	"github.com/ohzqq/fidi"
-	"github.com/spf13/viper"
-	"golang.org/x/exp/maps"
 )
 
 type Builder struct {
@@ -110,41 +108,12 @@ func Nav(full bool) BuildOpt {
 
 func Collection() BuildOpt {
 	return func(page *Page) {
-		for _, dir := range page.Tree.Children() {
-			p := NewPage(dir)
-			page.Children = append(page.Children, p)
-		}
+		page.GetChildren()
 	}
 }
 
 func Profile(pro string) BuildOpt {
 	return func(p *Page) {
-		p.tmpl = GetTemplate(pro)
-		p.profile = pro
-
-		css := GetCss(pro)
-		p.Css = append(p.Css, css...)
-
-		scripts := GetScripts(pro)
-		p.Scripts = append(p.Scripts, scripts...)
-
-		html := GetHtml(pro)
-		maps.Copy(p.Html, html)
-
-		mt := pro + ".mime"
-		ext := pro + ".ext"
-		var items []fidi.File
-		switch {
-		case viper.IsSet(mt):
-			mimes := viper.GetStringSlice(mt)
-			items = p.FilterByMime(mimes...)
-		case viper.IsSet(ext):
-			exts := viper.GetStringSlice(ext)
-			items = p.FilterByExt(exts...)
-		}
-
-		for _, i := range items {
-			p.NewAsset(i)
-		}
+		p.SetProfile(pro)
 	}
 }
