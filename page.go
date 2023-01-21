@@ -41,16 +41,15 @@ type Page struct {
 
 type BuildOpt func(p *Page)
 
-func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
+func NewPage(dir fidi.Tree) *Page {
 	page := Page{
-		Tree:      dir,
-		Css:       GetCss("global"),
-		Scripts:   GetScripts("global"),
-		Html:      GetHtml("global"),
-		profile:   "global",
-		Color:     viper.GetStringMapString("color"),
-		Opts:      &Builder{},
-		buildOpts: opts,
+		Tree:    dir,
+		Css:     GetCss("global"),
+		Scripts: GetScripts("global"),
+		Html:    GetHtml("global"),
+		profile: "global",
+		Color:   viper.GetStringMapString("color"),
+		Opts:    &Builder{},
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
@@ -65,31 +64,12 @@ func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 	return &page
 }
 
-func (page *Page) BuildOpts(opts ...BuildOpt) *Page {
-	page.buildOpts = append(page.buildOpts, opts...)
-	return page
-}
-
-func (p *Page) Build() {
+func (p *Page) Build(opts ...BuildOpt) {
 	fmt.Printf("building %s\n", p.Info().Name)
-	for _, opt := range p.buildOpts {
+	for _, opt := range opts {
 		opt(p)
 	}
 	p.Render()
-}
-
-func Input(tree fidi.Tree) BuildOpt {
-	return func(p *Page) {
-		p.Tree = tree
-		p.HtmlFiles = p.FilterByExt(".html")
-		p.Files = p.Leaves()
-		p.Index()
-		if tree.Info().Rel() == "." {
-			p.Title = "Home"
-		} else {
-			p.Title = tree.Info().Base
-		}
-	}
 }
 
 func Gen() BuildOpt {
@@ -130,7 +110,7 @@ func Breadcrumbs(tree fidi.Tree) BuildOpt {
 func Collection() BuildOpt {
 	return func(page *Page) {
 		for _, dir := range page.Tree.Children() {
-			p := NewPage(dir, page.buildOpts...)
+			p := NewPage(dir)
 			page.Children = append(page.Children, p)
 		}
 	}
@@ -225,7 +205,7 @@ func (p Page) Content() string {
 
 func (page *Page) GetChildren() []*Page {
 	for _, dir := range page.Tree.Children() {
-		p := NewPage(dir, page.buildOpts...)
+		p := NewPage(dir)
 		page.Children = append(page.Children, p)
 	}
 	return page.Children

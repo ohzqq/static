@@ -33,10 +33,9 @@ var testCmd = &cobra.Command{
 func page(d string) {
 	dir, _ := fidi.NewDir(d, d)
 	p := static.NewPage(dir)
-	p.BuildOpts(static.Profile("swiper"), static.Regen())
+	p.Build(static.Profile("swiper"), static.Regen())
 	fmt.Printf("html %+V\n", p.Info().Path())
 
-	p.Build()
 }
 
 func collection(d string) {

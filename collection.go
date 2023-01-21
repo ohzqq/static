@@ -74,12 +74,12 @@ func (b *Builder) Build() {
 	}
 	tree := fidi.NewTree(b.Input)
 
-	page := NewPage(tree, b.Opts()...)
-	page.Build()
+	page := NewPage(tree)
+	page.Build(b.Opts()...)
 
 	if b.isCollection {
 		for _, child := range page.Children {
-			child.Build()
+			child.Build(b.Opts()...)
 		}
 	}
 }
@@ -90,7 +90,6 @@ func NewCollection(path string, opts ...BuildOpt) Col {
 	col := Col{
 		Page: NewPage(tree),
 	}
-	col.BuildOpts(opts...)
 	col.root = path
 	cfgCollectionPage(col.Page)
 
