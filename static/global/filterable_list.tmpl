@@ -1,5 +1,5 @@
 {{define "filterableList"}}
-<div class="wrapper" x-data="{
+<div class="filterable-list" x-data="{
   search: '',
   show_item(el) {
     return this.search === '' ||
@@ -10,15 +10,6 @@
 	 <div>
     <p>Search Input: <span x-text="search"></span></p>
   </div>
-	{{range .}}
-	<div x-show="show_item($el)" style="padding-left:{{.depth}}rem;" class="dir">
-		 &#x1F4C2; <a href="{{.href}}">{{.text}}</a>
-	</div>
-	{{if gt (len .children) 0}}
-		{{range .children}}
-			{{template "filterableList" .}}
-		{{end}}
-	{{end}}
-{{end}}
+	{{template "list" .}}
 </div>
 {{end}}

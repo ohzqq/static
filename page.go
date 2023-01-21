@@ -226,7 +226,7 @@ func (p *Page) NewAsset(file fidi.File) *Page {
 
 func (p Page) Url() map[string]any {
 	url := make(map[string]any)
-	url["depth"] = p.Info().Depth
+	url["indent"] = p.Info().Depth
 	url["href"] = p.RelUrl()
 	url["text"] = p.Title
 	return url

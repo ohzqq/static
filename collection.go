@@ -119,9 +119,9 @@ func getBreadcrumbs(tree fidi.Tree) []map[string]any {
 		}
 
 		link := map[string]any{
-			"href":  path,
-			"text":  name,
-			"depth": parent.Info().Depth,
+			"href":   path,
+			"text":   name,
+			"indent": parent.Info().Depth,
 		}
 		crumbs = append(crumbs, link)
 	}
@@ -134,9 +134,9 @@ func getFiles(page *Page, rel string) []map[string]any {
 	for _, file := range page.Files {
 		if base := file.Base; base != "index.html" {
 			url := map[string]any{
-				"href":  filepath.Join(rel, base),
-				"text":  base,
-				"depth": file.Depth,
+				"href":   filepath.Join(rel, base),
+				"text":   base,
+				"indent": file.Depth,
 			}
 			files = append(files, url)
 		}
@@ -159,13 +159,13 @@ func getNav(page *Page) []map[string]any {
 		depth = append(depth, p.Info().Depth)
 
 		url := map[string]any{
-			"href":  filepath.Join(rel, "index.html"),
-			"text":  p.Title,
-			"depth": p.Info().Depth,
+			"href":   filepath.Join(rel, "index.html"),
+			"text":   p.Title,
+			"indent": p.Info().Depth,
 		}
 
 		if page.FullNav {
-			url["files"] = getFiles(p, rel)
+			url["children"] = getFiles(p, rel)
 		}
 
 		nav = append(nav, url)
@@ -173,15 +173,15 @@ func getNav(page *Page) []map[string]any {
 
 	for idx, d := range lo.Uniq(depth) {
 		for _, n := range nav {
-			if n["depth"].(int) == d {
-				n["depth"] = idx
+			if n["indent"].(int) == d {
+				n["indent"] = idx
 			}
 			if page.FullNav {
-				files := n["files"].([]map[string]any)
+				files := n["children"].([]map[string]any)
 				if len(files) > 0 {
 					for _, f := range files {
-						if f["depth"].(int) == d {
-							f["depth"] = idx + 1
+						if f["indent"].(int) == d {
+							f["indent"] = idx + 1
 						}
 					}
 				}
