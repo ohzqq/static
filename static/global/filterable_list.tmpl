@@ -1,2 +1,24 @@
 {{define "filterableList"}}
+<div class="wrapper" x-data="{
+  search: '',
+  show_item(el) {
+    return this.search === '' ||
+		el.textContent.toLowerCase().includes(this.search)
+  }
+}">
+	<input class="filterable-list-input" type="search" placeholder="Filter list..." x-model="search">
+	 <div>
+    <p>Search Input: <span x-text="search"></span></p>
+  </div>
+	{{range .}}
+	<div x-show="show_item($el)" style="padding-left:{{.depth}}rem;" class="dir">
+		 &#x1F4C2; <a href="{{.href}}">{{.text}}</a>
+	</div>
+	{{if gt (len .children) 0}}
+		{{range .children}}
+			{{template "filterableList" .}}
+		{{end}}
+	{{end}}
+{{end}}
+</div>
 {{end}}
