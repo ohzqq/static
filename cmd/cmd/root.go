@@ -72,6 +72,7 @@ func initConfig() {
 	viper.SetDefault(
 		"global.scripts",
 		[]string{
+			"static/js/alpine.js",
 			"static/js/filetree.js",
 			"static/js/w3.js",
 		},

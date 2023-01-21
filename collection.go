@@ -132,13 +132,14 @@ func getBreadcrumbs(tree fidi.Tree) []map[string]any {
 func getFiles(page *Page, rel string) []map[string]any {
 	var files []map[string]any
 	for _, file := range page.Files {
-		url := map[string]any{
-			"href":  filepath.Join(rel, file.Base),
-			"text":  file.Base,
-			"depth": file.Depth,
+		if base := file.Base; base != "index.html" {
+			url := map[string]any{
+				"href":  filepath.Join(rel, base),
+				"text":  base,
+				"depth": file.Depth,
+			}
+			files = append(files, url)
 		}
-
-		files = append(files, url)
 	}
 	return files
 }
@@ -149,6 +150,7 @@ func getNav(page *Page) []map[string]any {
 	for _, p := range page.Children {
 		self := page.Info().Rel()
 		child := p.Info().Rel()
+
 		rel, err := filepath.Rel(self, child)
 		if err != nil {
 			log.Fatal(err)
@@ -161,6 +163,7 @@ func getNav(page *Page) []map[string]any {
 			"text":  p.Title,
 			"depth": p.Info().Depth,
 		}
+
 		if page.FullNav {
 			url["files"] = getFiles(p, rel)
 		}
@@ -178,7 +181,7 @@ func getNav(page *Page) []map[string]any {
 				if len(files) > 0 {
 					for _, f := range files {
 						if f["depth"].(int) == d {
-							f["depth"] = idx
+							f["depth"] = idx + 1
 						}
 					}
 				}
