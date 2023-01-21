@@ -32,7 +32,6 @@ type Page struct {
 	Nav         []map[string]any
 	Breadcrumbs []map[string]any
 	tmpl        *template.Template
-	root        string
 	profile     string
 }
 

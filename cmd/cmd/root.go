@@ -18,7 +18,7 @@ var (
 	regenerate bool
 	generate   bool
 	cfg        static.Config
-	Builder    *static.Builder
+	builder    = &static.Builder{}
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -46,12 +46,15 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().BoolVarP(&regenerate, "regenerate", "G", false, "regenerate index files")
-	rootCmd.PersistentFlags().BoolVarP(&generate, "generate", "g", false, "generate index files")
-	rootCmd.PersistentFlags().StringSliceVarP(&extension, "ext", "e", []string{}, "glob by ext")
-	rootCmd.PersistentFlags().StringVarP(&mimetype, "mimetype", "m", "", "glob by mimetype")
-	rootCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "", "config category")
-	rootCmd.MarkFlagsMutuallyExclusive("ext", "mimetype")
+	rootCmd.PersistentFlags().BoolVarP(&builder.Regen, "regenerate", "G", false, "regenerate index files")
+	rootCmd.PersistentFlags().BoolVarP(&builder.Gen, "generate", "g", false, "generate index files")
+	rootCmd.PersistentFlags().BoolVarP(&builder.FullNav, "all", "a", false, "list all files in nav")
+	rootCmd.PersistentFlags().BoolVarP(&builder.IsCollection, "recurse", "r", false, "recursive build")
+	rootCmd.PersistentFlags().StringSliceVarP(&builder.Exts, "ext", "e", []string{}, "glob by ext")
+	rootCmd.PersistentFlags().StringSliceVarP(&builder.Mimetypes, "mime", "m", []string{}, "glob by mimetype")
+	rootCmd.PersistentFlags().StringVarP(&builder.Profile, "profile", "p", "", "config category")
+	rootCmd.PersistentFlags().StringVarP(&builder.Tmpl, "template", "t", "", "set golang template for page")
+	rootCmd.MarkFlagsMutuallyExclusive("ext", "mime")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

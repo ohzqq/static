@@ -2,7 +2,6 @@ package static
 
 import (
 	"log"
-	"text/template"
 
 	"github.com/ohzqq/fidi"
 )
@@ -12,10 +11,12 @@ type Builder struct {
 	FullNav      bool
 	Gen          bool
 	Regen        bool
-	isCollection bool
-	Tmpl         *template.Template
+	IsCollection bool
+	Tmpl         string
 	Profile      string
 	Input        string
+	Mimetypes    []string
+	Exts         []string
 }
 
 func New(path string) *Builder {
@@ -25,20 +26,20 @@ func New(path string) *Builder {
 }
 
 func (b *Builder) Collection() *Builder {
-	b.isCollection = true
+	b.IsCollection = true
 	b.Nav = true
 	return b
 }
 
 func (b *Builder) Page() *Builder {
-	b.isCollection = false
+	b.IsCollection = false
 	return b
 }
 
 func (b Builder) Opts() []BuildOpt {
 	var opts []BuildOpt
 
-	if b.isCollection {
+	if b.IsCollection {
 		opts = append(opts, Collection())
 	}
 
@@ -69,7 +70,7 @@ func (b *Builder) Build() {
 	page := NewPage(tree)
 	page.Build(b.Opts()...)
 
-	if b.isCollection {
+	if b.IsCollection {
 		for _, child := range page.Children {
 			child.Build(b.Opts()...)
 		}
