@@ -41,17 +41,6 @@ type Page struct {
 
 type BuildOpt func(p *Page)
 
-func newPage() *Page {
-	return &Page{
-		Css:     GetCss("global"),
-		Scripts: GetScripts("global"),
-		Html:    GetHtml("global"),
-		profile: "global",
-		Color:   viper.GetStringMapString("color"),
-		Opts:    &Builder{},
-	}
-}
-
 func NewPage(dir fidi.Tree, opts ...BuildOpt) *Page {
 	page := Page{
 		Tree:      dir,
@@ -127,8 +116,7 @@ func Regen() BuildOpt {
 
 func Nav(full bool) BuildOpt {
 	return func(p *Page) {
-		p.Opts.FullNav = full
-		p.Opts.Nav = true
+		//p.FullNav = full
 		p.Breadcrumbs = getBreadcrumbs(p.Tree)
 		p.Nav = getNav(p)
 	}
@@ -140,8 +128,11 @@ func Breadcrumbs(tree fidi.Tree) BuildOpt {
 }
 
 func Collection() BuildOpt {
-	return func(p *Page) {
-		p.isCollection = true
+	return func(page *Page) {
+		for _, dir := range page.Tree.Children() {
+			p := NewPage(dir, page.buildOpts...)
+			page.Children = append(page.Children, p)
+		}
 	}
 }
 

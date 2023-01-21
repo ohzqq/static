@@ -22,7 +22,7 @@ var testCmd = &cobra.Command{
 		//page(d)
 		//collection(d)
 		p := static.New(d)
-		p.Profile = "gifv"
+		p.Profile = "swiper"
 		p.Regen = true
 		p.FullNav = true
 		p.Collection().Build()

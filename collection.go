@@ -16,14 +16,14 @@ type Col struct {
 }
 
 type Builder struct {
-	Nav        bool
-	FullNav    bool
-	Gen        bool
-	Regen      bool
-	collection bool
-	Tmpl       *template.Template
-	Profile    string
-	Input      string
+	Nav          bool
+	FullNav      bool
+	Gen          bool
+	Regen        bool
+	isCollection bool
+	Tmpl         *template.Template
+	Profile      string
+	Input        string
 }
 
 func New(path string) *Builder {
@@ -33,20 +33,20 @@ func New(path string) *Builder {
 }
 
 func (b *Builder) Collection() *Builder {
-	b.collection = true
+	b.isCollection = true
 	b.Nav = true
 	return b
 }
 
 func (b *Builder) Page() *Builder {
-	b.collection = false
+	b.isCollection = false
 	return b
 }
 
 func (b Builder) Opts() []BuildOpt {
 	var opts []BuildOpt
 
-	if b.collection {
+	if b.isCollection {
 		opts = append(opts, Collection())
 	}
 
@@ -77,12 +77,9 @@ func (b *Builder) Build() {
 	page := NewPage(tree, b.Opts()...)
 	page.Build()
 
-	if b.collection {
-		for _, dir := range page.Tree.Children() {
-			p := NewPage(dir, b.Opts()...)
-			p.Opts = b
-			page.Children = append(page.Children, p)
-			p.Build()
+	if b.isCollection {
+		for _, child := range page.Children {
+			child.Build()
 		}
 	}
 }
