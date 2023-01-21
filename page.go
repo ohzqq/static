@@ -164,7 +164,7 @@ func (p Page) RelUrl() string {
 	return "." + p.AbsUrl()
 }
 
-func getBreadcrumbs(tree fidi.Tree) []map[string]any {
+func (tree *Page) getBreadcrumbs() *Page {
 	var crumbs []map[string]any
 
 	totalP := len(tree.Parents())
@@ -186,11 +186,12 @@ func getBreadcrumbs(tree fidi.Tree) []map[string]any {
 		}
 		crumbs = append(crumbs, link)
 	}
+	tree.Breadcrumbs = crumbs
 
-	return crumbs
+	return tree
 }
 
-func getFiles(page *Page, rel string) []map[string]any {
+func (page *Page) getFiles(rel string) []map[string]any {
 	var files []map[string]any
 	for _, file := range page.Leaves() {
 		if base := file.Base; base != "index.html" {
@@ -205,7 +206,7 @@ func getFiles(page *Page, rel string) []map[string]any {
 	return files
 }
 
-func getNav(page *Page) []map[string]any {
+func (page *Page) getNav() *Page {
 	var depth []int
 	var nav []map[string]any
 	for _, p := range page.Children {
@@ -226,7 +227,7 @@ func getNav(page *Page) []map[string]any {
 		}
 
 		if page.FullNav {
-			url["children"] = getFiles(p, rel)
+			url["children"] = p.getFiles(rel)
 		}
 
 		nav = append(nav, url)
@@ -250,7 +251,9 @@ func getNav(page *Page) []map[string]any {
 		}
 	}
 
-	return nav
+	page.Nav = nav
+
+	return page
 }
 func (p *Page) FilterByExt(ext ...string) []fidi.File {
 	return p.Filter(fidi.ExtFilter(ext...))

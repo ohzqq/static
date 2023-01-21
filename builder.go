@@ -2,9 +2,12 @@ package static
 
 import (
 	"log"
+	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/ohzqq/fidi"
+	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"golang.org/x/exp/maps"
 )
@@ -103,8 +106,8 @@ func Regen() BuildOpt {
 func Nav(full bool) BuildOpt {
 	return func(p *Page) {
 		p.FullNav = full
-		p.Breadcrumbs = getBreadcrumbs(p.Tree)
-		p.Nav = getNav(p)
+		p.getBreadcrumbs()
+		p.getNav()
 	}
 }
 
@@ -147,4 +150,92 @@ func Profile(pro string) BuildOpt {
 			p.NewAsset(i)
 		}
 	}
+}
+func getBreadcrumbs(tree fidi.Tree) []map[string]any {
+	var crumbs []map[string]any
+
+	totalP := len(tree.Parents())
+	for _, parent := range tree.Parents() {
+		totalP--
+
+		path := ".." + strings.Repeat("/..", totalP)
+		path = filepath.Join(path, "index.html")
+
+		name := parent.Info().Base
+		if parent.Info().Rel() == "." {
+			name = "Home"
+		}
+
+		link := map[string]any{
+			"href":   path,
+			"text":   name,
+			"indent": parent.Info().Depth,
+		}
+		crumbs = append(crumbs, link)
+	}
+
+	return crumbs
+}
+
+func getFiles(page *Page, rel string) []map[string]any {
+	var files []map[string]any
+	for _, file := range page.Leaves() {
+		if base := file.Base; base != "index.html" {
+			url := map[string]any{
+				"href":   filepath.Join(rel, base),
+				"text":   base,
+				"indent": file.Depth,
+			}
+			files = append(files, url)
+		}
+	}
+	return files
+}
+
+func getNav(page *Page) []map[string]any {
+	var depth []int
+	var nav []map[string]any
+	for _, p := range page.Children {
+		self := page.Info().Rel()
+		child := p.Info().Rel()
+
+		rel, err := filepath.Rel(self, child)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		depth = append(depth, p.Info().Depth)
+
+		url := map[string]any{
+			"href":   filepath.Join(rel, "index.html"),
+			"text":   p.Title,
+			"indent": p.Info().Depth,
+		}
+
+		if page.FullNav {
+			url["children"] = getFiles(p, rel)
+		}
+
+		nav = append(nav, url)
+	}
+
+	for idx, d := range lo.Uniq(depth) {
+		for _, n := range nav {
+			if n["indent"].(int) == d {
+				n["indent"] = idx
+			}
+			if page.FullNav {
+				files := n["children"].([]map[string]any)
+				if len(files) > 0 {
+					for _, f := range files {
+						if f["indent"].(int) == d {
+							f["indent"] = idx + 1
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return nav
 }
