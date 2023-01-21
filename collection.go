@@ -85,24 +85,6 @@ func (b *Builder) Build() {
 	}
 }
 
-func NewCollection(path string, opts ...BuildOpt) Col {
-	tree := fidi.NewTree(path)
-
-	col := Col{
-		Page: NewPage(tree),
-	}
-	col.root = path
-
-	return col
-}
-
-func (col Col) Build() {
-	col.Page.Build()
-	for _, page := range col.Children {
-		page.Build()
-	}
-}
-
 func getBreadcrumbs(tree fidi.Tree) []map[string]any {
 	var crumbs []map[string]any
 
@@ -131,7 +113,7 @@ func getBreadcrumbs(tree fidi.Tree) []map[string]any {
 
 func getFiles(page *Page, rel string) []map[string]any {
 	var files []map[string]any
-	for _, file := range page.Files {
+	for _, file := range page.Leaves() {
 		if base := file.Base; base != "index.html" {
 			url := map[string]any{
 				"href":   filepath.Join(rel, base),

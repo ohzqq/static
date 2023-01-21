@@ -65,7 +65,6 @@ func initConfig() {
 			"static/css/normalize.css",
 			"static/css/milligram.css",
 			"static/css/base.css",
-			"static/css/filetree.css",
 		},
 	)
 
@@ -73,8 +72,6 @@ func initConfig() {
 		"global.scripts",
 		[]string{
 			"static/js/alpine.js",
-			"static/js/filetree.js",
-			"static/js/w3.js",
 		},
 	)
 

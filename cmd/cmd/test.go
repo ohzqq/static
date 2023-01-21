@@ -38,34 +38,6 @@ func page(d string) {
 
 }
 
-func collection(d string) {
-	col := static.NewCollection(d, static.Profile("swiper"), static.Regen(), static.Nav(true))
-	//col.BuildOpts()
-	col.Build()
-	fmt.Printf("collection %s\n", col.Title)
-	fmt.Printf("collection %s\n", col.Leaves())
-	//fmt.Printf("collection %s\n", len(col.Css))
-	//node := col.Nodes[2]
-	//node, _ := col.GetNode(2)
-	//pro := static.GetProfile("gifv")
-	//fmt.Printf("cfg %v\n", pro)
-
-	for _, page := range col.Children {
-		//page.FilterByExt(".jpg", ".png", ".avif")
-		fmt.Printf("%d: %s\n", page.Info().Depth, page.Info().Rel())
-		if page.HasIndex() {
-			fmt.Printf("url %+V\n", page.RelUrl())
-		}
-		fmt.Printf("nav %s\n", page.Nav)
-		//fmt.Printf("breadcrumbs %+V\n", page.Breadcrumbs)
-		//page := static.NewPage(node)
-		//for _, child := range page.Assets {
-		//  fmt.Printf("html %+V\n", child.Render())
-		//}
-	}
-
-}
-
 func init() {
 	rootCmd.AddCommand(testCmd)
 
