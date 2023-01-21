@@ -1,25 +1,2 @@
 {{define "nav"}}
-	{{if .HasChildren}}
-<style type="text/css">
-	.sidebar {
-			padding: 0 .5rem;
-	}
-
-</style>
-
-<div x-data="{
-	open: false,
-	toggle() { this.open = ! this.open }
-}">
-	<button @click="toggle()">Menu</button>
-	<nav class="sidebar" x-show="open" @click.outside="open = false">
-
-	{{template "filterableList" .Nav}}
-</div>
-</nav>
-</div>
-</div>
-<script>
-</script>
-	{{end}}
 {{end}}
