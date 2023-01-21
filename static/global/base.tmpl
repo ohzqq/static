@@ -5,7 +5,7 @@
 		<title>{{.Title}}</title>
     <meta name="viewport" content="width=device-width">
 		{{template "color" .Color -}}
-		{{range .ReadCss -}}
+		{{range .Css -}}
 		<style>
 			{{.}}
 		</style>
@@ -34,7 +34,7 @@
 			{{.Content -}}
 
 			<footer>
-			{{- range .ReadScripts}}
+			{{- range .Scripts}}
 				<script>
 					{{.}}
 				</script>

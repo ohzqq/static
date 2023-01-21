@@ -22,6 +22,15 @@ type Asset struct {
 	Tag        string
 }
 
+func NewAsset(file fidi.File, html Html) Asset {
+	asset := Asset{
+		File:       file,
+		Html:       html,
+		Attributes: make(map[string]any),
+	}
+	return asset
+}
+
 func (a Asset) IsAudio() bool {
 	return strings.Contains(a.Mime, "audio")
 }

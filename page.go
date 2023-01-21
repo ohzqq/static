@@ -146,24 +146,6 @@ func (p *Page) NewAsset(file fidi.File) *Page {
 	return p
 }
 
-func (p Page) Url() map[string]any {
-	url := make(map[string]any)
-	url["indent"] = p.Info().Depth
-	url["href"] = p.RelUrl()
-	url["text"] = p.Title
-	return url
-}
-
-func (p Page) AbsUrl() string {
-	url := "/"
-	url += filepath.Join(p.Info().Rel(), "index.html")
-	return url
-}
-
-func (p Page) RelUrl() string {
-	return "." + p.AbsUrl()
-}
-
 func (tree *Page) getBreadcrumbs() *Page {
 	var crumbs []map[string]any
 
@@ -255,18 +237,11 @@ func (page *Page) getNav() *Page {
 
 	return page
 }
+
 func (p *Page) FilterByExt(ext ...string) []fidi.File {
 	return p.Filter(fidi.ExtFilter(ext...))
 }
 
 func (p *Page) FilterByMime(mime ...string) []fidi.File {
 	return p.Filter(fidi.MimeFilter(mime...))
-}
-
-func (p Page) ReadCss() []string {
-	return p.Css
-}
-
-func (p Page) ReadScripts() []string {
-	return p.Scripts
 }
