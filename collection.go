@@ -91,7 +91,6 @@ func NewCollection(path string, opts ...BuildOpt) Col {
 		Page: NewPage(tree),
 	}
 	col.root = path
-	cfgCollectionPage(col.Page)
 
 	return col
 }
@@ -101,27 +100,6 @@ func (col Col) Build() {
 	for _, page := range col.Children {
 		page.Build()
 	}
-}
-
-func cfgCollectionPage(p *Page) *Page {
-	fmt.Println(p.FullNav)
-	p.GetChildren()
-	p.Breadcrumbs = getBreadcrumbs(p.Tree)
-	p.Nav = getNav(p)
-
-	for _, page := range p.Children {
-		cfgCollectionPage(page)
-	}
-
-	return p
-}
-
-func (col *Col) getChildren() *Col {
-	col.GetChildren()
-	for _, page := range col.Children {
-		page.GetChildren()
-	}
-	return col
 }
 
 func getBreadcrumbs(tree fidi.Tree) []map[string]any {
@@ -183,6 +161,7 @@ func getNav(page *Page) []map[string]any {
 			"depth": p.Info().Depth,
 		}
 		if p.FullNav {
+			fmt.Printf("%s files %d\n", p.Title, len(p.Files))
 			url["files"] = getFiles(p, rel)
 		}
 
@@ -194,16 +173,17 @@ func getNav(page *Page) []map[string]any {
 			if n["depth"].(int) == d {
 				n["depth"] = idx
 			}
-			if page.FullNav {
-				files := n["files"].([]map[string]any)
-				if len(files) > 0 {
-					for _, f := range files {
-						if f["depth"].(int) == d {
-							f["depth"] = idx
-						}
-					}
-				}
-			}
+			//if page.FullNav {
+			//  files := n["files"].([]map[string]any)
+			//  if len(files) > 0 {
+			//    for _, f := range files {
+			//      if f["depth"].(int) == d {
+			//        f["depth"] = idx
+			//      }
+			//    }
+			//  }
+			//}
+
 		}
 	}
 

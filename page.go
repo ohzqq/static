@@ -96,7 +96,10 @@ func Regen() BuildOpt {
 
 func Nav(full bool) BuildOpt {
 	return func(p *Page) {
-		//p.FullNav = full
+		//if full {
+		//  p.Files = p.Leaves()
+		//}
+		p.FullNav = full
 		p.Breadcrumbs = getBreadcrumbs(p.Tree)
 		p.Nav = getNav(p)
 	}
