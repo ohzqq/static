@@ -17,28 +17,23 @@ import (
 
 type Page struct {
 	fidi.Tree
-	Title        string
-	Css          []string
-	Scripts      []string
-	Color        map[string]string
-	Html         Html
-	buildOpts    []BuildOpt
-	HtmlFiles    []fidi.File
-	hasIndex     bool
-	FullNav      bool
-	regen        bool
-	gen          bool
-	index        fidi.File
-	Files        []fidi.File
-	Assets       []Asset
-	Children     []*Page
-	isCollection bool
-	Nav          []map[string]any
-	Breadcrumbs  []map[string]any
-	tmpl         *template.Template
-	root         string
-	profile      string
-	Opts         *Builder
+	Title       string
+	Css         []string
+	Scripts     []string
+	Color       map[string]string
+	Html        Html
+	HtmlFiles   []fidi.File
+	hasIndex    bool
+	FullNav     bool
+	gen         bool
+	index       fidi.File
+	Assets      []Asset
+	Children    []*Page
+	Nav         []map[string]any
+	Breadcrumbs []map[string]any
+	tmpl        *template.Template
+	root        string
+	profile     string
 }
 
 type BuildOpt func(p *Page)
@@ -51,11 +46,9 @@ func NewPage(dir fidi.Tree) *Page {
 		Html:    GetHtml("global"),
 		profile: "global",
 		Color:   viper.GetStringMapString("color"),
-		Opts:    &Builder{},
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
-	page.Files = page.Leaves()
 
 	if dir.Info().Rel() == "." {
 		page.Title = "Home"
@@ -115,7 +108,6 @@ func (pg Page) Render() string {
 		}
 		return name
 	}
-
 	return ""
 }
 
@@ -125,7 +117,6 @@ func (pg Page) Content() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	return buf.String()
 }
 
