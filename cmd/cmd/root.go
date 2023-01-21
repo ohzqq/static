@@ -48,7 +48,7 @@ func init() {
 
 	rootCmd.PersistentFlags().BoolVarP(&builder.Regen, "regenerate", "G", false, "regenerate index files")
 	rootCmd.PersistentFlags().BoolVarP(&builder.Gen, "generate", "g", false, "generate index files")
-	rootCmd.PersistentFlags().BoolVarP(&builder.FullNav, "all", "a", false, "list all files in nav")
+	rootCmd.PersistentFlags().BoolVarP(&builder.ListAll, "all", "a", false, "list all files in nav")
 	rootCmd.PersistentFlags().BoolVarP(&builder.IsCollection, "recurse", "r", false, "recursive build")
 	rootCmd.PersistentFlags().StringSliceVarP(&builder.Exts, "ext", "e", []string{}, "glob by ext")
 	rootCmd.PersistentFlags().StringSliceVarP(&builder.Mimetypes, "mime", "m", []string{}, "glob by mimetype")

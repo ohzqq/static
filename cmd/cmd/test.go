@@ -24,7 +24,7 @@ var testCmd = &cobra.Command{
 		p := static.New(d)
 		p.Profile = "swiper"
 		p.Regen = true
-		p.FullNav = true
+		p.ListAll = true
 		p.Collection().Build()
 
 	},

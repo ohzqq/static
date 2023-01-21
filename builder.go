@@ -8,7 +8,8 @@ import (
 
 type Builder struct {
 	Nav          bool
-	FullNav      bool
+	ListAll      bool
+	IndexOnly    bool
 	Gen          bool
 	Regen        bool
 	IsCollection bool
@@ -44,7 +45,7 @@ func (b Builder) Opts() []BuildOpt {
 	}
 
 	if b.Nav {
-		opts = append(opts, Nav(b.FullNav))
+		opts = append(opts, Nav(b.ListAll))
 	}
 
 	switch {
