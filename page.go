@@ -12,7 +12,6 @@ import (
 	"github.com/ohzqq/fidi"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
-	"golang.org/x/exp/maps"
 )
 
 type Page struct {
@@ -40,7 +39,6 @@ type BuildOpt func(p *Page)
 func NewPage(dir fidi.Tree) *Page {
 	page := Page{
 		Tree:  dir,
-		Html:  GetHtml("global"),
 		Color: viper.GetStringMapString("color"),
 		Builder: &Builder{
 			Profile: "global",
@@ -59,14 +57,31 @@ func NewPage(dir fidi.Tree) *Page {
 }
 
 func (pg *Page) Build(opts ...BuildOpt) {
-	fmt.Printf("regen %v\n", viper.GetBool("build.regen"))
-	fmt.Printf("index %v\n", viper.GetBool("build.index_only"))
-	fmt.Printf("all %v\n", listAll())
-	fmt.Printf("collection %v\n", recurse())
+	pg.tmpl = GetTemplate()
+	//fmt.Printf("regen %v\n", viper.GetBool("build.regen"))
+	//fmt.Printf("index %v\n", viper.GetBool("build.index_only"))
+	//fmt.Printf("all %v\n", listAll())
+	if indexOnly() {
+		pg.Nav = pg.setFiles(pg.Info().Rel())
+	}
+	//fmt.Printf("collection %v\n", recurse())
+	if recurse() {
+		pg.setChildren()
+		pg.setNav()
+	}
+
 	fmt.Printf("thumbs %v\n", noThumbs())
 	fmt.Printf("ext %v\n", hasExts())
-	fmt.Printf("mime %v\n", hasMimes())
-	fmt.Printf("profile %v\n", viper.GetString("build.profile"))
+	m := parseFilterKind(".mime")
+	if hasMimes() {
+		m = mimes()
+	}
+	fmt.Printf("mime %v\n", m)
+	e := parseFilterKind(".ext")
+	if hasExts() {
+		e = exts()
+	}
+	fmt.Printf("exts %v\n", e)
 	fmt.Printf("tmpl %v\n", viper.GetString("build.tmpl"))
 	fmt.Printf("building %s\n", pg.Info().Name)
 	for _, opt := range opts {
@@ -145,11 +160,7 @@ func (pg *Page) setChildren() []*Page {
 }
 
 func (pg *Page) SetProfile(pro string) *Page {
-	pg.tmpl = GetTemplate(pro)
 	pg.Profile = pro
-
-	html := GetHtml(pro)
-	maps.Copy(pg.Html, html)
 
 	pg.setAssets()
 
@@ -241,7 +252,7 @@ func (pg *Page) setNav() *Page {
 			"indent": p.Info().Depth,
 		}
 
-		if pg.FullNav {
+		if listAll() {
 			url["children"] = p.setFiles(rel)
 		}
 
@@ -253,7 +264,7 @@ func (pg *Page) setNav() *Page {
 			if n["indent"].(int) == d {
 				n["indent"] = idx
 			}
-			if pg.FullNav {
+			if listAll() {
 				files := n["children"].([]map[string]any)
 				if len(files) > 0 {
 					for _, f := range files {

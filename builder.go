@@ -98,17 +98,17 @@ func (b *Builder) Page() *Builder {
 func (b Builder) Opts() []BuildOpt {
 	var opts []BuildOpt
 
-	if b.IsCollection {
-		opts = append(opts, Collection())
-	}
+	//if b.IsCollection {
+	//opts = append(opts, Collection())
+	//}
 
-	if b.Nav {
-		opts = append(opts, Nav(b.ListAll))
-	}
+	//if b.Nav {
+	//  opts = append(opts, Nav(b.ListAll))
+	//}
 
-	if b.Profile != "" {
-		opts = append(opts, Profile(b.Profile))
-	}
+	//if b.Profile != "" {
+	//  opts = append(opts, Profile(b.Profile))
+	//}
 
 	if len(b.Mimetypes) > 0 {
 		opts = append(opts, FilterAssets(fidi.MimeFilter(b.Mimetypes...)))

@@ -73,9 +73,12 @@ func parsePageResources(kind string) []string {
 	return ReadScriptsAndStyles(files)
 }
 
-func GetTemplate(pro string) *template.Template {
-	if viper.IsSet("inherits." + pro) {
-		pro = InheritedProfile(pro)
+func GetTemplate() *template.Template {
+	pro := viper.GetString("build.profile")
+	if pro != "global" {
+		if in := InheritedProfile(pro); in != "" {
+			pro = in
+		}
 	}
 
 	tmpl := Templates.Lookup(pro)
@@ -84,6 +87,14 @@ func GetTemplate(pro string) *template.Template {
 	}
 
 	return tmpl
+}
+
+func parseFilterKind(kind string) []string {
+	pro := viper.GetString("build.profile")
+	if pro != "global" {
+		return viper.GetStringSlice(pro + kind)
+	}
+	return viper.GetStringSlice("global" + kind)
 }
 
 func getHtml() Html {
@@ -98,10 +109,6 @@ func getHtml() Html {
 		maps.Copy(html, h)
 	}
 	return html
-}
-
-func (html Html) Merge(h Html) {
-	maps.Copy(html, h)
 }
 
 func GetHtml(pro string) Html {
