@@ -110,13 +110,13 @@ func (b Builder) Opts() []BuildOpt {
 	//  opts = append(opts, Profile(b.Profile))
 	//}
 
-	if len(b.Mimetypes) > 0 {
-		opts = append(opts, FilterAssets(fidi.MimeFilter(b.Mimetypes...)))
-	}
+	//if len(b.Mimetypes) > 0 {
+	//  opts = append(opts, FilterAssets(fidi.MimeFilter(b.Mimetypes...)))
+	//}
 
-	if len(b.Exts) > 0 {
-		opts = append(opts, FilterAssets(fidi.ExtFilter(b.Exts...)))
-	}
+	//if len(b.Exts) > 0 {
+	//  opts = append(opts, FilterAssets(fidi.ExtFilter(b.Exts...)))
+	//}
 
 	switch {
 	case b.Gen:

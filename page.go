@@ -58,35 +58,41 @@ func NewPage(dir fidi.Tree) *Page {
 
 func (pg *Page) Build(opts ...BuildOpt) {
 	pg.tmpl = GetTemplate()
-	//fmt.Printf("regen %v\n", viper.GetBool("build.regen"))
-	//fmt.Printf("index %v\n", viper.GetBool("build.index_only"))
-	//fmt.Printf("all %v\n", listAll())
+	pg.Html = getHtml()
+
 	if indexOnly() {
 		pg.Nav = pg.setFiles(pg.Info().Rel())
 	}
-	//fmt.Printf("collection %v\n", recurse())
-	if recurse() {
-		pg.setChildren()
-		pg.setNav()
-	}
 
-	fmt.Printf("thumbs %v\n", noThumbs())
-	fmt.Printf("ext %v\n", hasExts())
 	m := parseFilterKind(".mime")
 	if hasMimes() {
 		m = mimes()
 	}
-	fmt.Printf("mime %v\n", m)
+	if len(m) > 0 {
+		pg.filters = append(pg.filters, fidi.MimeFilter(m...))
+	}
+
 	e := parseFilterKind(".ext")
 	if hasExts() {
 		e = exts()
 	}
-	fmt.Printf("exts %v\n", e)
-	fmt.Printf("tmpl %v\n", viper.GetString("build.tmpl"))
+	if len(e) > 0 {
+		pg.filters = append(pg.filters, fidi.ExtFilter(e...))
+	}
+
+	pg.setAssets()
+
 	fmt.Printf("building %s\n", pg.Info().Name)
 	for _, opt := range opts {
 		opt(pg)
 	}
+
+	if recurse() {
+		pg.setChildren()
+		pg.setNav()
+		pg.setBreadcrumbs()
+	}
+
 	pg.Render()
 }
 
@@ -168,21 +174,10 @@ func (pg *Page) SetProfile(pro string) *Page {
 }
 
 func (pg *Page) setAssets(filters ...fidi.Filter) *Page {
-	mt := pg.Profile + ".mime"
-	ext := pg.Profile + ".ext"
-	var items []fidi.File
-
-	switch {
-	case viper.IsSet(mt):
-		mimes := viper.GetStringSlice(mt)
-		items = pg.FilterByMime(mimes...)
-	case viper.IsSet(ext):
-		exts := viper.GetStringSlice(ext)
-		items = pg.FilterByExt(exts...)
-	}
+	items := pg.Filter(pg.filters...)
 
 	for _, i := range items {
-		asset := NewAsset(i, pg.NoThumbs, pg.Html)
+		asset := NewAsset(i, pg.Html)
 		pg.Assets = append(pg.Assets, asset)
 	}
 
