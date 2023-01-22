@@ -13,6 +13,7 @@ type Builder struct {
 	Gen          bool
 	Regen        bool
 	IsCollection bool
+	NoThumbs     bool
 	Tmpl         string
 	Profile      string
 	Input        string
@@ -82,9 +83,9 @@ func Gen() BuildOpt {
 	return func(p *Page) {
 		switch {
 		case !p.hasIndex:
-			p.gen = true
+			p.Gen = true
 		default:
-			p.gen = false
+			p.Gen = false
 		}
 	}
 }
@@ -92,10 +93,10 @@ func Gen() BuildOpt {
 func Regen() BuildOpt {
 	return func(p *Page) {
 		switch {
-		case p.gen:
-			p.gen = false
+		case p.Gen:
+			p.Gen = false
 		default:
-			p.gen = true
+			p.Gen = true
 		}
 	}
 }
@@ -117,5 +118,10 @@ func Collection() BuildOpt {
 func Profile(pro string) BuildOpt {
 	return func(p *Page) {
 		p.SetProfile(pro)
+	}
+}
+
+func FilterFiles(filters ...fidi.Filter) BuildOpt {
+	return func(p *Page) {
 	}
 }

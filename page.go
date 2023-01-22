@@ -18,33 +18,32 @@ import (
 type Page struct {
 	fidi.Tree
 	Title       string
-	Css         []string
-	Scripts     []string
+	css         []string
+	scripts     []string
 	Color       map[string]string
 	Html        Html
 	HtmlFiles   []fidi.File
 	hasIndex    bool
 	FullNav     bool
-	gen         bool
 	index       fidi.File
 	Assets      []Asset
 	Children    []*Page
 	Nav         []map[string]any
 	Breadcrumbs []map[string]any
 	tmpl        *template.Template
-	profile     string
+	*Builder
 }
 
 type BuildOpt func(p *Page)
 
 func NewPage(dir fidi.Tree) *Page {
 	page := Page{
-		Tree:    dir,
-		Css:     GetCss("global"),
-		Scripts: GetScripts("global"),
-		Html:    GetHtml("global"),
-		profile: "global",
-		Color:   viper.GetStringMapString("color"),
+		Tree:  dir,
+		Html:  GetHtml("global"),
+		Color: viper.GetStringMapString("color"),
+		Builder: &Builder{
+			Profile: "global",
+		},
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
@@ -91,7 +90,7 @@ func (pg *Page) SetTmpl(tmpl *template.Template) *Page {
 }
 
 func (pg Page) Render() string {
-	if pg.gen {
+	if pg.Gen {
 		tmpl := Templates.Lookup("base")
 		name := filepath.Join(pg.Info().Path(), "index.html")
 
@@ -119,6 +118,18 @@ func (pg Page) Content() string {
 	return buf.String()
 }
 
+func (pg Page) Css() []string {
+	css := GetCss("global")
+	css = append(css, GetCss(pg.Profile)...)
+	return css
+}
+
+func (pg Page) Scripts() []string {
+	scripts := GetScripts("global")
+	scripts = append(scripts, GetScripts(pg.Profile)...)
+	return scripts
+}
+
 func (pg *Page) GetChildren() []*Page {
 	for _, dir := range pg.Tree.Children() {
 		p := NewPage(dir)
@@ -129,20 +140,21 @@ func (pg *Page) GetChildren() []*Page {
 
 func (pg *Page) SetProfile(pro string) *Page {
 	pg.tmpl = GetTemplate(pro)
-	pg.profile = pro
-
-	css := GetCss(pro)
-	pg.Css = append(pg.Css, css...)
-
-	scripts := GetScripts(pro)
-	pg.Scripts = append(pg.Scripts, scripts...)
+	pg.Profile = pro
 
 	html := GetHtml(pro)
 	maps.Copy(pg.Html, html)
 
-	mt := pro + ".mime"
-	ext := pro + ".ext"
+	pg.getAssets()
+
+	return pg
+}
+
+func (pg *Page) getAssets() *Page {
+	mt := pg.Profile + ".mime"
+	ext := pg.Profile + ".ext"
 	var items []fidi.File
+
 	switch {
 	case viper.IsSet(mt):
 		mimes := viper.GetStringSlice(mt)
@@ -153,9 +165,10 @@ func (pg *Page) SetProfile(pro string) *Page {
 	}
 
 	for _, i := range items {
-		asset := NewAsset(i, pg.Html)
+		asset := NewAsset(i, pg.NoThumbs, pg.Html)
 		pg.Assets = append(pg.Assets, asset)
 	}
+
 	return pg
 }
 

@@ -19,10 +19,11 @@ type Asset struct {
 	fidi.File
 	Attributes map[string]any
 	Html       Html
+	NoThumbs   bool
 	Tag        string
 }
 
-func NewAsset(file fidi.File, tags ...Html) Asset {
+func NewAsset(file fidi.File, noThumbs bool, tags ...Html) Asset {
 	var html Html
 	if len(tags) > 0 {
 		html = tags[0]

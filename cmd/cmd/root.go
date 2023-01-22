@@ -50,6 +50,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&builder.Gen, "generate", "g", false, "generate index files")
 	rootCmd.PersistentFlags().BoolVarP(&builder.ListAll, "all", "a", false, "list all files in nav")
 	rootCmd.PersistentFlags().BoolVarP(&builder.IsCollection, "recurse", "r", false, "recursive build")
+	rootCmd.PersistentFlags().BoolVar(&builder.NoThumbs, "no-thumbs", false, "don't generate thumbnails")
 	rootCmd.PersistentFlags().StringSliceVarP(&builder.Exts, "ext", "e", []string{}, "glob by ext")
 	rootCmd.PersistentFlags().StringSliceVarP(&builder.Mimetypes, "mime", "m", []string{}, "glob by mimetype")
 	rootCmd.PersistentFlags().StringVarP(&builder.Profile, "profile", "p", "", "config category")
