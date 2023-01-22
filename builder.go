@@ -104,8 +104,8 @@ func Regen() BuildOpt {
 func Nav(full bool) BuildOpt {
 	return func(pg *Page) {
 		pg.FullNav = full
-		pg.getBreadcrumbs()
-		pg.getNav()
+		pg.setBreadcrumbs()
+		pg.setNav()
 	}
 }
 

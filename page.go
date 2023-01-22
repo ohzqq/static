@@ -173,7 +173,7 @@ func (pg *Page) getAssets() *Page {
 	return pg
 }
 
-func (pg *Page) getBreadcrumbs() *Page {
+func (pg *Page) setBreadcrumbs() *Page {
 	var crumbs []map[string]any
 
 	totalP := len(pg.Parents())
@@ -195,12 +195,13 @@ func (pg *Page) getBreadcrumbs() *Page {
 		}
 		crumbs = append(crumbs, link)
 	}
+
 	pg.Breadcrumbs = crumbs
 
 	return pg
 }
 
-func (pg *Page) getFiles(rel string) []map[string]any {
+func (pg *Page) setFiles(rel string) []map[string]any {
 	var files []map[string]any
 	for _, file := range pg.Leaves() {
 		if base := file.Base; base != "index.html" {
@@ -215,7 +216,7 @@ func (pg *Page) getFiles(rel string) []map[string]any {
 	return files
 }
 
-func (pg *Page) getNav() *Page {
+func (pg *Page) setNav() *Page {
 	var depth []int
 	var nav []map[string]any
 	for _, p := range pg.Children {
@@ -236,7 +237,7 @@ func (pg *Page) getNav() *Page {
 		}
 
 		if pg.FullNav {
-			url["children"] = p.getFiles(rel)
+			url["children"] = p.setFiles(rel)
 		}
 
 		nav = append(nav, url)
