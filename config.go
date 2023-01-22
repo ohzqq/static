@@ -99,20 +99,20 @@ func parseFilterKind(kind string) []string {
 }
 
 func getHtml() Html {
-	html := GetHtml("global")
+	html := unmarshalHtml("global")
 	if pro := viper.GetString("build.profile"); pro != "global" {
 		if in := InheritedProfile(pro); in != "" {
-			inh := GetHtml(in)
+			inh := unmarshalHtml(in)
 			maps.Copy(html, inh)
 		}
 
-		h := GetHtml(pro)
+		h := unmarshalHtml(pro)
 		maps.Copy(html, h)
 	}
 	return html
 }
 
-func GetHtml(pro string) Html {
+func unmarshalHtml(pro string) Html {
 	var html Html
 	err := viper.UnmarshalKey(pro+".html", &html)
 	if err != nil {

@@ -7,17 +7,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Builder struct {
+type Site struct {
 	Input string
 }
 
-func New(path string) *Builder {
-	return &Builder{
+func New(path string) *Site {
+	return &Site{
 		Input: path,
 	}
 }
 
-func (b *Builder) Build() {
+func (b *Site) Build() {
 	if b.Input == "" {
 		log.Fatal("no input")
 	}

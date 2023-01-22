@@ -17,6 +17,7 @@ import (
 type Page struct {
 	fidi.Tree
 	Title       string
+	Input       string
 	css         []string
 	scripts     []string
 	Color       map[string]string
@@ -58,22 +59,6 @@ func (pg *Page) Build(opts ...BuildOpt) {
 
 	if indexOnly() {
 		pg.Nav = pg.setFiles(pg.Info().Rel())
-	}
-
-	m := parseFilterKind(".mime")
-	if hasMimes() {
-		m = mimes()
-	}
-	if len(m) > 0 {
-		pg.filters = append(pg.filters, fidi.MimeFilter(m...))
-	}
-
-	e := parseFilterKind(".ext")
-	if hasExts() {
-		e = exts()
-	}
-	if len(e) > 0 {
-		pg.filters = append(pg.filters, fidi.ExtFilter(e...))
 	}
 
 	pg.setAssets()
@@ -157,15 +142,34 @@ func (pg *Page) setChildren() []*Page {
 	return pg.Children
 }
 
-func (pg *Page) setAssets(filters ...fidi.Filter) *Page {
-	items := pg.Filter(pg.filters...)
-
-	for _, i := range items {
-		asset := NewAsset(i, pg.Html)
-		pg.Assets = append(pg.Assets, asset)
+func (pg *Page) setAssets() []Asset {
+	var filters []fidi.Filter
+	m := parseFilterKind(".mime")
+	if hasMimes() {
+		m = mimes()
+	}
+	if len(m) > 0 {
+		filters = append(filters, fidi.MimeFilter(m...))
 	}
 
-	return pg
+	e := parseFilterKind(".ext")
+	if hasExts() {
+		e = exts()
+	}
+	if len(e) > 0 {
+		filters = append(filters, fidi.ExtFilter(e...))
+	}
+
+	items := pg.Filter(filters...)
+
+	var assets []Asset
+	for _, i := range items {
+		asset := NewAsset(i, pg.Html)
+		assets = append(assets, asset)
+	}
+	pg.Assets = assets
+
+	return assets
 }
 
 func (pg *Page) setBreadcrumbs() *Page {

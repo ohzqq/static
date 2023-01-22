@@ -18,7 +18,7 @@ var (
 	regenerate bool
 	generate   bool
 	indexOnly  bool
-	builder    = &static.Builder{}
+	builder    = &static.Site{}
 )
 
 // rootCmd represents the base command when called without any subcommands
