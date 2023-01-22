@@ -17,7 +17,6 @@ var (
 	profile    string
 	regenerate bool
 	generate   bool
-	cfg        static.Config
 	builder    = &static.Builder{}
 )
 
@@ -46,7 +45,9 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().BoolVarP(&builder.Regen, "regenerate", "G", false, "regenerate index files")
+	rootCmd.PersistentFlags().BoolVarP(&builder.Regen, "regen", "G", false, "regenerate index files")
+	viper.BindPFlag("build.regen", rootCmd.PersistentFlags().Lookup("regen"))
+
 	rootCmd.PersistentFlags().BoolVarP(&builder.Gen, "generate", "g", false, "generate index files")
 	rootCmd.PersistentFlags().BoolVarP(&builder.ListAll, "all", "a", false, "list all files in nav")
 	rootCmd.PersistentFlags().BoolVarP(&builder.IsCollection, "recurse", "r", false, "recursive build")

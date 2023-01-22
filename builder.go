@@ -49,15 +49,23 @@ func (b Builder) Opts() []BuildOpt {
 		opts = append(opts, Nav(b.ListAll))
 	}
 
+	if b.Profile != "" {
+		opts = append(opts, Profile(b.Profile))
+	}
+
+	if len(b.Mimetypes) > 0 {
+		opts = append(opts, FilterAssets(fidi.MimeFilter(b.Mimetypes...)))
+	}
+
+	if len(b.Exts) > 0 {
+		opts = append(opts, FilterAssets(fidi.ExtFilter(b.Exts...)))
+	}
+
 	switch {
 	case b.Gen:
 		opts = append(opts, Gen())
 	case b.Regen:
 		opts = append(opts, Regen())
-	}
-
-	if b.Profile != "" {
-		opts = append(opts, Profile(b.Profile))
 	}
 
 	return opts
@@ -121,8 +129,14 @@ func Profile(pro string) BuildOpt {
 	}
 }
 
-func AssetFilters(filters ...fidi.Filter) BuildOpt {
+func FilterAssets(filters ...fidi.Filter) BuildOpt {
 	return func(pg *Page) {
-		pg.filters = filters
+		pg.filters = append(pg.filters, filters...)
+	}
+}
+
+func NoThumbs() BuildOpt {
+	return func(pg *Page) {
+		pg.NoThumbs = true
 	}
 }

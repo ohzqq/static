@@ -33,20 +33,6 @@ type Color struct {
 	Purple string
 }
 
-type Config struct {
-	//Html
-	Path       string
-	Categories []string `toml:"categories"`
-	Color      Color    `toml:"color"`
-	//Category   map[string]Category `toml:"category"`
-}
-
-//type Profile struct {
-//  Css     []string
-//  Scripts []string
-//  Html    map[string]map[string]any
-//}
-
 type Html map[string]map[string]any
 
 func Profiles() []string {
@@ -55,7 +41,7 @@ func Profiles() []string {
 
 	var profiles []string
 	for _, k := range keys {
-		if k != "color" {
+		if k != "color" && k != "build" {
 			profiles = append(profiles, k)
 		}
 	}

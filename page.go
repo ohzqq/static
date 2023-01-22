@@ -146,12 +146,12 @@ func (pg *Page) SetProfile(pro string) *Page {
 	html := GetHtml(pro)
 	maps.Copy(pg.Html, html)
 
-	pg.getAssets()
+	pg.setAssets()
 
 	return pg
 }
 
-func (pg *Page) getAssets() *Page {
+func (pg *Page) setAssets(filters ...fidi.Filter) *Page {
 	mt := pg.Profile + ".mime"
 	ext := pg.Profile + ".ext"
 	var items []fidi.File
