@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/ohzqq/fidi"
+	"github.com/spf13/viper"
 )
 
 type Builder struct {
@@ -19,6 +20,62 @@ type Builder struct {
 	Input        string
 	Mimetypes    []string
 	Exts         []string
+}
+
+func (b Builder) State() string {
+	var state string
+	switch {
+	case b.IndexOnly:
+		switch {
+		}
+	}
+	return state
+}
+
+func listAll() bool {
+	switch {
+	case viper.GetBool("build.all"):
+		return true
+	case indexOnly():
+		if recurse() {
+			return false
+		}
+		return true
+	default:
+		return false
+	}
+}
+
+func indexOnly() bool {
+	return viper.GetBool("build.index_only")
+}
+
+func noThumbs() bool {
+	return viper.GetBool("build.no_thumbs")
+}
+
+func recurse() bool {
+	return viper.GetBool("build.is_collection")
+}
+
+func regen() bool {
+	return viper.GetBool("build.regen")
+}
+
+func hasMimes() bool {
+	return len(mimes()) > 0
+}
+
+func mimes() []string {
+	return viper.GetStringSlice("build.mimes")
+}
+
+func hasExts() bool {
+	return len(exts()) > 0
+}
+
+func exts() []string {
+	return viper.GetStringSlice("build.exts")
 }
 
 func New(path string) *Builder {
@@ -92,8 +149,10 @@ func Gen() BuildOpt {
 		switch {
 		case !pg.hasIndex:
 			pg.Gen = true
+			viper.Set("build.gen", true)
 		default:
 			pg.Gen = false
+			viper.Set("build.gen", false)
 		}
 	}
 }
@@ -101,10 +160,14 @@ func Gen() BuildOpt {
 func Regen() BuildOpt {
 	return func(pg *Page) {
 		switch {
+		case viper.GetBool("build.gen"):
+			fallthrough
 		case pg.Gen:
 			pg.Gen = false
+			viper.Set("build.gen", false)
 		default:
 			pg.Gen = true
+			viper.Set("build.gen", true)
 		}
 	}
 }

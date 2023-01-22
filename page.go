@@ -59,6 +59,15 @@ func NewPage(dir fidi.Tree) *Page {
 }
 
 func (pg *Page) Build(opts ...BuildOpt) {
+	fmt.Printf("regen %v\n", viper.GetBool("build.regen"))
+	fmt.Printf("index %v\n", viper.GetBool("build.index_only"))
+	fmt.Printf("all %v\n", listAll())
+	fmt.Printf("collection %v\n", recurse())
+	fmt.Printf("thumbs %v\n", noThumbs())
+	fmt.Printf("ext %v\n", hasExts())
+	fmt.Printf("mime %v\n", hasMimes())
+	fmt.Printf("profile %v\n", viper.GetString("build.profile"))
+	fmt.Printf("tmpl %v\n", viper.GetString("build.tmpl"))
 	fmt.Printf("building %s\n", pg.Info().Name)
 	for _, opt := range opts {
 		opt(pg)

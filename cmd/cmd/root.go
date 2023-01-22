@@ -17,6 +17,7 @@ var (
 	profile    string
 	regenerate bool
 	generate   bool
+	indexOnly  bool
 	builder    = &static.Builder{}
 )
 
@@ -41,29 +42,9 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	// defaults
+	viper.SetDefault("build.index_only", true)
 
-	rootCmd.PersistentFlags().BoolVarP(&builder.Regen, "regen", "G", false, "regenerate index files")
-	viper.BindPFlag("build.regen", rootCmd.PersistentFlags().Lookup("regen"))
-
-	rootCmd.PersistentFlags().BoolVarP(&builder.Gen, "generate", "g", false, "generate index files")
-	rootCmd.PersistentFlags().BoolVarP(&builder.ListAll, "all", "a", false, "list all files in nav")
-	rootCmd.PersistentFlags().BoolVarP(&builder.IsCollection, "recurse", "r", false, "recursive build")
-	rootCmd.PersistentFlags().BoolVar(&builder.NoThumbs, "no-thumbs", false, "don't generate thumbnails")
-	rootCmd.PersistentFlags().StringSliceVarP(&builder.Exts, "ext", "e", []string{}, "glob by ext")
-	rootCmd.PersistentFlags().StringSliceVarP(&builder.Mimetypes, "mime", "m", []string{}, "glob by mimetype")
-	rootCmd.PersistentFlags().StringVarP(&builder.Profile, "profile", "p", "", "config category")
-	rootCmd.PersistentFlags().StringVarP(&builder.Tmpl, "template", "t", "", "set golang template for page")
-	rootCmd.MarkFlagsMutuallyExclusive("ext", "mime")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
 	viper.SetDefault(
 		"global.css",
 		[]string{
@@ -126,6 +107,43 @@ func initConfig() {
 		},
 	)
 
+	// flags
+	rootCmd.PersistentFlags().BoolP("regen", "g", false, "regenerate index files")
+	viper.BindPFlag("build.regen", rootCmd.PersistentFlags().Lookup("regen"))
+
+	rootCmd.PersistentFlags().BoolP("all", "a", false, "list all files in nav")
+	viper.BindPFlag("build.all", rootCmd.PersistentFlags().Lookup("all"))
+
+	rootCmd.PersistentFlags().BoolP("recurse", "r", false, "recursive build")
+	viper.BindPFlag("build.is_collection", rootCmd.PersistentFlags().Lookup("recurse"))
+
+	rootCmd.PersistentFlags().Bool("no-thumbs", false, "don't generate thumbnails")
+	viper.BindPFlag("build.no_thumbs", rootCmd.PersistentFlags().Lookup("no-thumbs"))
+
+	rootCmd.PersistentFlags().BoolVarP(&indexOnly, "index-only", "I", false, "only list index.html files")
+
+	rootCmd.PersistentFlags().StringSliceP("ext", "e", []string{}, "glob by ext")
+	viper.BindPFlag("build.exts", rootCmd.PersistentFlags().Lookup("ext"))
+
+	rootCmd.PersistentFlags().StringSliceP("mime", "m", []string{}, "glob by mimetype")
+	viper.BindPFlag("build.mimes", rootCmd.PersistentFlags().Lookup("mime"))
+
+	rootCmd.PersistentFlags().StringP("profile", "p", "", "build profile")
+	viper.BindPFlag("build.profile", rootCmd.PersistentFlags().Lookup("profile"))
+
+	rootCmd.PersistentFlags().StringP("template", "t", "", "set golang template for page")
+	viper.BindPFlag("build.tmpl", rootCmd.PersistentFlags().Lookup("template"))
+
+	rootCmd.MarkFlagsMutuallyExclusive("all", "mime")
+	rootCmd.MarkFlagsMutuallyExclusive("all", "ext")
+	rootCmd.MarkFlagsMutuallyExclusive("all", "index-only")
+	rootCmd.MarkFlagsMutuallyExclusive("index-only", "ext")
+	rootCmd.MarkFlagsMutuallyExclusive("index-only", "mime")
+
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
