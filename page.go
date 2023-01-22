@@ -27,6 +27,7 @@ type Page struct {
 	FullNav     bool
 	index       fidi.File
 	Assets      []Asset
+	filters     []fidi.Filter
 	Children    []*Page
 	Nav         []map[string]any
 	Breadcrumbs []map[string]any
@@ -130,7 +131,7 @@ func (pg Page) Scripts() []string {
 	return scripts
 }
 
-func (pg *Page) GetChildren() []*Page {
+func (pg *Page) setChildren() []*Page {
 	for _, dir := range pg.Tree.Children() {
 		p := NewPage(dir)
 		pg.Children = append(pg.Children, p)

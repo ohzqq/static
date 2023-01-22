@@ -80,48 +80,49 @@ func (b *Builder) Build() {
 }
 
 func Gen() BuildOpt {
-	return func(p *Page) {
+	return func(pg *Page) {
 		switch {
-		case !p.hasIndex:
-			p.Gen = true
+		case !pg.hasIndex:
+			pg.Gen = true
 		default:
-			p.Gen = false
+			pg.Gen = false
 		}
 	}
 }
 
 func Regen() BuildOpt {
-	return func(p *Page) {
+	return func(pg *Page) {
 		switch {
-		case p.Gen:
-			p.Gen = false
+		case pg.Gen:
+			pg.Gen = false
 		default:
-			p.Gen = true
+			pg.Gen = true
 		}
 	}
 }
 
 func Nav(full bool) BuildOpt {
-	return func(p *Page) {
-		p.FullNav = full
-		p.getBreadcrumbs()
-		p.getNav()
+	return func(pg *Page) {
+		pg.FullNav = full
+		pg.getBreadcrumbs()
+		pg.getNav()
 	}
 }
 
 func Collection() BuildOpt {
-	return func(page *Page) {
-		page.GetChildren()
+	return func(pg *Page) {
+		pg.setChildren()
 	}
 }
 
 func Profile(pro string) BuildOpt {
-	return func(p *Page) {
-		p.SetProfile(pro)
+	return func(pg *Page) {
+		pg.SetProfile(pro)
 	}
 }
 
-func FilterFiles(filters ...fidi.Filter) BuildOpt {
-	return func(p *Page) {
+func AssetFilters(filters ...fidi.Filter) BuildOpt {
+	return func(pg *Page) {
+		pg.filters = filters
 	}
 }
