@@ -5,6 +5,8 @@ import (
 	"log"
 	"path/filepath"
 	"text/template"
+
+	"github.com/spf13/viper"
 )
 
 var (
@@ -29,7 +31,7 @@ func InitTemplates() []string {
 			t := fmt.Sprintf("static/%s/*tmpl", pro)
 			def = append(def, t)
 		default:
-			if !ProfileInherits(pro) {
+			if !viper.IsSet(pro + ".inherit") {
 				t := fmt.Sprintf("%s/*tmpl", pro)
 				user = append(user, t)
 			}

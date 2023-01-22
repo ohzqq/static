@@ -129,14 +129,14 @@ func (pg Page) Content() string {
 }
 
 func (pg Page) Css() []string {
-	css := GetCss("global")
-	css = append(css, GetCss(pg.Profile)...)
+	css := parseCss("global")
+	css = append(css, parseCss(pg.Profile)...)
 	return css
 }
 
 func (pg Page) Scripts() []string {
-	scripts := GetScripts("global")
-	scripts = append(scripts, GetScripts(pg.Profile)...)
+	scripts := parseScripts("global")
+	scripts = append(scripts, parseScripts(pg.Profile)...)
 	return scripts
 }
 

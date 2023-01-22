@@ -44,6 +44,7 @@ func init() {
 
 	// defaults
 	viper.SetDefault("build.index_only", true)
+	viper.SetDefault("build.profile", "global")
 
 	viper.SetDefault(
 		"global.css",
