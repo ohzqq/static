@@ -61,15 +61,24 @@ func (a *Asset) Render() string {
 		if at, ok := a.Html[a.Tag]; ok {
 			a.Attributes = at
 		}
-		a.Attributes["src"] = Thumbnail(a.Path())
+		if noThumbs() {
+			a.Attributes["src"] = a.Base
+		} else {
+			a.Attributes["src"] = Thumbnail(a.Path())
+		}
 		a.Attributes["alt"] = a.Base
 	case a.IsVideo():
 		a.Tag = "video"
 		if at, ok := a.Html[a.Tag]; ok {
 			a.Attributes = at
 		}
-		a.Attributes["src"] = a.Base
-		a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
+		if noThumbs() {
+			a.Attributes["src"] = a.Base
+			a.Attributes["poster"] = a.Base
+		} else {
+			a.Attributes["src"] = a.Base
+			a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
+		}
 	}
 
 	var buf bytes.Buffer

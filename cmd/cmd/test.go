@@ -22,10 +22,11 @@ var testCmd = &cobra.Command{
 		//page(d)
 		//collection(d)
 		p := static.New(d)
-		p.Profile = "swiper"
-		p.Regen = true
-		p.ListAll = true
-		p.Collection().Build()
+		p.Build()
+		//p.Profile = "swiper"
+		//p.Regen = true
+		//p.ListAll = true
+		//p.Collection().Build()
 
 	},
 }
@@ -33,7 +34,7 @@ var testCmd = &cobra.Command{
 func page(d string) {
 	dir, _ := fidi.NewDir(d, d)
 	p := static.NewPage(dir)
-	p.Build(static.Profile("swiper"), static.Regen())
+	p.Build()
 	fmt.Printf("html %+V\n", p.Info().Path())
 
 }

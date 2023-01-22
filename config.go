@@ -74,16 +74,17 @@ func parsePageResources(kind string) []string {
 }
 
 func GetTemplate() *template.Template {
+	var tmpl *template.Template
+
 	pro := viper.GetString("build.profile")
 	if pro != "global" {
 		if in := InheritedProfile(pro); in != "" {
 			pro = in
 		}
-	}
-
-	tmpl := Templates.Lookup(pro)
-	if tmpl == nil {
-		log.Fatalf("template %s not found\n", pro)
+		tmpl = Templates.Lookup(pro)
+		if tmpl == nil {
+			log.Fatalf("template %s not found\n", pro)
+		}
 	}
 
 	return tmpl

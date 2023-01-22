@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"static"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,8 +16,8 @@ var buildCmd = &cobra.Command{
 		input := args[0]
 		fmt.Printf("root dir %s\n", input)
 		parseFlags()
-		p := static.New(input)
-		p.Page().Build()
+		//p := static.New(input)
+		//p.Page().Build()
 	},
 }
 

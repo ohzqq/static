@@ -31,7 +31,6 @@ type Page struct {
 	Nav         []map[string]any
 	Breadcrumbs []map[string]any
 	tmpl        *template.Template
-	*Builder
 }
 
 type BuildOpt func(p *Page)
@@ -40,9 +39,6 @@ func NewPage(dir fidi.Tree) *Page {
 	page := Page{
 		Tree:  dir,
 		Color: viper.GetStringMapString("color"),
-		Builder: &Builder{
-			Profile: "global",
-		},
 	}
 	page.HtmlFiles = page.FilterByExt(".html")
 	page.Index()
@@ -82,18 +78,16 @@ func (pg *Page) Build(opts ...BuildOpt) {
 
 	pg.setAssets()
 
-	fmt.Printf("building %s\n", pg.Info().Name)
-	for _, opt := range opts {
-		opt(pg)
-	}
-
 	if recurse() {
 		pg.setChildren()
 		pg.setNav()
 		pg.setBreadcrumbs()
 	}
 
-	pg.Render()
+	if !pg.HasIndex() || regen() {
+		fmt.Printf("building %s\n", pg.Info().Name)
+		pg.Render()
+	}
 }
 
 func (pg *Page) Index() *Page {
@@ -121,22 +115,20 @@ func (pg *Page) SetTmpl(tmpl *template.Template) *Page {
 }
 
 func (pg Page) Render() string {
-	if pg.Gen {
-		tmpl := Templates.Lookup("base")
-		name := filepath.Join(pg.Info().Path(), "index.html")
+	tmpl := Templates.Lookup("base")
+	name := filepath.Join(pg.Info().Path(), "index.html")
 
-		file, err := os.Create(name)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer file.Close()
-
-		err = tmpl.Execute(file, pg)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return name
+	file, err := os.Create(name)
+	if err != nil {
+		log.Fatal(err)
 	}
+	defer file.Close()
+
+	err = tmpl.Execute(file, pg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return name
 	return ""
 }
 
@@ -163,14 +155,6 @@ func (pg *Page) setChildren() []*Page {
 		pg.Children = append(pg.Children, p)
 	}
 	return pg.Children
-}
-
-func (pg *Page) SetProfile(pro string) *Page {
-	pg.Profile = pro
-
-	pg.setAssets()
-
-	return pg
 }
 
 func (pg *Page) setAssets(filters ...fidi.Filter) *Page {
