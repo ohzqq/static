@@ -57,28 +57,18 @@ func InheritedProfile(pro string) string {
 	return ""
 }
 
-func parseCss(pro string) []string {
-	var files []string
+func parsePageResources(kind string) []string {
+	files := viper.GetStringSlice("global" + kind)
 
-	if in := InheritedProfile(pro); in != "" {
-		files = viper.GetStringSlice(in + ".css")
+	if pro := viper.GetString("build.profile"); pro != "global" {
+		if in := InheritedProfile(pro); in != "" {
+			inh := viper.GetStringSlice(in + kind)
+			files = append(files, inh...)
+		}
+
+		proF := viper.GetStringSlice(pro + kind)
+		files = append(files, proF...)
 	}
-
-	proF := viper.GetStringSlice(pro + ".css")
-	files = append(files, proF...)
-
-	return ReadScriptsAndStyles(files)
-}
-
-func parseScripts(pro string) []string {
-	var files []string
-
-	if in := InheritedProfile(pro); in != "" {
-		files = viper.GetStringSlice(in + ".scripts")
-	}
-
-	proF := viper.GetStringSlice(pro + ".scripts")
-	files = append(files, proF...)
 
 	return ReadScriptsAndStyles(files)
 }
@@ -94,6 +84,24 @@ func GetTemplate(pro string) *template.Template {
 	}
 
 	return tmpl
+}
+
+func getHtml() Html {
+	html := GetHtml("global")
+	if pro := viper.GetString("build.profile"); pro != "global" {
+		if in := InheritedProfile(pro); in != "" {
+			inh := GetHtml(in)
+			maps.Copy(html, inh)
+		}
+
+		h := GetHtml(pro)
+		maps.Copy(html, h)
+	}
+	return html
+}
+
+func (html Html) Merge(h Html) {
+	maps.Copy(html, h)
 }
 
 func GetHtml(pro string) Html {

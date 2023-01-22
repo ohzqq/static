@@ -129,15 +129,11 @@ func (pg Page) Content() string {
 }
 
 func (pg Page) Css() []string {
-	css := parseCss("global")
-	css = append(css, parseCss(pg.Profile)...)
-	return css
+	return parsePageResources(".css")
 }
 
 func (pg Page) Scripts() []string {
-	scripts := parseScripts("global")
-	scripts = append(scripts, parseScripts(pg.Profile)...)
-	return scripts
+	return parsePageResources(".scripts")
 }
 
 func (pg *Page) setChildren() []*Page {
