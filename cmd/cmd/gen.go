@@ -1,40 +1,53 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // genCmd represents the gen command
 var genCmd = &cobra.Command{
 	Use:   "gen",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "(re)generate a site",
+	Args:  cobra.ExactArgs(1),
+	Run:   runGenCmd,
+}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("gen called")
-	},
+// genIndexCmd represents the gen command
+var genIndexCmd = &cobra.Command{
+	Use:   "index",
+	Short: "(re)generate a site",
+	Args:  cobra.ExactArgs(1),
+	Run:   runGenCmd,
+}
+
+// genCollectionCmd represents the gen command
+var genCollectionCmd = &cobra.Command{
+	Use:   "collection",
+	Short: "(re)generate a site",
+	Args:  cobra.ExactArgs(1),
+	Run:   runGenCmd,
+}
+
+// genAllCmd represents the gen command
+var genAllCmd = &cobra.Command{
+	Use:   "all",
+	Short: "(re)generate a site",
+	Args:  cobra.ExactArgs(1),
+	Run:   runGenCmd,
+}
+
+func runGenCmd(cmd *cobra.Command, args []string) {
+	input := args[0]
+	parseFlags()
+	viper.Set("build.regen", true)
+	parseSubCommands(cmd)
+	buildSite(input)
 }
 
 func init() {
 	rootCmd.AddCommand(genCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// genCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// genCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	genCmd.AddCommand(genIndexCmd)
+	genCmd.AddCommand(genCollectionCmd)
+	genCmd.AddCommand(genAllCmd)
 }
