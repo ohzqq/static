@@ -4,8 +4,6 @@ import (
 	"embed"
 	"io/fs"
 	"log"
-	"strings"
-	"text/template"
 
 	"github.com/spf13/viper"
 	"golang.org/x/exp/maps"
@@ -49,67 +47,12 @@ func Profiles() []string {
 	return profiles
 }
 
-func InheritedProfile(pro string) string {
+func inheritedProfile(pro string) string {
 	p := pro + ".inherit"
 	if viper.IsSet(p) {
 		return viper.GetString(p)
 	}
 	return ""
-}
-
-func parsePageResources(kind string) []string {
-	files := viper.GetStringSlice("global" + kind)
-
-	if pro := viper.GetString("build.profile"); pro != "global" {
-		if in := InheritedProfile(pro); in != "" {
-			inh := viper.GetStringSlice(in + kind)
-			files = append(files, inh...)
-		}
-
-		proF := viper.GetStringSlice(pro + kind)
-		files = append(files, proF...)
-	}
-
-	return ReadScriptsAndStyles(files)
-}
-
-func GetTemplate() *template.Template {
-	var tmpl *template.Template
-
-	pro := viper.GetString("build.profile")
-	if pro != "global" {
-		if in := InheritedProfile(pro); in != "" {
-			pro = in
-		}
-		tmpl = Templates.Lookup(pro)
-		if tmpl == nil {
-			log.Fatalf("template %s not found\n", pro)
-		}
-	}
-
-	return tmpl
-}
-
-func parseFilterKind(kind string) []string {
-	pro := viper.GetString("build.profile")
-	if pro != "global" {
-		return viper.GetStringSlice(pro + kind)
-	}
-	return viper.GetStringSlice("global" + kind)
-}
-
-func getHtml() Html {
-	html := unmarshalHtml("global")
-	if pro := viper.GetString("build.profile"); pro != "global" {
-		if in := InheritedProfile(pro); in != "" {
-			inh := unmarshalHtml(in)
-			maps.Copy(html, inh)
-		}
-
-		h := unmarshalHtml(pro)
-		maps.Copy(html, h)
-	}
-	return html
 }
 
 func unmarshalHtml(pro string) Html {
@@ -121,20 +64,48 @@ func unmarshalHtml(pro string) Html {
 	return html
 }
 
-func ReadScriptsAndStyles(files []string) []string {
-	var assets []string
-	for _, asset := range files {
-		var f fs.FS
-		if strings.HasPrefix(asset, "static") {
-			f = Public
-		} else {
-			f = UserCfg
+func listAll() bool {
+	switch {
+	case viper.GetBool("build.all"):
+		return true
+	case indexOnly():
+		if recurse() {
+			return false
 		}
-		d, err := fs.ReadFile(f, asset)
-		if err != nil {
-			log.Fatal(err)
-		}
-		assets = append(assets, string(d))
+		return true
+	default:
+		return false
 	}
-	return assets
+}
+
+func indexOnly() bool {
+	return viper.GetBool("build.index_only")
+}
+
+func noThumbs() bool {
+	return viper.GetBool("build.no_thumbs")
+}
+
+func recurse() bool {
+	return viper.GetBool("build.is_collection")
+}
+
+func regen() bool {
+	return viper.GetBool("build.regen")
+}
+
+func hasMimes() bool {
+	return len(mimes()) > 0
+}
+
+func mimes() []string {
+	return viper.GetStringSlice("build.mimes")
+}
+
+func hasExts() bool {
+	return len(exts()) > 0
+}
+
+func exts() []string {
+	return viper.GetStringSlice("build.exts")
 }

@@ -18,18 +18,16 @@
 				<h1>{{.Title}}</h1>
 			</div>
 			{{template "breadcrumbs" .}}
-	{{if .HasChildren}}
-<div x-data="{
-	open: false,
-	toggle() { this.open = ! this.open }
-}">
-	<button @click="toggle()">Menu</button>
-	<nav class="sidebar" x-show="open" @click.outside="open = false">
 
-	{{template "filterableList" .Nav}}
-</nav>
-</div>
-	{{end}}
+			{{if .HasChildren}}
+			<div x-data="{open: false, toggle() { this.open = ! this.open }}">
+				<button @click="toggle()">Menu</button>
+				<nav class="sidebar" x-show="open" @click.outside="open = false">
+
+					{{template "filterableList" .}}
+				</nav>
+			</div>
+			{{end}}
 
 			{{.Content -}}
 

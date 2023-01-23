@@ -1,10 +1,14 @@
 package static
 
 import (
+	"io/fs"
 	"log"
+	"strings"
+	"text/template"
 
 	"github.com/ohzqq/fidi"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/maps"
 )
 
 type Site struct {
@@ -33,48 +37,75 @@ func (b *Site) Build() {
 	}
 }
 
-func listAll() bool {
-	switch {
-	case viper.GetBool("build.all"):
-		return true
-	case indexOnly():
-		if recurse() {
-			return false
+func parsePageResources(kind string) []string {
+	files := viper.GetStringSlice("global" + kind)
+
+	if pro := viper.GetString("build.profile"); pro != "global" {
+		if in := inheritedProfile(pro); in != "" {
+			inh := viper.GetStringSlice(in + kind)
+			files = append(files, inh...)
 		}
-		return true
-	default:
-		return false
+
+		proF := viper.GetStringSlice(pro + kind)
+		files = append(files, proF...)
 	}
+
+	return readScriptsAndStyles(files)
 }
 
-func indexOnly() bool {
-	return viper.GetBool("build.index_only")
+func getTemplate() *template.Template {
+	var tmpl *template.Template
+
+	pro := viper.GetString("build.profile")
+	if pro != "global" {
+		if in := inheritedProfile(pro); in != "" {
+			pro = in
+		}
+		tmpl = Templates.Lookup(pro)
+		if tmpl == nil {
+			log.Fatalf("template %s not found\n", pro)
+		}
+	}
+
+	return tmpl
 }
 
-func noThumbs() bool {
-	return viper.GetBool("build.no_thumbs")
+func parseFilterKind(kind string) []string {
+	pro := viper.GetString("build.profile")
+	if pro != "global" {
+		return viper.GetStringSlice(pro + kind)
+	}
+	return viper.GetStringSlice("global" + kind)
 }
 
-func recurse() bool {
-	return viper.GetBool("build.is_collection")
+func getHtml() Html {
+	html := unmarshalHtml("global")
+	if pro := viper.GetString("build.profile"); pro != "global" {
+		if in := inheritedProfile(pro); in != "" {
+			inh := unmarshalHtml(in)
+			maps.Copy(html, inh)
+		}
+
+		h := unmarshalHtml(pro)
+		maps.Copy(html, h)
+	}
+	return html
 }
 
-func regen() bool {
-	return viper.GetBool("build.regen")
-}
-
-func hasMimes() bool {
-	return len(mimes()) > 0
-}
-
-func mimes() []string {
-	return viper.GetStringSlice("build.mimes")
-}
-
-func hasExts() bool {
-	return len(exts()) > 0
-}
-
-func exts() []string {
-	return viper.GetStringSlice("build.exts")
+func readScriptsAndStyles(files []string) []string {
+	var assets []string
+	for _, asset := range files {
+		var f fs.FS
+		if strings.HasPrefix(asset, "static") {
+			f = Public
+		} else {
+			f = UserCfg
+		}
+		d, err := fs.ReadFile(f, asset)
+		if err != nil {
+			log.Fatal(err)
+		}
+		assets = append(assets, string(d))
+	}
+	return assets
 }

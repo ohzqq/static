@@ -23,6 +23,7 @@ type Page struct {
 	Color       map[string]string
 	Html        Html
 	HtmlFiles   []fidi.File
+	HasChildren bool
 	hasIndex    bool
 	FullNav     bool
 	index       fidi.File
@@ -53,12 +54,15 @@ func NewPage(dir fidi.Tree) *Page {
 	return &page
 }
 
-func (pg *Page) Build(opts ...BuildOpt) {
-	pg.tmpl = GetTemplate()
+func (pg *Page) Build() {
+	pg.tmpl = getTemplate()
 	pg.Html = getHtml()
 
 	if indexOnly() {
 		pg.Nav = pg.setFiles(pg.Info().Rel())
+		tmpl := Templates.Lookup("filterableList")
+		pg.SetTmpl(tmpl)
+		//fmt.Printf("has children %v\n", pg.HasChildren())
 	}
 
 	pg.setAssets()
@@ -68,6 +72,8 @@ func (pg *Page) Build(opts ...BuildOpt) {
 		pg.setNav()
 		pg.setBreadcrumbs()
 	}
+
+	pg.HasChildren = len(pg.Children) > 0
 
 	if !pg.HasIndex() || regen() {
 		fmt.Printf("building %s\n", pg.Info().Name)
@@ -114,7 +120,6 @@ func (pg Page) Render() string {
 		log.Fatal(err)
 	}
 	return name
-	return ""
 }
 
 func (pg Page) Content() string {
