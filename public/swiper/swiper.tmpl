@@ -1,16 +1,8 @@
 {{define "swiper"}}
 {{$mime := "" -}}
 
-{{range Batch .Assets -}}
-<div class="row">
-	{{- range .}}
-		{{$mime := .Mime -}}
-	<div class="thumbnail column" lightbox-toggle>
-		{{.Render}}
-	</div>
-	{{- end}}
-</div>
-{{end}}
+{{template "mediaAsset" .}}
+
 <!--
 	license for Swiper Lightbox:
 	Copyright (c) 2022 by Dalton Walsh (https://codepen.io/daltonw/pen/NWpGMrb)

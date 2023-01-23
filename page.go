@@ -62,8 +62,8 @@ func (pg *Page) Build() {
 		pg.Nav = pg.setFiles(pg.Info().Rel())
 		tmpl := Templates.Lookup("filterableList")
 		pg.SetTmpl(tmpl)
-		fmt.Printf("index only %v\n", indexOnly())
 	}
+	fmt.Printf("index only %v\n", viper.GetString("build.template"))
 
 	pg.setAssets()
 

@@ -54,7 +54,10 @@ func parsePageResources(kind string) []string {
 }
 
 func getTemplate() *template.Template {
-	var tmpl *template.Template
+	tmpl := Templates.Lookup("filterableList")
+	if hasMimes() {
+		tmpl = Templates.Lookup("mediaAsset")
+	}
 
 	pro := viper.GetString("build.profile")
 	if pro != "global" {

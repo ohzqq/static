@@ -1,0 +1,42 @@
+{{define "mediaAsset"}}
+
+{{range Batch .Assets -}}
+<div class="row">
+	{{- range .}}
+		{{$mime := .Mime -}}
+
+		<div class="thumbnail column" lightbox-toggle>
+		{{if eq .Tag "video"}}
+				<{{.Tag}} type="{{.Mime}}"
+		{{- range $key, $val := .Attributes}} 
+			{{- if ne $key "autoplay"}}
+				{{- if ne $key "controls"}}
+					{{$key}}="{{$val}}"
+				{{- end -}}
+			{{- end -}}
+		{{- end -}}
+		></{{.Tag}}>
+		{{end}}
+
+	{{if eq .Tag "img"}}
+	<img
+	{{- range $key, $val := .Attributes}} 
+		{{$key}}="{{$val}}"
+	{{- end -}}
+	></img>
+	{{end}}
+
+	{{if eq .Tag "audio"}}
+	<{{.Tag}} type="{{.Mime}}"
+	{{- range $key, $val := .Attributes}} 
+		{{- if ne $key "autoplay"}}
+			{{$key}}="{{$val}}"
+		{{- end -}}
+	{{- end -}}
+	></{{.Tag}}>
+	{{end}}
+	</div>
+	{{- end}}
+</div>
+{{end}}
+{{end}}

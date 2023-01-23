@@ -45,6 +45,7 @@ func init() {
 	// defaults
 	viper.SetDefault("build.index_only", true)
 	viper.SetDefault("build.profile", "global")
+	viper.SetDefault("build.template", "filterableList")
 
 	viper.SetDefault(
 		"global.css",
@@ -54,6 +55,8 @@ func init() {
 			"public/css/base.css",
 		},
 	)
+
+	viper.SetDefault("global.template", "filterableList")
 
 	viper.SetDefault(
 		"global.scripts",
@@ -69,6 +72,15 @@ func init() {
 			"autoplay": false,
 			"loop":     false,
 			"controls": true,
+		},
+	)
+
+	viper.SetDefault(
+		"global.html.audio",
+		map[string]any{
+			"controls": true,
+			"muted":    true,
+			"loop":     false,
 		},
 	)
 
@@ -133,7 +145,7 @@ func init() {
 	viper.BindPFlag("build.profile", rootCmd.PersistentFlags().Lookup("profile"))
 
 	rootCmd.PersistentFlags().StringP("template", "t", "", "set golang template for page")
-	viper.BindPFlag("build.tmpl", rootCmd.PersistentFlags().Lookup("template"))
+	viper.BindPFlag("build.template", rootCmd.PersistentFlags().Lookup("template"))
 
 	rootCmd.MarkFlagsMutuallyExclusive("all", "mime")
 	rootCmd.MarkFlagsMutuallyExclusive("all", "ext")

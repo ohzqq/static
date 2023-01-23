@@ -28,12 +28,44 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 	if len(tags) > 0 {
 		html = tags[0]
 	}
-	asset := Asset{
+	a := Asset{
 		File:       file,
 		Html:       html,
 		Attributes: make(map[string]any),
+		NoThumbs:   noThumbs(),
 	}
-	return asset
+	switch {
+	case strings.Contains(a.Mime, "audio"):
+		a.Tag = "audio"
+		if at, ok := a.Html[a.Tag]; ok {
+			a.Attributes = at
+			a.Attributes["src"] = a.Base
+		}
+	case strings.Contains(a.Mime, "video"):
+		a.Tag = "video"
+		if at, ok := a.Html[a.Tag]; ok {
+			a.Attributes = at
+		}
+		if noThumbs() {
+			a.Attributes["src"] = a.Base
+			a.Attributes["poster"] = a.Base
+		} else {
+			a.Attributes["src"] = a.Base
+			a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
+		}
+	case strings.Contains(a.Mime, "image"):
+		a.Tag = "img"
+		if at, ok := a.Html[a.Tag]; ok {
+			a.Attributes = at
+		}
+		if noThumbs() {
+			a.Attributes["src"] = a.Base
+		} else {
+			a.Attributes["src"] = Thumbnail(a.Path())
+		}
+		a.Attributes["alt"] = a.Base
+	}
+	return a
 }
 
 func (a Asset) IsAudio() bool {
@@ -133,13 +165,23 @@ func Thumbnail(path string) string {
 }
 
 var assetTmpl = template.Must(template.New("asset").Parse(
-	`<{{.Tag}}
+	`
+	{{if eq .Tag "video" "audio"}}
+	<{{.Tag}}
 	{{- range $key, $val := .Attributes}} 
-	{{- if ne $key "autoplay"}}
-	{{- if ne $key "controls"}}
-	{{$key}}="{{$val}}"
-	{{- end -}}
-	{{- end -}}
+		{{- if ne $key "autoplay"}}
+			{{- if ne $key "controls"}}
+				{{$key}}="{{$val}}"
+			{{- end -}}
+		{{- end -}}
 	{{- end -}}
 	></{{.Tag}}>
+	{{end}}
+	{{if eq .Tag "img"}}
+	<img
+	{{- range $key, $val := .Attributes}} 
+		{{$key}}="{{$val}}"
+	{{- end -}}
+	></img>
+	{{end}}
 `))
