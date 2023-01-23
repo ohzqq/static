@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	//go:embed static
+	//go:embed public
 	Public  embed.FS
 	UserCfg fs.FS
 	//defaultProfile Profile
