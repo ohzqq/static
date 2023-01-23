@@ -10,7 +10,7 @@ import (
 // collectionCmd represents the collection command
 var collectionCmd = &cobra.Command{
 	Use:   "collection",
-	Short: "A brief description of your command",
+	Short: "recursively build a site",
 	Args:  cobra.ExactArgs(1),
 	Run:   runCollectionCmd,
 }

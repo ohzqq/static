@@ -12,8 +12,7 @@ var port string
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "A brief description of your command",
-	Long:  ``,
+	Short: "serve the site",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := args[0]
@@ -28,5 +27,5 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-	serveCmd.Flags().StringVarP(&port, "port", "p", "3000", "port to serve files on")
+	serveCmd.Flags().StringVarP(&port, "port", "P", "3000", "port to serve files on")
 }
