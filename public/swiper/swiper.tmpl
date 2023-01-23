@@ -1,5 +1,4 @@
 {{define "swiper"}}
-{{$mime := "" -}}
 
 {{template "mediaAsset" .}}
 
@@ -21,7 +20,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 let swiper;
 window.globals = {};
 const body = document.getElementsByTagName("body")[0];
-const lightboxImages = document.querySelectorAll("[lightbox-toggle] img, [lightbox-toggle] video");
+const lightboxImages = document.querySelectorAll("[media-toggle] img, [media-toggle] video");
 const initLightbox = lightboxImages.length > 0;
 const destroySwiper = (swiper, timeout) => {
   setTimeout(() => {

@@ -63,7 +63,7 @@ func (pg *Page) Build() {
 		tmpl := Templates.Lookup("filterableList")
 		pg.SetTmpl(tmpl)
 	}
-	fmt.Printf("index only %v\n", viper.GetString("build.template"))
+	//fmt.Printf("index only %v\n", viper.GetString("build.template"))
 
 	pg.setAssets()
 
@@ -170,6 +170,7 @@ func (pg *Page) setAssets() []Asset {
 	var assets []Asset
 	for _, i := range items {
 		asset := NewAsset(i, pg.Html)
+		//fmt.Printf("asset rel %s\n", asset.Rel())
 		assets = append(assets, asset)
 	}
 	pg.Assets = assets
