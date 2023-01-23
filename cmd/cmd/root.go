@@ -52,7 +52,6 @@ func init() {
 		[]string{
 			"public/css/normalize.css",
 			"public/css/milligram.css",
-			"public/css/base.css",
 		},
 	)
 

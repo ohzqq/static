@@ -20,7 +20,11 @@
 			{{template "breadcrumbs" .}}
 
 			{{if .Children}}
-			<div x-data="{open: false, toggle() { this.open = ! this.open }}">
+				{{$open := false}}
+				{{if eq .Title "Home"}}
+					{{$open = true}}
+				{{end}}
+				<div x-data="{open: {{$open}}, toggle() { this.open = ! this.open }}">
 				<button @click="toggle()">Menu</button>
 				<nav class="sidebar" x-show="open" @click.outside="open = false">
 
