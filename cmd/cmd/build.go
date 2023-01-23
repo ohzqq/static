@@ -10,7 +10,7 @@ import (
 // buildCmd represents the build command
 var buildCmd = &cobra.Command{
 	Use:   "build",
-	Short: "A brief description of your command",
+	Short: "build a static site",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		input := args[0]
@@ -23,5 +23,4 @@ var buildCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(buildCmd)
-
 }

@@ -11,8 +11,10 @@ import (
 
 var (
 	TmplFuncs = template.FuncMap{
-		"Batch": AssetBatch,
-		"Dir":   filepath.Dir,
+		"Batch":      AssetBatch,
+		"Dir":        filepath.Dir,
+		"Thumb":      Thumbnail,
+		"VideoThumb": ExtractThumbFromVideo,
 	}
 )
 
