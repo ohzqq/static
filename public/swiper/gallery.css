@@ -7,48 +7,23 @@
 }
 
 .thumbnail {
-  width: 24%;
+	width: 24%;
   text-align: center;
 	margin: 0.25em;
   float:left;
 }
 
-.thumbnail img {
-  max-width: 100%;
-  height: auto;
-  margin: 0 5px 5px 5px;
+.thumbnail img, .thumbnail video {
+	width: auto;
+	max-height: 150px;
+	margin: 0 5px 5px 5px;
 	border: 2px solid var(--green);
-  border-radius: 2px 2px 2px 2px;
-  padding: 0 0 2px;
+	border-radius: 2px 2px 2px 2px;
+	padding: 0 0 2px;
 }
 
-.thumbnail video {
-  max-width: 100%;
-  height: auto;
-  margin: 0 2px 5px 2px;
-	border: 2px solid var(--green);
-  border-radius: 2px 2px 2px 2px;
-  padding: 0 0 2px;
-}
-
-.thumbnail video:hover {
+.thumbnail video:hover, .thumbnail img:hover {
 	border: 2px solid var(--purple);
-}
-
-.thumbnail img:hover {
-	border: 2px solid var(--purple);
-}
-
-.album_title {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.video {
-  width: 100%;
-  margin: 0 0 24px 0;
 }
 
 /*Media Queries*/
@@ -56,22 +31,19 @@
   h1 {
     font-size: 40px;
   }
-  .thumbnail,
-  .gallery__img--secondary {
+  .thumbnail {
     width: 33%;
   }
 }
 
 @media screen and (max-width: 500px) {
-  .thumbnail,
-  .gallery__img--secondary {
+  .thumbnail {
     width: 45%;
   }
 }
 
 @media screen and (max-width: 300px) {
-  .thumbnail,
-  .gallery__img--secondary {
+  .thumbnail {
     width: 100%;
   }
 }

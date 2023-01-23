@@ -108,6 +108,7 @@ func (pg *Page) SetTmpl(tmpl *template.Template) *Page {
 func (pg Page) Render() string {
 	tmpl := Templates.Lookup("base")
 	name := filepath.Join(pg.Info().Path(), "index.html")
+	//pg.saveContent()
 
 	file, err := os.Create(name)
 	if err != nil {
@@ -129,6 +130,26 @@ func (pg Page) Content() string {
 		log.Fatal(err)
 	}
 	return buf.String()
+}
+
+func (pg Page) saveContent() {
+	name := pg.Title
+	if pg.Title == "Home" {
+		name = "index"
+	}
+	name += ".html"
+	name = filepath.Join(pg.Input, name)
+
+	file, err := os.Create(name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write([]byte(pg.Content()))
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (pg Page) Css() []string {
@@ -170,7 +191,6 @@ func (pg *Page) setAssets() []Asset {
 	var assets []Asset
 	for _, i := range items {
 		asset := NewAsset(i, pg.Html)
-		//fmt.Printf("asset rel %s\n", asset.Rel())
 		assets = append(assets, asset)
 	}
 	pg.Assets = assets

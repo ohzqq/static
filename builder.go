@@ -28,10 +28,12 @@ func (b *Site) Build() {
 	tree := fidi.NewTree(b.Input)
 
 	page := NewPage(tree)
+	page.Input = b.Input
 	page.Build()
 
 	if recurse() {
 		for _, child := range page.Children {
+			child.Input = b.Input
 			child.Build()
 		}
 	}

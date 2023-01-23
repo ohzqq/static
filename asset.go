@@ -46,11 +46,9 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 		if at, ok := a.Html[a.Tag]; ok {
 			a.Attributes = at
 		}
-		if noThumbs() {
-			a.Attributes["src"] = a.Base
-			a.Attributes["poster"] = a.Base
-		} else {
-			a.Attributes["src"] = a.Base
+		a.Attributes["src"] = a.Base
+		a.Attributes["poster"] = a.Base
+		if !noThumbs() {
 			a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
 		}
 	case strings.Contains(a.Mime, "image"):
@@ -58,12 +56,11 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 		if at, ok := a.Html[a.Tag]; ok {
 			a.Attributes = at
 		}
-		if noThumbs() {
-			a.Attributes["src"] = a.Base
-		} else {
+		a.Attributes["alt"] = a.Base
+		a.Attributes["src"] = a.Base
+		if !noThumbs() {
 			a.Attributes["src"] = Thumbnail(a.Path())
 		}
-		a.Attributes["alt"] = a.Base
 	}
 	return a
 }
