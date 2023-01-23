@@ -16,15 +16,9 @@ var buildCmd = &cobra.Command{
 		input := args[0]
 		parseFlags()
 		site := static.New(input)
+		viper.Set("build.index_only", false)
 		site.Build()
 	},
-}
-
-func parseFlags() {
-	switch {
-	case rootCmd.PersistentFlags().Changed("all"), rootCmd.PersistentFlags().Changed("ext"), rootCmd.PersistentFlags().Changed("mime"), rootCmd.PersistentFlags().Changed("profile"):
-		viper.Set("build.index_only", false)
-	}
 }
 
 func init() {

@@ -189,3 +189,10 @@ func initConfig() {
 	}
 	static.InitTemplates()
 }
+
+func parseFlags() {
+	switch {
+	case rootCmd.PersistentFlags().Changed("all"), rootCmd.PersistentFlags().Changed("ext"), rootCmd.PersistentFlags().Changed("mime"), rootCmd.PersistentFlags().Changed("profile"):
+		viper.Set("build.index_only", false)
+	}
+}
