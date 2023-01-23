@@ -30,7 +30,7 @@ func InitTemplates() []string {
 	for _, pro := range Profiles() {
 		switch pro {
 		case "swiper", "global":
-			t := fmt.Sprintf("static/%s/*tmpl", pro)
+			t := fmt.Sprintf("public/%s/*tmpl", pro)
 			def = append(def, t)
 		default:
 			if !viper.IsSet(pro + ".inherit") {

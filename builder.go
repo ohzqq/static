@@ -96,7 +96,7 @@ func readScriptsAndStyles(files []string) []string {
 	var assets []string
 	for _, asset := range files {
 		var f fs.FS
-		if strings.HasPrefix(asset, "static") {
+		if strings.HasPrefix(asset, "public") {
 			f = Public
 		} else {
 			f = UserCfg
