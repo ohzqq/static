@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"static"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -35,17 +33,8 @@ func runBuildCmd(cmd *cobra.Command, args []string) {
 	input := args[0]
 	parseFlags()
 	viper.Set("build.index_only", false)
-
-	switch cmd.Name() {
-	case "all":
-		viper.Set("build.all", true)
-		viper.Set("build.index_only", true)
-	case "collection":
-		viper.Set("build.is_collection", true)
-	}
-
-	site := static.New(input)
-	site.Build()
+	parseSubCommands(cmd)
+	buildSite(input)
 }
 
 func init() {

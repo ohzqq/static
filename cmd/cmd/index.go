@@ -1,10 +1,7 @@
 package cmd
 
 import (
-	"static"
-
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // indexCmd represents the index command
@@ -15,9 +12,9 @@ var indexCmd = &cobra.Command{
 	Run:   runIndexCmd,
 }
 
-// indexAllCmd represents the collection command
-var indexAllCmd = &cobra.Command{
-	Use:   "all",
+// indexCollectionCmd represents the collection command
+var indexCollectionCmd = &cobra.Command{
+	Use:   "collection",
 	Short: "build a collection",
 	Args:  cobra.ExactArgs(1),
 	Run:   runIndexCmd,
@@ -26,20 +23,11 @@ var indexAllCmd = &cobra.Command{
 func runIndexCmd(cmd *cobra.Command, args []string) {
 	input := args[0]
 	parseFlags()
-	viper.Set("build.index_only", true)
-
-	switch cmd.Name() {
-	case "all":
-		viper.Set("build.all", true)
-	case "collection":
-		viper.Set("build.is_collection", true)
-	}
-
-	site := static.New(input)
-	site.Build()
+	parseSubCommands(cmd)
+	buildSite(input)
 }
 
 func init() {
 	rootCmd.AddCommand(indexCmd)
-	buildCmd.AddCommand(indexCmd)
+	indexCmd.AddCommand(indexCollectionCmd)
 }
