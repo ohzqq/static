@@ -2,6 +2,7 @@ package static
 
 import (
 	"fmt"
+	ht "html/template"
 	"log"
 	"path/filepath"
 	"text/template"
@@ -15,8 +16,13 @@ var (
 		"Dir":        filepath.Dir,
 		"Thumb":      Thumbnail,
 		"VideoThumb": ExtractThumbFromVideo,
+		"JS":         js,
 	}
 )
+
+func js(js string) ht.JS {
+	return ht.JS(js)
+}
 
 var Templates = template.New("").Funcs(TmplFuncs)
 
