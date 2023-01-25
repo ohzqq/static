@@ -276,7 +276,7 @@ if (initLightbox) {
 					// Create clone of current image in loop
 					//const media = asset.cloneNode(true);
 					const type = asset.nodeName;
-					if (type.toLowerCase() === "video") {
+					if (type === "VIDEO") {
 						var media = document.createElement("video");
 						media.src = asset.src
 						media.muted = {{.Html.video.muted}};
@@ -287,9 +287,9 @@ if (initLightbox) {
 						{{if .Html.video.controls}}
 							media.controls = true;
 						{{end}}
-					} else if (type.toLowerCase() === "img") {
+					} else if (type === "IMG") {
 						var media = document.createElement("img");
-						media.src = asset.alt
+						media.src = asset.dataset.original
 					};
 					media.className = "swiper-zoom-target slide swiper-lazy";
 					// Create divs

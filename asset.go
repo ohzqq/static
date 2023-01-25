@@ -56,7 +56,7 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 		if at, ok := a.Html[a.Tag]; ok {
 			a.Attributes = at
 		}
-		a.Attributes["alt"] = a.Base
+		a.Attributes["data-original"] = a.Base
 		a.Attributes["src"] = a.Base
 		if !noThumbs() {
 			a.Attributes["src"] = Thumbnail(a.Path())
