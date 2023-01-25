@@ -1,0 +1,34 @@
+{{define "asset"}}
+
+{{if eq .Tag "video"}}
+	<{{.Tag}}
+	{{- range $key, $val := .Attributes}} 
+		{{- if ne $key "autoplay"}}
+			{{- if ne $key "controls"}}
+				{{$key}}="{{$val}}"
+			{{- end -}}
+		{{- end -}}
+	{{- end -}}
+	></{{.Tag}}>
+	{{end}}
+
+{{if eq .Tag "img"}}
+<img
+{{- range $key, $val := .Attributes}} 
+	{{- if ne $key "type"}}
+		{{$key}}="{{$val}}"
+	{{- end -}}
+{{- end -}}
+></img>
+{{end}}
+
+{{if eq .Tag "audio"}}
+<{{.Tag}}
+{{- range $key, $val := .Attributes}} 
+	{{- if ne $key "autoplay"}}
+		{{$key}}="{{$val}}"
+	{{- end -}}
+{{- end -}}
+></{{.Tag}}>
+{{end}}
+{{end}}

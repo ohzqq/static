@@ -24,8 +24,10 @@ type Asset struct {
 func NewAsset(file fidi.File, tags ...Html) Asset {
 	html := getHtml()
 	a := Asset{
-		File:       file,
-		Attributes: make(map[string]any),
+		File: file,
+		Attributes: map[string]any{
+			"type": file.Mime,
+		},
 	}
 
 	switch {
@@ -56,60 +58,6 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 	}
 
 	return a
-}
-
-func (a Asset) IsAudio() bool {
-	return strings.Contains(a.Mime, "audio")
-}
-
-func (a Asset) IsVideo() bool {
-	return strings.Contains(a.Mime, "video")
-}
-
-func (a Asset) IsImage() bool {
-	return strings.Contains(a.Mime, "image")
-}
-
-func (a *Asset) Render() string {
-	switch {
-	case a.IsAudio():
-		a.Tag = "audio"
-		if at, ok := a.Html[a.Tag]; ok {
-			a.Attributes = at
-			a.Attributes["src"] = a.Base
-		}
-	case a.IsImage():
-		a.Tag = "img"
-		if at, ok := a.Html[a.Tag]; ok {
-			a.Attributes = at
-		}
-		if noThumbs() {
-			a.Attributes["src"] = a.Base
-		} else {
-			a.Attributes["src"] = Thumbnail(a.Path())
-		}
-		a.Attributes["data-original"] = a.Base
-	case a.IsVideo():
-		a.Tag = "video"
-		if at, ok := a.Html[a.Tag]; ok {
-			a.Attributes = at
-		}
-		if noThumbs() {
-			a.Attributes["src"] = a.Base
-			a.Attributes["poster"] = a.Base
-		} else {
-			a.Attributes["src"] = a.Base
-			a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
-		}
-	}
-
-	var buf bytes.Buffer
-	err := assetsTmpl.Execute(&buf, a)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return buf.String()
 }
 
 func ExtractThumbFromVideo(file fidi.File) string {
