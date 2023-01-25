@@ -17,51 +17,44 @@ import (
 
 type Asset struct {
 	fidi.File
-	Attributes map[string]any
-	Html       Html
-	NoThumbs   bool
-	Tag        string
+	Attributes map[string]any `json:"Attributes"`
+	Tag        string         `json:"Tag"`
 }
 
 func NewAsset(file fidi.File, tags ...Html) Asset {
-	var html Html
-	if len(tags) > 0 {
-		html = tags[0]
-	}
+	html := getHtml()
 	a := Asset{
 		File:       file,
-		Html:       html,
 		Attributes: make(map[string]any),
-		NoThumbs:   noThumbs(),
 	}
+
 	switch {
 	case strings.Contains(a.Mime, "audio"):
 		a.Tag = "audio"
-		if at, ok := a.Html[a.Tag]; ok {
-			a.Attributes = at
-			a.Attributes["src"] = a.Base
-		}
 	case strings.Contains(a.Mime, "video"):
 		a.Tag = "video"
-		if at, ok := a.Html[a.Tag]; ok {
-			a.Attributes = at
-		}
-		a.Attributes["src"] = a.Base
+	case strings.Contains(a.Mime, "image"):
+		a.Tag = "img"
+	}
+
+	if at, ok := html[a.Tag]; ok {
+		a.Attributes = at
+	}
+	a.Attributes["src"] = a.Base
+
+	switch a.Tag {
+	case "video":
 		a.Attributes["poster"] = a.Base
 		if !noThumbs() {
 			a.Attributes["poster"] = ExtractThumbFromVideo(a.File)
 		}
-	case strings.Contains(a.Mime, "image"):
-		a.Tag = "img"
-		if at, ok := a.Html[a.Tag]; ok {
-			a.Attributes = at
-		}
+	case "img":
 		a.Attributes["data-original"] = a.Base
-		a.Attributes["src"] = a.Base
 		if !noThumbs() {
 			a.Attributes["src"] = Thumbnail(a.Path())
 		}
 	}
+
 	return a
 }
 
@@ -95,7 +88,7 @@ func (a *Asset) Render() string {
 		} else {
 			a.Attributes["src"] = Thumbnail(a.Path())
 		}
-		a.Attributes["alt"] = a.Base
+		a.Attributes["data-original"] = a.Base
 	case a.IsVideo():
 		a.Tag = "video"
 		if at, ok := a.Html[a.Tag]; ok {
@@ -111,7 +104,7 @@ func (a *Asset) Render() string {
 	}
 
 	var buf bytes.Buffer
-	err := assetTmpl.Execute(&buf, a)
+	err := assetsTmpl.Execute(&buf, a)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -178,6 +171,28 @@ var assetTmpl = template.Must(template.New("asset").Parse(
 	<img
 	{{- range $key, $val := .Attributes}} 
 		{{$key}}="{{$val}}"
+	{{- end -}}
+	></img>
+	{{end}}
+`))
+
+var assetsTmpl = template.Must(template.New("asset").Parse(
+	`
+	{{if eq .Tag "video" "audio"}}
+	<{{.Tag}}
+	{{- range $key, $val := .Attributes}} 
+		{{- if eq $key "src"}}
+				{{$key}}="{{$val}}"
+		{{- end -}}
+	{{- end -}}
+	></{{.Tag}}>
+	{{end}}
+	{{if eq .Tag "img"}}
+	<img
+	{{- range $key, $val := .Attributes}} 
+		{{- if eq $key "data-original"}}
+				{{$key}}="{{$val}}"
+		{{- end -}}
 	{{- end -}}
 	></img>
 	{{end}}
