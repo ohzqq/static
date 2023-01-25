@@ -20,6 +20,7 @@ func runCollectionCmd(cmd *cobra.Command, args []string) {
 	parseFlags()
 
 	viper.Set("build.is_collection", true)
+	//viper.Set("build.template", "slides")
 
 	site := static.New(input)
 	site.Build()

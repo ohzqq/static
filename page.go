@@ -191,9 +191,23 @@ func (pg *Page) setAssets() []Asset {
 	var assets []Asset
 	for _, i := range items {
 		asset := NewAsset(i, pg.Html)
+		switch asset.Tag {
+		case "video":
+			fmt.Printf("pre %v\n", asset.Attributes["src"])
+		case "img":
+			fmt.Printf("pre %v\n", asset.Attributes["data-original"])
+		}
 		assets = append(assets, asset)
 	}
 	pg.Assets = assets
+	for _, asset := range pg.Assets {
+		switch asset.Tag {
+		case "video":
+			fmt.Printf("post %v\n", asset.Attributes["src"])
+		case "img":
+			fmt.Printf("post %v\n", asset.Attributes["data-original"])
+		}
+	}
 
 	return assets
 }

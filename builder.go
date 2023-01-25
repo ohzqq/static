@@ -56,6 +56,15 @@ func parsePageResources(kind string) []string {
 }
 
 func getTemplate() *template.Template {
+	if viper.IsSet("build.template") {
+		pro := viper.GetString("build.template")
+		tmpl := Templates.Lookup(pro)
+		if tmpl == nil {
+			log.Fatalf("template %s not found\n", pro)
+		}
+		return tmpl
+	}
+
 	tmpl := Templates.Lookup("filterableList")
 	if hasMimes() {
 		tmpl = Templates.Lookup("mediaAsset")
