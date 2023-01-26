@@ -2,6 +2,7 @@ package static
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -77,6 +78,7 @@ func (pg *Page) Build() {
 
 	if !pg.HasIndex() || regen() {
 		fmt.Printf("building %s\n", pg.Info().Name)
+		fmt.Println(pg.AssetsToJson())
 		pg.Render()
 	}
 }
@@ -224,6 +226,14 @@ func (pg *Page) setBreadcrumbs() *Page {
 	pg.Breadcrumbs = crumbs
 
 	return pg
+}
+
+func (pg Page) AssetsToJson() string {
+	data, err := json.Marshal(pg.Assets)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(data)
 }
 
 func (pg *Page) setFiles(rel string) []map[string]any {

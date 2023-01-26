@@ -24,10 +24,8 @@ type Asset struct {
 func NewAsset(file fidi.File, tags ...Html) Asset {
 	html := getHtml()
 	a := Asset{
-		File: file,
-		Attributes: map[string]any{
-			"type": file.Mime,
-		},
+		File:       file,
+		Attributes: make(map[string]any),
 	}
 
 	switch {
@@ -43,6 +41,8 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 		a.Attributes = at
 	}
 	a.Attributes["src"] = a.Base
+	a.Attributes["mime"] = a.Mime
+	a.Attributes["caption"] = ""
 
 	switch a.Tag {
 	case "video":

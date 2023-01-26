@@ -2,6 +2,13 @@
 
 {{if eq .Tag "video"}}
 	<{{.Tag}}
+
+	{{if .Attributes.controls}}
+		{{.}}
+	{{- end -}}
+	{{if .Attributes.autoplay}}
+		{{.}}
+	{{- end -}}
 	{{- range $key, $val := .Attributes}} 
 		{{- if ne $key "autoplay"}}
 			{{- if ne $key "controls"}}
@@ -24,6 +31,9 @@
 
 {{if eq .Tag "audio"}}
 <{{.Tag}}
+	{{if .Attributes.autoplay}}
+		{{.}}
+	{{- end -}}
 {{- range $key, $val := .Attributes}} 
 	{{- if ne $key "autoplay"}}
 		{{$key}}="{{$val}}"

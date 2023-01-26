@@ -85,9 +85,9 @@ func init() {
 	viper.SetDefault(
 		"swiper.css",
 		[]string{
-			//"public/swiper/swiper-bundle.min.css",
-			//"public/swiper/swiper.css",
-			//"public/swiper/gallery.css",
+			"public/swiper/swiper-bundle.min.css",
+			"public/swiper/swiper-lightbox.css",
+			"public/swiper/gallery.css",
 		},
 	)
 
