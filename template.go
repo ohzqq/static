@@ -12,11 +12,9 @@ import (
 
 var (
 	TmplFuncs = template.FuncMap{
-		"Batch":      AssetBatch,
-		"Dir":        filepath.Dir,
-		"Thumb":      Thumbnail,
-		"VideoThumb": ExtractThumbFromVideo,
-		"JS":         js,
+		"Batch": AssetBatch,
+		"Dir":   filepath.Dir,
+		"JS":    js,
 	}
 )
 
@@ -35,7 +33,7 @@ func InitTemplates() []string {
 
 	for _, pro := range Profiles() {
 		switch pro {
-		case "swiper", "global":
+		case "global":
 			t := fmt.Sprintf("public/%s/*tmpl", pro)
 			def = append(def, t)
 		default:

@@ -85,24 +85,6 @@ func init() {
 	)
 
 	viper.SetDefault(
-		"swiper.css",
-		[]string{
-			"public/swiper/swiper-bundle.min.css",
-			"public/swiper/swiper-lightbox.css",
-			"public/swiper/gallery.css",
-		},
-	)
-
-	viper.SetDefault("swiper.mime", []string{"image", "video"})
-
-	viper.SetDefault(
-		"swiper.scripts",
-		[]string{
-			"public/swiper/swiper-bundle.min.js",
-		},
-	)
-
-	viper.SetDefault(
 		"color",
 		map[string]string{
 			"bg":     "#262626",

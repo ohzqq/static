@@ -16,7 +16,7 @@ var genCmd = &cobra.Command{
 // genIndexCmd represents the gen command
 var genIndexCmd = &cobra.Command{
 	Use:   "index",
-	Short: "(re)generate a site",
+	Short: "(re)generate a sites indices",
 	Args:  cobra.ExactArgs(1),
 	Run:   runGenCmd,
 }
@@ -24,7 +24,7 @@ var genIndexCmd = &cobra.Command{
 // genCollectionCmd represents the gen command
 var genCollectionCmd = &cobra.Command{
 	Use:   "collection",
-	Short: "(re)generate a site",
+	Short: "recursively (re)generate a site",
 	Args:  cobra.ExactArgs(1),
 	Run:   runGenCmd,
 }
@@ -32,7 +32,15 @@ var genCollectionCmd = &cobra.Command{
 // genAllCmd represents the gen command
 var genAllCmd = &cobra.Command{
 	Use:   "all",
-	Short: "(re)generate a site",
+	Short: "(re)generate all files list",
+	Args:  cobra.ExactArgs(1),
+	Run:   runGenCmd,
+}
+
+// genAssetsCmd represents the gen command
+var genAssetsCmd = &cobra.Command{
+	Use:   "assets",
+	Short: "(re)generate asset meta",
 	Args:  cobra.ExactArgs(1),
 	Run:   runGenCmd,
 }

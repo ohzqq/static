@@ -26,7 +26,8 @@ func parseSubCommands(cmd *cobra.Command) {
 	case "gen":
 		viper.Set("build.regen", true)
 	case "assets":
-		viper.Set("build.regen", true)
+		viper.Set("build.assets", true)
+		viper.Set("build.no_thumbs", true)
 	}
 }
 

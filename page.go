@@ -69,7 +69,6 @@ func (pg *Page) Build() {
 
 	pg.GetAssets()
 	if viper.GetBool("build.assets") {
-		//fmt.Printf("dir %s\n", pg.Info().Base)
 		f := viper.GetString("build.format")
 		p := pg.Info().Rename("assets").Ext("." + f).String()
 		p = filepath.Join(pg.Info().Dir, pg.Info().Base, p)

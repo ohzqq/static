@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"static"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,17 +13,41 @@ var collectionCmd = &cobra.Command{
 	Run:   runCollectionCmd,
 }
 
+// colIndexCmd represents the gen command
+var colIndexCmd = &cobra.Command{
+	Use:   "index",
+	Short: "recursively collect indices",
+	Args:  cobra.ExactArgs(1),
+	Run:   runCollectionCmd,
+}
+
+// colAssetsCmd represents the gen command
+var colAssetsCmd = &cobra.Command{
+	Use:   "assets",
+	Short: "recursively collect assets",
+	Args:  cobra.ExactArgs(1),
+	Run:   runCollectionCmd,
+}
+
+// colGenCmd represents the gen command
+var colGenCmd = &cobra.Command{
+	Use:   "gen",
+	Short: "recursively generate pages",
+	Args:  cobra.ExactArgs(1),
+	Run:   runCollectionCmd,
+}
+
 func runCollectionCmd(cmd *cobra.Command, args []string) {
 	input := args[0]
 	parseFlags()
-
 	viper.Set("build.is_collection", true)
-	//viper.Set("build.template", "slides")
-
-	site := static.New(input)
-	site.Build()
+	parseSubCommands(cmd)
+	buildSite(input)
 }
 
 func init() {
 	rootCmd.AddCommand(collectionCmd)
+	collectionCmd.AddCommand(colIndexCmd)
+	collectionCmd.AddCommand(colAssetsCmd)
+	collectionCmd.AddCommand(colGenCmd)
 }
