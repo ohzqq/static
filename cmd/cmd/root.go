@@ -45,6 +45,8 @@ func init() {
 	// defaults
 	viper.SetDefault("build.index_only", true)
 	viper.SetDefault("build.profile", "global")
+	viper.SetDefault("build.format", "yml")
+	viper.SetDefault("build.assets", false)
 
 	viper.SetDefault(
 		"global.css",
@@ -132,6 +134,9 @@ func init() {
 	viper.BindPFlag("build.no_thumbs", rootCmd.PersistentFlags().Lookup("no-thumbs"))
 
 	rootCmd.PersistentFlags().BoolVarP(&indexOnly, "index-only", "I", false, "only list index.html files")
+
+	rootCmd.PersistentFlags().StringP("fmt", "f", "", "data export format")
+	viper.BindPFlag("build.format", rootCmd.PersistentFlags().Lookup("fmt"))
 
 	rootCmd.PersistentFlags().StringSliceP("ext", "e", []string{}, "glob by ext")
 	viper.BindPFlag("build.exts", rootCmd.PersistentFlags().Lookup("ext"))

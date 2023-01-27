@@ -68,6 +68,14 @@ func (pg *Page) Build() {
 	//fmt.Printf("index only %v\n", viper.GetString("build.template"))
 
 	pg.setAssets()
+	if viper.GetBool("build.assets") {
+		switch viper.GetString("build.format") {
+		case "yaml", "yml":
+			pg.AssetsToYaml()
+		case "json":
+			pg.AssetsToJson()
+		}
+	}
 
 	if recurse() {
 		pg.setChildren()

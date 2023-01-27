@@ -25,6 +25,8 @@ func parseSubCommands(cmd *cobra.Command) {
 		viper.Set("build.index_only", true)
 	case "gen":
 		viper.Set("build.regen", true)
+	case "assets":
+		viper.Set("build.regen", true)
 	}
 }
 

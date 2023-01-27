@@ -8,12 +8,15 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"text/template"
 
 	"github.com/disintegration/imaging"
 	"github.com/ohzqq/fidi"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
+
+type Assets struct {
+	Assets []Assets `json:"Assets" yaml:"Assets"`
+}
 
 type Asset struct {
 	fidi.File  `json:"-" yaml:"-"`
@@ -101,47 +104,3 @@ func Thumbnail(path string) string {
 
 	return base
 }
-
-var assetTmpl = template.Must(template.New("asset").Parse(
-	`
-	{{if eq .Tag "video" "audio"}}
-	<{{.Tag}}
-	{{- range $key, $val := .Attributes}} 
-		{{- if ne $key "autoplay"}}
-			{{- if ne $key "controls"}}
-				{{$key}}="{{$val}}"
-			{{- end -}}
-		{{- end -}}
-	{{- end -}}
-	></{{.Tag}}>
-	{{end}}
-	{{if eq .Tag "img"}}
-	<img
-	{{- range $key, $val := .Attributes}} 
-		{{$key}}="{{$val}}"
-	{{- end -}}
-	></img>
-	{{end}}
-`))
-
-var assetsTmpl = template.Must(template.New("asset").Parse(
-	`
-	{{if eq .Tag "video" "audio"}}
-	<{{.Tag}}
-	{{- range $key, $val := .Attributes}} 
-		{{- if eq $key "src"}}
-				{{$key}}="{{$val}}"
-		{{- end -}}
-	{{- end -}}
-	></{{.Tag}}>
-	{{end}}
-	{{if eq .Tag "img"}}
-	<img
-	{{- range $key, $val := .Attributes}} 
-		{{- if eq $key "data-original"}}
-				{{$key}}="{{$val}}"
-		{{- end -}}
-	{{- end -}}
-	></img>
-	{{end}}
-`))
