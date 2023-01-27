@@ -43,5 +43,4 @@ func init() {
 	rootCmd.AddCommand(assetsCmd)
 	assetsCmd.AddCommand(assetsGenCmd)
 	assetsCmd.AddCommand(assetsCollectionCmd)
-	//assetsCmd.AddCommand(assetsgenCmd)
 }

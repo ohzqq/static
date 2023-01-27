@@ -115,6 +115,7 @@ func readScriptsAndStyles(files []string) []string {
 		} else {
 			f = UserCfg
 		}
+
 		d, err := fs.ReadFile(f, asset)
 		if err != nil {
 			log.Fatal(err)

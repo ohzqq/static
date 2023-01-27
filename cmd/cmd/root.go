@@ -165,24 +165,8 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	//files, _ := fs.Glob(static.Public, "static/*")
-	//fmt.Printf("files %+V\n", files)
-	//usr, _ := fs.Glob(static.UserCfg, "swiper/*")
-	//fmt.Printf("files %+V\n", usr)
-	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {
-		//fmt.Printf("%+V\n", viper.AllSettings())
-		//fmt.Printf("%+V\n", viper.Get("gifv.html"))
-		//cfile := viper.ConfigFileUsed()
-		//err := viper.Unmarshal(&cfg)
-		//if err != nil {
-		//log.Fatal(err)
-		//}
-		//cfg, err = static.ParseConfig(cfile)
-		//if err != nil {
-		//  log.Fatal(err)
-		//}
 	}
 	static.InitTemplates()
 }

@@ -13,23 +13,7 @@ var (
 	//go:embed public
 	Public  embed.FS
 	UserCfg fs.FS
-	//defaultProfile Profile
 )
-
-type Color struct {
-	Bg     string
-	Fg     string
-	White  string
-	Black  string
-	Grey   string
-	Yellow string
-	Red    string
-	Pink   string
-	Cyan   string
-	Blue   string
-	Green  string
-	Purple string
-}
 
 type Html map[string]map[string]any
 
