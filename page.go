@@ -13,6 +13,7 @@ import (
 	"github.com/ohzqq/fidi"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 type Page struct {
@@ -78,7 +79,7 @@ func (pg *Page) Build() {
 
 	if !pg.HasIndex() || regen() {
 		fmt.Printf("building %s\n", pg.Info().Name)
-		fmt.Println(pg.AssetsToJson())
+		fmt.Println(pg.AssetsToYaml())
 		pg.Render()
 	}
 }
@@ -126,6 +127,16 @@ func (pg Page) Render() string {
 }
 
 func (pg Page) Content() string {
+	for _, file := range pg.HtmlFiles {
+		if file.Base == "content.html" {
+			h, err := os.ReadFile(file.Path())
+			if err != nil {
+				log.Fatal(err)
+			}
+			return string(h)
+		}
+	}
+
 	var buf bytes.Buffer
 	err := pg.tmpl.Execute(&buf, pg)
 	if err != nil {
@@ -230,6 +241,14 @@ func (pg *Page) setBreadcrumbs() *Page {
 
 func (pg Page) AssetsToJson() string {
 	data, err := json.Marshal(pg.Assets)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(data)
+}
+
+func (pg Page) AssetsToYaml() string {
+	data, err := yaml.Marshal(pg.Assets)
 	if err != nil {
 		log.Fatal(err)
 	}

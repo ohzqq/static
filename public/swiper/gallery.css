@@ -1,25 +1,17 @@
-#description {
-  font-size: 36px;
-  line-height: 1;
-	margin-bottom: 1em;
-  font-weight: 600;
-  text-align: center;
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
 }
 
 .thumbnail {
-	width: 24%;
   text-align: center;
 	margin: 0.25em;
-  float:left;
 }
 
 .thumbnail img, .thumbnail video {
 	width: auto;
 	max-height: 150px;
-	margin: 0 5px 5px 5px;
 	border: 2px solid var(--green);
-	border-radius: 2px 2px 2px 2px;
-	padding: 0 0 2px;
 }
 
 .thumbnail video:hover, .thumbnail img:hover {

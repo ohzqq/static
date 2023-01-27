@@ -1,12 +1,10 @@
 {{define "mediaAsset"}}
 
-{{range Batch .Assets -}}
-<div class="row">
-	{{- range .}}
-		<div class="thumbnail column" media-toggle>
+<div class="gallery">
+	{{- range .Assets}}
+		<div class="thumbnail" media-toggle>
 			{{template "asset" .}}
 	</div>
 	{{- end}}
 </div>
-{{end}}
 {{end}}

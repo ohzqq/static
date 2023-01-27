@@ -16,9 +16,9 @@ import (
 )
 
 type Asset struct {
-	fidi.File
-	Attributes map[string]any `json:"Attributes"`
-	Tag        string         `json:"Tag"`
+	fidi.File  `json:"-" yaml:"-"`
+	Tag        string         `json:"Tag" yaml:"Tag"`
+	Attributes map[string]any `json:"Attributes" yaml:"Attributes"`
 }
 
 func NewAsset(file fidi.File, tags ...Html) Asset {
