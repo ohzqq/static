@@ -3,6 +3,7 @@ package static
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"log"
 	"os"
 	"os/exec"
@@ -12,11 +13,10 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/ohzqq/fidi"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
+	"gopkg.in/yaml.v2"
 )
 
-type Assets struct {
-	Assets []Assets `json:"Assets" yaml:"Assets"`
-}
+type Assets []Asset
 
 type Asset struct {
 	fidi.File  `json:"-" yaml:"-"`
@@ -61,6 +61,45 @@ func NewAsset(file fidi.File, tags ...Html) Asset {
 	}
 
 	return a
+}
+
+func (as Assets) Export(format, path string) {
+	var data []byte
+	switch format {
+	case "yaml", "yml":
+		data = as.toYaml()
+	case "json":
+		data = as.toJson()
+	}
+
+	//name := filepath.Join(path, "")
+
+	file, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (as Assets) toJson() []byte {
+	data, err := json.Marshal(as)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return data
+}
+
+func (as Assets) toYaml() []byte {
+	data, err := yaml.Marshal(as)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return data
 }
 
 func ExtractThumbFromVideo(file fidi.File) string {

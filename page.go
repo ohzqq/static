@@ -29,7 +29,7 @@ type Page struct {
 	hasIndex    bool
 	FullNav     bool
 	index       fidi.File
-	Assets      []Asset
+	Assets      Assets
 	filters     []fidi.Filter
 	Children    []*Page
 	Nav         []map[string]any
@@ -67,14 +67,13 @@ func (pg *Page) Build() {
 	}
 	//fmt.Printf("index only %v\n", viper.GetString("build.template"))
 
-	pg.setAssets()
+	pg.GetAssets()
 	if viper.GetBool("build.assets") {
-		switch viper.GetString("build.format") {
-		case "yaml", "yml":
-			pg.AssetsToYaml()
-		case "json":
-			pg.AssetsToJson()
-		}
+		//fmt.Printf("dir %s\n", pg.Info().Base)
+		f := viper.GetString("build.format")
+		p := pg.Info().Rename("assets").Ext("." + f).String()
+		p = filepath.Join(pg.Info().Dir, pg.Info().Base, p)
+		pg.Assets.Export(f, p)
 	}
 
 	if recurse() {
@@ -87,7 +86,6 @@ func (pg *Page) Build() {
 
 	if !pg.HasIndex() || regen() {
 		fmt.Printf("building %s\n", pg.Info().Name)
-		fmt.Println(pg.AssetsToYaml())
 		pg.Render()
 	}
 }
@@ -189,7 +187,7 @@ func (pg *Page) setChildren() []*Page {
 	return pg.Children
 }
 
-func (pg *Page) setAssets() []Asset {
+func (pg *Page) GetAssets() []Asset {
 	var filters []fidi.Filter
 	m := parseFilterKind(".mime")
 	if hasMimes() {
