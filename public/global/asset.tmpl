@@ -10,11 +10,9 @@
 		{{.}}
 	{{- end -}}
 	{{- range $key, $val := .Attributes}} 
-		{{- if ne $key "autoplay"}}
-			{{- if ne $key "controls"}}
-				{{$key}}="{{$val}}"
-			{{- end -}}
-		{{- end -}}
+		{{- if ne $key "autoplay"}}{{- if ne $key "controls"}}
+			{{$key}}="{{$val}}"
+		{{- end -}}{{- end -}}
 	{{- end -}}
 	></{{.Tag}}>
 	{{end}}
