@@ -1,11 +1,11 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"fmt"
+	"encoding/json"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"static"
 
 	"github.com/spf13/cobra"
 )
@@ -13,20 +13,59 @@ import (
 // newCmd represents the new command
 var newCmd = &cobra.Command{
 	Use:   "new",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "create new gal",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("new called")
+		dir := args[0]
+
+		var media []static.Media
+		filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+			var m static.Media
+			var thumb []byte
+			mt := static.MimeType(path)
+
+			if mt.IsMedia() {
+				switch {
+				case mt.IsVideo():
+					if cmd.Flags().Changed("thumbs") {
+						thumb = static.VideoThumb(path)
+						m.Thumbnail = static.ThumbToBase64(thumb)
+					}
+					m.Video = filepath.Join("/", path)
+				case mt.IsImage():
+					if cmd.Flags().Changed("thumbs") {
+						thumb = static.ImageThumb(path)
+						m.Thumbnail = static.ThumbToBase64(thumb)
+					}
+					m.Img = filepath.Join("/", path)
+				}
+
+				media = append(media, m)
+			}
+			return nil
+		})
+
+		gal, err := json.MarshalIndent(media, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+
+		idx, err := os.Create(filepath.Join(dir, "index.json"))
+		if err != nil {
+			panic(err)
+		}
+		defer idx.Close()
+
+		_, err = idx.Write(gal)
+		if err != nil {
+			panic(err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(newCmd)
+	newCmd.Flags().BoolP("thumbs", "t", false, "create thumbs")
 
 	// Here you will define your flags and configuration settings.
 

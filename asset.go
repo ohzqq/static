@@ -19,6 +19,34 @@ import (
 
 type Assets []Asset
 
+type mimeType string
+
+func MimeType(path string) mimeType {
+	ext := filepath.Ext(path)
+	return mimeType(mime.TypeByExtension(ext))
+}
+
+func (mt mimeType) IsMedia() bool {
+	if mt.IsVideo() || mt.IsImage() {
+		return true
+	}
+	return false
+}
+
+func (mt mimeType) IsVideo() bool {
+	if strings.Contains(string(mt), "video") {
+		return true
+	}
+	return false
+}
+
+func (mt mimeType) IsImage() bool {
+	if strings.Contains(string(mt), "image") {
+		return true
+	}
+	return false
+}
+
 type Asset struct {
 	fidi.File  `json:"-" yaml:"-"`
 	Tag        string         `json:"Tag" yaml:"Tag"`
@@ -139,7 +167,7 @@ type Media struct {
 	Img       string `json:"img,omitempty"`
 	Video     string `json:"video,omitempty"`
 	Caption   string `json:"caption,omitempty"`
-	Thumbnail string `json:"thumbnail"`
+	Thumbnail string `json:"thumbnail,omitempty"`
 }
 
 func Thumb(input string, output ...string) Media {
