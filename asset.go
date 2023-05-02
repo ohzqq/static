@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"log"
+	"mime"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -104,9 +105,9 @@ func Thumbnail(input fidi.File, output ...string) string {
 	var thumb []byte
 	switch {
 	case strings.Contains(input.Mime, "video"):
-		thumb = videoThumb(input.Path())
+		thumb = VideoThumb(input.Path())
 	case strings.Contains(input.Mime, "image"):
-		thumb = imageThumb(input.Path())
+		thumb = ImageThumb(input.Path())
 	}
 
 	name := input.Copy().Ext(".jpg").Prefix("thumb-").String()
@@ -134,7 +135,34 @@ func Thumbnail(input fidi.File, output ...string) string {
 	}
 }
 
-func videoThumb(input string) []byte {
+type Media struct {
+	Img       string `json:"img,omitempty"`
+	Video     string `json:"video,omitempty"`
+	Caption   string `json:"caption,omitempty"`
+	Thumbnail string `json:"thumbnail"`
+}
+
+func Thumb(input string, output ...string) Media {
+	var thumb []byte
+	var media Media
+
+	ext := filepath.Ext(input)
+	mt := mime.TypeByExtension(ext)
+
+	switch {
+	case strings.Contains(mt, "video"):
+		thumb = VideoThumb(input)
+		media.Video = input
+	case strings.Contains(mt, "image"):
+		thumb = ImageThumb(input)
+		media.Img = input
+	}
+	media.Thumbnail = ThumbToBase64(thumb)
+
+	return media
+}
+
+func VideoThumb(input string) []byte {
 	inArgs := ffmpeg.KwArgs{
 		"y":           "",
 		"loglevel":    "quiet",
@@ -148,6 +176,7 @@ func videoThumb(input string) []byte {
 
 	ff := ffmpeg.Input(input, inArgs).
 		Filter("thumbnail", ffmpeg.Args{}).
+		Filter("scale", ffmpeg.Args{"w=268:h=-2:flags=lanczos"}).
 		Output("pipe:1", outArgs)
 
 	args := ff.GetArgs()
@@ -164,7 +193,7 @@ func videoThumb(input string) []byte {
 	return out.Bytes()
 }
 
-func imageThumb(path string) []byte {
+func ImageThumb(path string) []byte {
 	src, err := imaging.Open(path)
 	if err != nil {
 		log.Fatal(err)

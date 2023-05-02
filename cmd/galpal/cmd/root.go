@@ -1,30 +1,77 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
+	"encoding/json"
+	"mime"
 	"os"
+	"path/filepath"
+	"static"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
-
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "galpal",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "generate gal json",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		dir := args[0]
+		files, err := os.ReadDir(dir)
+		if err != nil {
+			panic(err)
+		}
+
+		var media []static.Media
+		for _, file := range files {
+			if !file.IsDir() {
+				var m static.Media
+				var thumb []byte
+				name := filepath.Join(dir, file.Name())
+				ext := filepath.Ext(name)
+				mt := mime.TypeByExtension(ext)
+
+				switch {
+				case strings.Contains(mt, "video"):
+					thumb = static.VideoThumb(name)
+					m.Video = name
+				case strings.Contains(mt, "image"):
+					thumb = static.ImageThumb(name)
+					m.Img = name
+				}
+				m.Thumbnail = static.ThumbToBase64(thumb)
+
+				media = append(media, m)
+			}
+		}
+
+		gal, err := json.MarshalIndent(media, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+
+		idx, err := os.Create(filepath.Join(dir, "index.json"))
+		if err != nil {
+			panic(err)
+		}
+		defer idx.Close()
+
+		_, err = idx.Write(gal)
+		if err != nil {
+			panic(err)
+		}
+	},
+}
+
+func checkForIndex(dir string) (string, bool) {
+	idx, _ := filepath.Glob(filepath.Join(dir, "index.json"))
+
+	if len(idx) > 0 {
+		return idx[0], true
+	}
+	return "", false
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -47,5 +94,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
