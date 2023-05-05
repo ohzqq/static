@@ -18,9 +18,9 @@ var newCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := args[0]
 
-		var media []static.Media
+		var gallery static.Gallery
 		filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-			var m static.Media
+			m := new(static.Media)
 			var thumb []byte
 			mt := static.MimeType(path)
 
@@ -40,12 +40,12 @@ var newCmd = &cobra.Command{
 					m.Img = filepath.Join("/", path)
 				}
 
-				media = append(media, m)
+				gallery.Media = append(gallery.Media, m)
 			}
 			return nil
 		})
 
-		gal, err := json.MarshalIndent(media, "", "  ")
+		gal, err := json.MarshalIndent(gallery, "", "  ")
 		if err != nil {
 			panic(err)
 		}

@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"static"
 	"strings"
 
@@ -20,24 +21,32 @@ var thumbCmd = &cobra.Command{
 			panic(err)
 		}
 
-		var idx []*static.Media
-		err = json.Unmarshal(f, &idx)
+		var gallery static.Gallery
+		err = json.Unmarshal(f, &gallery)
 		if err != nil {
 			panic(err)
 		}
 
-		for _, m := range idx {
+		for _, m := range gallery.Media {
 			var thumb []byte
 			switch {
 			case m.Video != "":
-				thumb = static.VideoThumb(strings.TrimPrefix(m.Video, "/"))
+				name := strings.TrimPrefix(m.Video, "/")
+				if args[0] == "index.json" {
+					name = filepath.Base(name)
+				}
+				thumb = static.VideoThumb(name)
 			case m.Img != "":
-				thumb = static.ImageThumb(strings.TrimPrefix(m.Img, "/"))
+				name := strings.TrimPrefix(m.Img, "/")
+				if args[0] == "index.json" {
+					name = filepath.Base(name)
+				}
+				thumb = static.ImageThumb(name)
 			}
 			m.Thumbnail = static.ThumbToBase64(thumb)
 		}
 
-		gal, err := json.MarshalIndent(idx, "", "  ")
+		gal, err := json.MarshalIndent(gallery, "", "  ")
 		if err != nil {
 			panic(err)
 		}

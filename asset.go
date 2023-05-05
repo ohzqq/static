@@ -163,11 +163,23 @@ func Thumbnail(input fidi.File, output ...string) string {
 	}
 }
 
+type Gallery struct {
+	Meta  Meta     `json:"meta,omitempty"`
+	Media []*Media `json:"media"`
+}
+
+type Meta struct {
+	Title   string   `json:"title"`
+	Creator string   `json:"creator"`
+	Subject []string `json:"subject"`
+}
+
 type Media struct {
-	Img       string `json:"img,omitempty"`
-	Video     string `json:"video,omitempty"`
-	Caption   string `json:"caption,omitempty"`
-	Thumbnail string `json:"thumbnail,omitempty"`
+	Img       string   `json:"img,omitempty"`
+	Video     string   `json:"video,omitempty"`
+	Caption   string   `json:"caption,omitempty"`
+	Thumbnail string   `json:"thumbnail,omitempty"`
+	Tags      []string `json:"tags,omitempty"`
 }
 
 func Thumb(input string, output ...string) Media {
@@ -193,7 +205,7 @@ func Thumb(input string, output ...string) Media {
 func VideoThumb(input string) []byte {
 	inArgs := ffmpeg.KwArgs{
 		"y":           "",
-		"loglevel":    "quiet",
+		"loglevel":    "error",
 		"hide_banner": "",
 	}
 	outArgs := ffmpeg.KwArgs{
