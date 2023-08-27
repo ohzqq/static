@@ -1,0 +1,22 @@
+{{define "filetree"}}
+{{$parent := .}}
+{{- if .HasChildren}}
+	<div class=""><span class="caret"></span>
+		<a href="{{.Url}}">{{.Title}}</a>
+		<div class="nested">
+		{{- range .Children}}
+			{{template "filetree" . -}}
+		{{- end}}
+		</div>
+	</div><!--end {{.Title}} -->
+{{- else}}
+		<div>
+			<a href="{{.Url}}">{{.Title}}</a>
+		</div>
+		{{range .Files}}
+		<div>
+			<a href="{{Dir $parent.Url}}/{{.}}">{{.}}</a>
+		</div>
+	{{end}}
+{{end -}}
+{{end -}}

@@ -1,0 +1,8 @@
+{{define "footer"}}
+	{{range .ReadScripts}}
+		<script>{{.}}</script>
+	{{end}}
+	{{if eq .Mime "image" "video"}}
+		{{template "swiperLightbox" .Collection}}
+	{{end}}
+{{end}}

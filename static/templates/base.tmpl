@@ -1,0 +1,33 @@
+{{define "base"}}
+<!doctype html>
+<html>
+	<head>
+		<title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width">
+		{{template "color" color -}}
+		{{range .ReadCss -}}
+		<style>
+			{{.}}
+		</style>
+		{{end -}}
+	</head>
+	<body class="w3-mobile">
+		<main class="w3-mobile w3-content w3-main">
+			<div>
+				<h1>{{.Title}}</h1>
+			</div>
+
+			{{.Content -}}
+
+			<footer>
+			{{- range .ReadScripts}}
+				<script>
+					{{.}}
+				</script>
+			{{- end}}
+
+			</footer>
+		</main>
+	</body>
+</html>
+{{end}}

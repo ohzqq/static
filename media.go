@@ -1,16 +1,5 @@
 package static
 
-type Gallery struct {
-	Meta  Meta     `json:"meta,omitempty"`
-	Media []*Media `json:"media"`
-}
-
-type Meta struct {
-	Title   string   `json:"title"`
-	Creator string   `json:"creator"`
-	Subject []string `json:"subject"`
-}
-
 type Media struct {
 	Img       string   `json:"img,omitempty"`
 	Video     string   `json:"video,omitempty"`
@@ -37,9 +26,9 @@ func (m *Media) WithThumb() *Media {
 	var thumb []byte
 	switch {
 	case m.Video != "":
-		thumb = VideoThumb(input)
+		thumb = VideoThumb(m.Video)
 	case m.Img != "":
-		thumb = ImageThumb(input)
+		thumb = ImageThumb(m.Img)
 	}
 	m.Thumbnail = ThumbToBase64(thumb)
 	return m
